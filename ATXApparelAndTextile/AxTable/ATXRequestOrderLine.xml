@@ -1,0 +1,858 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxTable xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXRequestOrderLine</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+public class ATXRequestOrderLine extends common
+{
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>insert</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    public void insert()
+    {
+        if (!this.LineNum)
+        {
+            this.LineNum = ATXRequestOrderLine::getLastLineNum(this.RequestOrderId,this.RequestOrderUpdateId)+1;
+        }
+
+        //this.modifiedField(fieldNum(RequestOrderLine_AT, QtyOrig));
+
+        super();
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>displayConfigName</Name>
+				<Source><![CDATA[
+    [SysClientCacheDataMethodAttribute(true)]
+    display ConfigName displayConfigName()
+    {
+        return ATXTools::itemConfigurationName(this.ItemId, this.inventDim().configId);
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>inventDim</Name>
+				<Source><![CDATA[
+    public InventDim inventDim()
+    {
+        return InventDim::find(this.InventDimId);
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>inventTable</Name>
+				<Source><![CDATA[
+    public InventTable inventTable()
+    {
+        return inventTable::find(this.ItemId);
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>modifiedField</Name>
+				<Source><![CDATA[
+    public void modifiedField(FieldId _fieldId)
+    {
+        ATXProductOvercutSetup  productOvercutSetup_AT;
+        ATXRequestQty           requestQtyExtra;
+
+        ;
+
+        super(_fieldId);
+
+        switch(_fieldId)
+        {
+            case fieldNum(ATXRequestOrderLine, QtyOrig):
+                productOvercutSetup_AT      = ATXProductOvercutSetup::find(InventTable::find(this.ItemId).ATXProductOvercutId, this.QtyOrig, this.inventDim().configId, this.inventDim().InventColorId);
+                if (productOvercutSetup_AT)
+                {
+                    switch (productOvercutSetup_AT.PercentAmount)
+                    {
+                        case PercentAmount::Amount:
+                            requestQtyExtra = productOvercutSetup_AT.Qty;
+                            break;
+                        case PercentAmount::Percent:
+                            requestQtyExtra = this.QtyOrig * productOvercutSetup_AT.Qty / 100;
+                            break;
+                    }
+                    // Apply rules
+                    switch (productOvercutSetup_AT.RoundOffType)
+                    {
+                        case RoundOffType::Ordinary:
+                            requestQtyExtra = round(requestQtyExtra, 1);
+                            break;
+                        case RoundOffType::RoundDown:
+                            requestQtyExtra = roundDown(requestQtyExtra, 1);
+                            break;
+                        case RoundOffType::RoundUp:
+                            requestQtyExtra = roundUp(requestQtyExtra, 1);
+                            break;
+                    }
+                    this.RequestQty = this.QtyOrig + requestQtyExtra;
+
+                    if (productOvercutSetup_AT.BOMRoundUpQty)
+                    {
+                        this.RequestQty = roundUp(this.RequestQty, productOvercutSetup_AT.BOMRoundUpQty);
+                    }
+                }
+                else
+                {
+                    warning(strFmt("No se ha configurado la cantidad extra de corte para el artículo %1", this.ItemId));
+                }
+                this.calcLineAmount();
+                break;
+
+            case fieldNum(ATXRequestOrderLine, ItemId):
+                if (!this.ItemDivisionId)
+                {
+                    this.ItemDivisionId             = this.requestOrderHeader().ItemDivisionId;
+                }
+                if (!this.SeasonId)
+                {
+                    this.SeasonId                   = this.requestOrderHeader().SeasonId;
+                }
+                if (!this.DestinationPlaceId)
+                {
+                    this.DestinationPlaceId         = this.requestOrderHeader().DestinationPlaceId;
+                }
+                this.DlvModeId                  = this.requestOrderHeader().DlvModeId;
+                this.RequestOrderDate           = this.requestOrderHeader().RequestOrderDate;
+                this.RequestOrderCancelDate     = this.requestOrderHeader().RequestOrderCancelDate;
+                break;
+
+            case fieldNum(ATXRequestOrderLine, RequestQty):
+                this.calcLineAmount();
+                break;
+
+            case fieldNum(ATXRequestOrderLine, SalesPrice):
+                this.calcLineAmount();
+                // Update price in SalesLine
+                this.updateSalesPrice();
+                break;
+
+            case fieldNum(ATXRequestOrderLine, ReviewedOrderDate):
+                this.updateReviewedOrderDate();
+                break;
+            
+            case fieldNum(ATXRequestOrderLine, RequestOrderDate):
+                this.updateRequestOrderDate();
+                break;
+            
+            case fieldNum(ATXRequestOrderLine, RequestOrderCancelDate):
+                this.updateRequestOrderCancelDate();
+                break;
+            
+        }
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>calcLineAmount</Name>
+				<Source><![CDATA[
+    public void calcLineAmount()
+    {
+        this.LineAmount     = this.RequestQty * this.SalesPrice;
+        this.LineAmountOrig = this.QtyOrig * this.SalesPrice;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>requestOrderHeader</Name>
+				<Source><![CDATA[
+    public ATXRequestOrderHeader requestOrderHeader()
+    {
+        return ATXRequestOrderHeader::find(this.RequestOrderId);
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>setInventDimId</Name>
+				<Source><![CDATA[
+    public void setInventDimId(InventDimId _inventDimId,InventDim _inventDim = InventDim::find(_inventDimId))
+    {
+        InventDim   currentInventDim = this.InventDimId == _inventDimId ? _inventDim : InventDim::find(this.InventDimId);
+
+        this.InventDimId = _inventDimId;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>update</Name>
+				<Source><![CDATA[
+    public void update()
+    {
+        ATXRequestOrderLine requestOrdrLineOrig;
+        InventDim           inventDim = InventDim::findOrCreate(this.inventDim()), inventDimPrice;
+        ;
+
+        inventDimPrice.configId         = inventDim.configId;
+        inventDimPrice.InventSizeId     = inventDim.InventSizeId;
+        inventDimPrice.InventColorId    = inventDim.InventColorId;
+        inventDimPrice.InventStyleId    = inventDim.InventStyleId;
+        inventDimPrice = InventDim::findOrCreate(inventDimPrice);
+        requestOrdrLineOrig = this.orig();
+        //this.modifiedField(fieldNum(RequestOrderLine_AT, QtyOrig));
+
+        super();
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>updateRequestOrderCancelDate</Name>
+				<Source><![CDATA[
+    public void updateRequestOrderCancelDate()
+    {
+        SalesLine   salesLine, salesLineSplit;
+        InventDim   inventDim;
+
+        ttsBegin;
+        salesLine = SalesLine::findInventTransId(this.InventTransIdOrigin, true);
+        if (salesLine.RecId != 0)
+        {
+            salesLine.ReceiptDateRequested = this.RequestOrderCancelDate;
+            salesLine.modifiedField(fieldNum(SalesLine, ReceiptDateRequested));
+            salesLine.update();
+
+            while select forUpdate salesLineSplit
+                where   salesLineSplit.ATXInventTransIdOrigin == this.InventTransIdOrigin
+                join inventDim
+                    where   inventDim.inventDimId == salesLineSplit.InventDimId
+                        &&  inventDim.InventSizeId == ATXProductParameters::find().DummyValue
+            {
+                salesLineSplit.ReceiptDateRequested = this.RequestOrderCancelDate;
+                salesLineSplit.modifiedField(fieldNum(SalesLine, ReceiptDateRequested));
+                salesLineSplit.update();
+            }
+        }
+        ttsCommit;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>updateRequestOrderDate</Name>
+				<Source><![CDATA[
+    public void updateRequestOrderDate()
+    {
+        SalesLine   salesLine, salesLineSplit;
+        InventDim   inventDim;
+
+        ttsBegin;
+        salesLine = SalesLine::findInventTransId(this.InventTransIdOrigin, true);
+        if (salesLine.RecId != 0)
+        {
+            salesLine.ShippingDateRequested = this.RequestOrderDate;
+            salesLine.ReceiptDateConfirmed  = this.RequestOrderDate;
+            salesLine.modifiedField(fieldNum(SalesLine, ShippingDateConfirmed));
+
+            if (!this.ReviewedOrderDate)
+            {
+                salesLine.ShippingDateConfirmed = this.RequestOrderDate;
+                salesLine.modifiedField(fieldNum(SalesLine, ShippingDateConfirmed));
+            }
+            salesLine.update();
+
+            while select forUpdate salesLineSplit
+                where   salesLineSplit.ATXInventTransIdOrigin == this.InventTransIdOrigin
+                join inventDim
+                    where  inventDim.inventDimId == salesLineSplit.InventDimId
+                        && inventDim.InventSizeId == ATXProductParameters::find().DummyValue
+            {
+                salesLineSplit.ShippingDateRequested = this.RequestOrderDate;
+                salesLineSplit.ReceiptDateConfirmed  = this.RequestOrderDate;
+                salesLineSplit.modifiedField(fieldNum(SalesLine, ShippingDateConfirmed));
+
+                if (!this.ReviewedOrderDate)
+                {
+                    salesLineSplit.ShippingDateConfirmed = this.RequestOrderDate;
+                    salesLineSplit.modifiedField(fieldNum(SalesLine, ShippingDateConfirmed));
+                }
+                salesLineSplit.update();
+            }
+        }
+        ttsCommit;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>updateReviewedOrderDate</Name>
+				<Source><![CDATA[
+    public void updateReviewedOrderDate()
+    {
+        SalesLine   salesLine, salesLineSplit;
+        InventDim   inventDim;
+
+        ttsBegin;
+        salesLine = SalesLine::findInventTransId(this.InventTransIdOrigin, true);
+        if (salesLine.RecId != 0)
+        {
+            salesLine.ShippingDateConfirmed = this.ReviewedOrderDate;
+            salesLine.modifiedField(fieldNum(SalesLine, ShippingDateConfirmed));
+            salesLine.update();
+
+            while select forUpdate salesLineSplit
+                where   salesLineSplit.ATXInventTransIdOrigin == this.InventTransIdOrigin
+                join inventDim
+                    where   inventDim.inventDimId == salesLineSplit.InventDimId
+                        &&  inventDim.InventSizeId == ATXProductParameters::find().DummyValue
+            {
+                salesLineSplit.ShippingDateConfirmed = this.ReviewedOrderDate;
+                salesLineSplit.modifiedField(fieldNum(SalesLine, ShippingDateConfirmed));
+                salesLineSplit.update();
+            }
+        }
+        ttsCommit;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>updateSalesPrice</Name>
+				<Source><![CDATA[
+    public void updateSalesPrice()
+    {
+        SalesLine               salesLine, salesLineSplit;
+        ATXBreakdownOrderLine   breakDownOrderLine;
+
+        ttsBegin;
+        salesLine = SalesLine::findInventTransId(this.InventTransIdOrigin, true);
+        if (salesLine.RecId != 0)
+        {
+            salesLine.SalesPrice = this.SalesPrice;
+            salesLine.modifiedField(fieldNum(SalesLine, SalesPrice));
+            salesLine.update();
+
+            while select forUpdate breakDownOrderLine
+                where  breakDownOrderLine.InventTransId == salesLine.InventTransId
+                    && breakDownOrderLine.SalesId == salesLine.SalesId
+            {
+                breakDownOrderLine.SalesPrice = this.SalesPrice;
+                breakDownOrderLine.update();
+            }
+
+            while select forUpdate salesLineSplit
+                where   salesLineSplit.ATXInventTransIdOrigin == this.InventTransIdOrigin
+            {
+                salesLineSplit.SalesPrice = this.SalesPrice;
+                salesLineSplit.modifiedField(fieldNum(SalesLine, SalesPrice));
+                salesLineSplit.update();
+            }
+
+            while select forUpdate breakDownOrderLine
+                where breakDownOrderLine.SalesId == salesLineSplit.SalesId
+                join salesLineSplit
+                where salesLineSplit.InventTransId == breakDownOrderLine.InventTransId
+                && salesLineSplit.ATXInventTransIdOrigin == this.InventTransIdOrigin
+            {
+                breakDownOrderLine.SalesPrice = salesLineSplit.SalesPrice;
+                breakDownOrderLine.update();
+            }
+        }
+        ttsCommit;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>updateShipmentOrderDate</Name>
+				<Source><![CDATA[
+    public void updateShipmentOrderDate()
+    {
+        SalesLine   salesLine, salesLineSplit;
+        InventDim   inventDim;
+
+        ttsBegin;
+        salesLine = SalesLine::findInventTransId(this.InventTransIdOrigin, true);
+        if (salesLine.RecId != 0)
+        {
+            salesLine.modifiedField(fieldNum(SalesLine, ReceiptDateConfirmed));
+            salesLine.update();
+
+            while select forUpdate salesLineSplit
+                where   salesLineSplit.ATXInventTransIdOrigin == this.InventTransIdOrigin
+                join inventDim
+                    where   inventDim.inventDimId == salesLineSplit.InventDimId
+                        &&  inventDim.InventSizeId == ATXProductParameters::find().DummyValue
+            {
+                salesLineSplit.modifiedField(fieldNum(SalesLine, ReceiptDateConfirmed));
+                salesLineSplit.update();
+            }
+        }
+        ttsCommit;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>validateDelete</Name>
+				<Source><![CDATA[
+    public boolean validateDelete()
+    {
+        boolean     ret;
+
+        ret = super();
+        if (ret)
+        {
+            if (this.requestOrderHeader().RequestOrderStatus == ATXRequestOrderStatus::Authorized)
+            {
+                ret = checkFailed("@ATXApparelAndTextile_AT:NewLabel114");
+            }
+        }
+
+        return ret;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>findByRecId</Name>
+				<Source><![CDATA[
+    static ATXRequestOrderLine findByRecId(RecId _recId, boolean _forUpdate = false)
+    {
+        ATXRequestOrderLine requestOrderLine;
+
+        requestOrderLine.selectForUpdate(_forUpdate);
+
+        select firstOnly requestOrderLine
+        where requestOrderLine.RecId == _recId;
+
+        return requestOrderLine;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>RequestSizeId</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    public display EcoResSizeName RequestSizeId()
+    {
+        return (select firstonly InventSizeId from InventDim where InventDim.InventDimId == this.InventDimId).inventSizeId;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>displayItemName</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    [SysClientCacheDataMethodAttribute(true)]
+    public display ItemName displayItemName()
+    {
+        return this.inventTable().itemName();
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>validateWrite</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    /// <returns></returns>
+    public boolean validateWrite()
+    {
+        boolean ret;
+    
+        ret = super();
+        if (ret)
+        {
+            if (this.requestOrderHeader().RequestOrderStatus == ATXRequestOrderStatus::Authorized)
+            {
+                if (!ATXRequestOrderUsers::find(curUserId()))
+                {
+                    ret = checkFailed("@ATXApparelAndTextile_AT:NewLabel115");
+                }
+            }
+        }
+    
+        return ret;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>aosValidateInsert</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    /// <returns></returns>
+    public boolean aosValidateInsert()
+    {
+        boolean ret;
+    
+        ret = super();
+        if (ret)
+        {
+            if (this.requestOrderHeader().RequestOrderStatus == ATXRequestOrderStatus::Authorized)
+            {
+                ret = checkFailed("@ATXApparelAndTextile_AT:NewLabel115");
+            }
+        }
+    
+        return ret;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>initValue</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    public void initValue()
+    {
+        ATXRequestOrderLine requestOrderLineFind;
+        
+        super();
+        
+        this.SeasonId               = this.requestOrderHeader().SeasonId;
+        this.DestinationPlaceId     = this.requestOrderHeader().DestinationPlaceId;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>getLastLineNum</Name>
+				<Source><![CDATA[
+    public static LineNum getLastLineNum(ATXRequestOrderId _requestOrderId, ATXRequestOrderUpdateId _requestOrderUpdateId)
+    {
+        return (select maxof(LineNum) from ATXRequestOrderLine where ATXRequestOrderLine.RequestOrderId == _requestOrderId && ATXRequestOrderLine.RequestOrderUpdateId == _requestOrderUpdateId).LineNum;
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+	<Label>@ATXAT:NewLabel83</Label>
+	<SubscriberAccessLevel>
+		<Read>Allow</Read>
+	</SubscriberAccessLevel>
+	<TitleField1>RequestOrderId</TitleField1>
+	<TitleField2>ItemId</TitleField2>
+	<ClusteredIndex>ReqIdx</ClusteredIndex>
+	<DeleteActions />
+	<FieldGroups>
+		<AxTableFieldGroup>
+			<Name>AutoReport</Name>
+			<Fields>
+				<AxTableFieldGroupField>
+					<DataField>InventTransOriginId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>RequestOrderId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>RequestOrderUpdateId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>ItemId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>InventDimId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>QtyOrig</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>LineAmountOrig</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>RequestQty</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>SalesPrice</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>LineAmount</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>SeasonId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>RequestOrderDate</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>RequestOrderCancelDate</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>ReviewedOrderDate</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>BranchId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>ItemDivisionId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>LineDisc</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>LinePercent</DataField>
+				</AxTableFieldGroupField>
+			</Fields>
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoLookup</Name>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoIdentification</Name>
+			<AutoPopulate>Yes</AutoPopulate>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoSummary</Name>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoBrowse</Name>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>Overview</Name>
+			<Label>@SYS35893</Label>
+			<Fields>
+				<AxTableFieldGroupField>
+					<DataField>ItemId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>LineNum</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>QtyOrig</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>RequestQty</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>SalesPrice</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>LineAmountOrig</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>LineAmount</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>RequestOrderDate</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>RequestOrderCancelDate</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>ReviewedOrderDate</DataField>
+				</AxTableFieldGroupField>
+			</Fields>
+		</AxTableFieldGroup>
+	</FieldGroups>
+	<Fields>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>DlvModeId</Name>
+			<ExtendedDataType>DlvModeId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>InventDimId</Name>
+			<ExtendedDataType>InventDimId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>InventTransIdOrigin</Name>
+			<ExtendedDataType>TradeInventTransId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>ItemDivisionId</Name>
+			<ExtendedDataType>ATXItemDivisionId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>ItemId</Name>
+			<ExtendedDataType>ItemId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldReal">
+			<Name>LineAmount</Name>
+			<ExtendedDataType>SalesLineAmount</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldReal">
+			<Name>LineAmountOrig</Name>
+			<ExtendedDataType>Amount</ExtendedDataType>
+			<Label>@ATXAT:NewLabel89</Label>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldReal">
+			<Name>QtyOrig</Name>
+			<ExtendedDataType>SalesQty</ExtendedDataType>
+			<Label>@ATXAT:NewLabel45</Label>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldDate">
+			<Name>RequestOrderCancelDate</Name>
+			<ExtendedDataType>ATXRequestOrderCancelDate</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldDate">
+			<Name>RequestOrderDate</Name>
+			<ExtendedDataType>ATXRequestOrderDate</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>RequestOrderId</Name>
+			<ExtendedDataType>ATXRequestOrderId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldInt">
+			<Name>RequestOrderUpdateId</Name>
+			<ExtendedDataType>ATXRequestOrderUpdateId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldReal">
+			<Name>RequestQty</Name>
+			<ExtendedDataType>SalesQty</ExtendedDataType>
+			<Label>@ATXAT:NewLabel49</Label>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldDate">
+			<Name>ReviewedOrderDate</Name>
+			<ExtendedDataType>ATXReviewedOrderDate</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldReal">
+			<Name>SalesPrice</Name>
+			<ExtendedDataType>SalesPrice</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>SeasonId</Name>
+			<ExtendedDataType>ATXSeasonId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>BranchId</Name>
+			<ExtendedDataType>ATXBranchId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldReal">
+			<Name>LineDisc</Name>
+			<ExtendedDataType>SalesLineDisc</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldReal">
+			<Name>LinePercent</Name>
+			<ExtendedDataType>SalesLinePercent</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldInt64">
+			<Name>InventTransOriginId</Name>
+			<ExtendedDataType>InventTransOriginId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>DestinationPlaceId</Name>
+			<ExtendedDataType>ATXDestinationPlaceId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldReal">
+			<Name>LineNum</Name>
+			<ExtendedDataType>LineNum</ExtendedDataType>
+		</AxTableField>
+	</Fields>
+	<FullTextIndexes />
+	<Indexes>
+		<AxTableIndex>
+			<Name>ReqIdx</Name>
+			<AllowDuplicates>Yes</AllowDuplicates>
+			<Fields>
+				<AxTableIndexField>
+					<DataField>RequestOrderId</DataField>
+				</AxTableIndexField>
+			</Fields>
+		</AxTableIndex>
+	</Indexes>
+	<Mappings />
+	<Relations>
+		<AxTableRelation>
+			<Name>ATXRequestOrderUpdates</Name>
+			<RelatedTable>ATXRequestOrderUpdates</RelatedTable>
+			<Constraints>
+				<AxTableRelationConstraint xmlns=""
+					i:type="AxTableRelationConstraintField">
+					<Name>RequestOrderId</Name>
+					<Field>RequestOrderId</Field>
+					<RelatedField>RequestOrderId</RelatedField>
+				</AxTableRelationConstraint>
+				<AxTableRelationConstraint xmlns=""
+					i:type="AxTableRelationConstraintField">
+					<Name>RequestOrderUpdateId</Name>
+					<Field>RequestOrderUpdateId</Field>
+					<RelatedField>RequestOrderUpdateId</RelatedField>
+				</AxTableRelationConstraint>
+			</Constraints>
+		</AxTableRelation>
+		<AxTableRelation>
+			<Name>ATXItemDivisionTable</Name>
+			<RelatedTable>ATXItemDivisionTable</RelatedTable>
+			<Constraints>
+				<AxTableRelationConstraint xmlns=""
+					i:type="AxTableRelationConstraintField">
+					<Name>ItemDivisionId</Name>
+					<Field>ItemDivisionId</Field>
+					<RelatedField>ItemDivisionId</RelatedField>
+				</AxTableRelationConstraint>
+			</Constraints>
+		</AxTableRelation>
+		<AxTableRelation>
+			<Name>ATXDestinationPlace</Name>
+			<RelatedTable>ATXDestinationPlace</RelatedTable>
+			<Constraints>
+				<AxTableRelationConstraint xmlns=""
+					i:type="AxTableRelationConstraintField">
+					<Name>DestinationPlaceId</Name>
+					<Field>DestinationPlaceId</Field>
+					<RelatedField>DestinationPlaceId</RelatedField>
+				</AxTableRelationConstraint>
+			</Constraints>
+		</AxTableRelation>
+		<AxTableRelation>
+			<Name>ATXSeasonTable</Name>
+			<RelatedTable>ATXSeasonTable</RelatedTable>
+			<Constraints>
+				<AxTableRelationConstraint xmlns=""
+					i:type="AxTableRelationConstraintField">
+					<Name>SeasonId</Name>
+					<Field>SeasonId</Field>
+					<RelatedField>SeasonId</RelatedField>
+				</AxTableRelationConstraint>
+			</Constraints>
+		</AxTableRelation>
+	</Relations>
+	<StateMachines />
+</AxTable>

@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXLookupTableEngine</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+class ATXLookupTableEngine
+{
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>lookupProdRoute</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Show prod operation sorted by OprNum
+    /// </summary>
+    /// <param name = "_formControl">ProdRouteMultiRegister</param>
+    /// <param name = "_prodId">Production order</param>
+    static void lookupProdRoute(FormControl _formControl, ProdId _prodId)
+    {
+        SysTableLookUp          lookUp;
+        Query                   q;
+        QueryBuildDataSource    qDS;
+        QueryBuildRange         qRange;
+        DictTable               dictTable  = new DictTable(tableNum(ATXProdRouteLookup));
+        DictField               dictField;
+
+        q            = new Query();
+        qDS          = q.addDataSource(tableNum(ATXProdRouteLookup));
+        
+        qRange = qDS.addRange(fieldNum(ATXProdRouteLookup, ProdId));
+        qRange.value(_prodId);
+
+        qDS.addSortField(fieldNum(ATXProdRouteLookup, OprNum), SortOrder::Ascending);
+
+        lookUp = SysTableLookup::newParameters(tableNum(ATXProdRouteLookup), _formControl);
+        lookUp.addLookupfield(fieldNum(ATXProdRouteLookup, OprId));
+
+        lookUp.addLookupfield(fieldNum(ATXProdRouteLookup, OprNum));
+        lookUp.addLookupfield(fieldNum(ATXProdRouteLookup, Name));
+        
+        lookUp.parmQuery(q);
+        lookUp.performFormLookup();
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>lookupProdRouteName</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Show prod operation sorted by OprNum
+    /// </summary>
+    /// <param name = "_formControl">ProdRouteMultiRegister</param>
+    /// <param name = "_prodId">Production order</param>
+    static void lookupProdRouteName(FormControl _formControl, ProdId _prodId)
+    {
+        SysTableLookUp          lookUp;
+        Query                   q;
+        QueryBuildDataSource    qDS;
+        QueryBuildRange         qRange;
+        DictTable               dictTable  = new DictTable(tableNum(ATXProdRouteLookup));
+        DictField               dictField;
+
+        q            = new Query();
+        qDS          = q.addDataSource(tableNum(ATXProdRouteLookup));
+        
+        qRange = qDS.addRange(fieldNum(ATXProdRouteLookup, ProdId));
+        qRange.value(_prodId);
+
+        qDS.addSortField(fieldNum(ATXProdRouteLookup, OprNum), SortOrder::Ascending);
+
+        lookUp = SysTableLookup::newParameters(tableNum(ATXProdRouteLookup), _formControl);
+        lookUp.addLookupfield(fieldNum(ATXProdRouteLookup, Name));
+
+        lookUp.addLookupfield(fieldNum(ATXProdRouteLookup, OprNum));
+        lookUp.addLookupfield(fieldNum(ATXProdRouteLookup, OprId));
+        
+        lookUp.parmQuery(q);
+        lookUp.performFormLookup();
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>lookUpByParameters</Name>
+				<Source><![CDATA[
+    static void lookUpByParameters( FormControl _formControl,
+                                    str         _tablename,
+                                    str         _resultField,
+                                    Container   _fields4Range,
+                                    Container   _fieldsValue,
+                                    Container   _fieldsToShow = connull())
+    {
+        SysTableLookUp          lookUp;
+        Query                   q;
+        QueryBuildDataSource    qDS;
+        QueryBuildRange         qRange;
+
+        DictTable               dictTable  = new DictTable(tablename2id(_tableName));
+        DictField               dictField;
+
+        Container               fieldElement;
+        int                     fld4Rslt   = ( dictTable.fieldName2Id(_resultField)  ? dictTable.fieldName2Id(_resultField): 1);
+        int                     cont;
+        int                     tmp;
+        str                     fldname;
+        int                     fldid;
+
+        q            = new Query();
+        qDS          = q.addDataSource(dictTable.id());
+
+
+        while(cont < conlen(_fields4Range))
+        {
+            cont++;
+            qRange = qDS.addRange(dictTable.fieldName2Id(conpeek(_fields4Range, cont)));
+            qRange.value(conpeek(_fieldsValue,cont));
+        }
+
+        lookUp = SysTableLookup::newParameters(dictTable.id(), _formControl);
+        lookUp.addLookupfield(fld4Rslt);
+
+        if(conlen(_fieldsToShow))
+        {
+            fieldElement = _fieldsToShow;
+        }
+        else
+        {
+            fieldElement = _fields4Range;
+        }
+
+        cont = 0;
+        while(cont < conlen(fieldElement))
+        {
+            cont++;
+            fldname = conpeek(fieldElement, cont);
+            fldid = dictTable.fieldName2Id(fldname);
+            if(fldid != fld4Rslt)
+            {
+                lookUp.addLookupfield(fldId);
+            }
+        }
+        lookUp.parmQuery(q);
+        lookUp.performFormLookup();
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>lookUpByParametersNum</Name>
+				<Source><![CDATA[
+    static void lookUpByParametersNum(  FormControl _formControl,
+                                        str         _tablename,
+                                        str         _resultField,
+                                        Container   _fields4Range,
+                                        Container   _fieldsValue,
+                                        Container   _fieldsToShow = connull())
+    {
+        SysTableLookUp          lookUp;
+        Query                   q;
+        QueryBuildDataSource    qDS;
+        QueryBuildRange         qRange;
+        DictTable               dictTable = new DictTable(tablename2id(_tableName));
+        DictField               dictField;
+        Container               fieldElement;
+        int                     fld4Rslt = (dictTable.fieldName2Id(_resultField) ? dictTable.fieldName2Id(_resultField):1),
+                            cont,
+                            tmp,
+                            fldid;
+        str                     fldname;
+        ;
+
+        q   = new Query();
+        qDS = q.addDataSource(dictTable.id());
+
+        while (cont<conlen(_fields4Range))
+        {
+            cont++;
+            qRange = qDS.addRange(dictTable.fieldName2Id(conpeek(_fields4Range, cont)));
+            qRange.value(queryValue(conpeek(_fieldsValue, cont)));
+        }
+
+        lookUp = SysTableLookup::newParameters(dictTable.id(), _formControl);
+        lookUp.addLookupfield(fld4Rslt);
+
+        if (conlen(_fieldsToShow))
+        {
+            fieldElement = _fieldsToShow;
+        }
+        else
+        {
+            fieldElement = _fields4Range;
+        }
+
+        cont = 0;
+
+        while (cont<conlen(fieldElement))
+        {
+            cont++;
+            fldname = conpeek(fieldElement, cont);
+            fldid = dictTable.fieldName2Id(fldname);
+
+            if (fldid != fld4Rslt)
+            {
+                lookUp.addLookupfield(fldId);
+            }
+        }
+
+        lookUp.parmQuery(q);
+        lookUp.performFormLookup();
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>

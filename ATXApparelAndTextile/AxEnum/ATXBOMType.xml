@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxEnum xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXBOMType</Name>
+	<Label>@ATXAT:NewLabel25</Label>
+	<UseEnumValue>No</UseEnumValue>
+	<EnumValues>
+		<AxEnumValue>
+			<Name>None</Name>
+			<Label>@ATXAT:NewLabel26</Label>
+		</AxEnumValue>
+		<AxEnumValue>
+			<Name>Template</Name>
+			<Label>@ATXAT:NewLabel27</Label>
+			<Value>1</Value>
+		</AxEnumValue>
+		<AxEnumValue>
+			<Name>Variant</Name>
+			<Label>@ATXAT:NewLabel28</Label>
+			<Value>2</Value>
+		</AxEnumValue>
+		<AxEnumValue>
+			<Name>ProdBOM</Name>
+			<Label>@ATXAT:NewLabel29</Label>
+			<Value>3</Value>
+		</AxEnumValue>
+		<AxEnumValue>
+			<Name>Sample</Name>
+			<Label>@ATXAT:NewLabel30</Label>
+			<Value>4</Value>
+		</AxEnumValue>
+	</EnumValues>
+	<IsExtensible>true</IsExtensible>
+</AxEnum>

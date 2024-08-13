@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxFormExtension xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="Microsoft.Dynamics.AX.Metadata.V6">
+	<Name>SalesTable.ATXApparelAndTextile</Name>
+	<ControlModifications />
+	<Controls>
+		<AxFormExtensionControl xmlns="">
+			<Name>FormExtensionControl4i123pev1</Name>
+			<FormControl xmlns=""
+				i:type="AxFormTabPageControl">
+				<Name>ATXSizeBreakdownTabPage</Name>
+				<Pattern>ToolbarList</Pattern>
+				<PatternVersion>1.2</PatternVersion>
+				<Type>TabPage</Type>
+				<FormControlExtension
+					i:nil="true" />
+				<Controls>
+					<AxFormControl xmlns=""
+						i:type="AxFormGridControl">
+						<Name>BreakdownFormGridControl</Name>
+						<Type>Grid</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<Controls>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>BreakdownFormGridControl_ConfigId</Name>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>ConfigId</DataField>
+								<DataSource>ATXBreakdownOrderLine</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>BreakdownFormGridControl_InventSizeId</Name>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>InventSizeId</DataField>
+								<DataSource>ATXBreakdownOrderLine</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>BreakdownFormGridControl_InventColorId</Name>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>InventColorId</DataField>
+								<DataSource>ATXBreakdownOrderLine</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>BreakdownFormGridControl_InventStyleId</Name>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>InventStyleId</DataField>
+								<DataSource>ATXBreakdownOrderLine</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormRealControl">
+								<Name>BreakdownFormGridControl_QtyOrig</Name>
+								<Type>Real</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>QtyOrig</DataField>
+								<DataSource>ATXBreakdownOrderLine</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormRealControl">
+								<Name>BreakdownFormGridControl_Qty</Name>
+								<Type>Real</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>Qty</DataField>
+								<DataSource>ATXBreakdownOrderLine</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormRealControl">
+								<Name>BreakdownFormGridControl_QtyEnd</Name>
+								<Type>Real</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>QtyEnd</DataField>
+								<DataSource>ATXBreakdownOrderLine</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormRealControl">
+								<Name>BreakdownFormGridControl_SalesPrice</Name>
+								<Type>Real</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>SalesPrice</DataField>
+								<DataSource>ATXBreakdownOrderLine</DataSource>
+							</AxFormControl>
+						</Controls>
+						<DataSource>ATXBreakdownOrderLine</DataSource>
+					</AxFormControl>
+				</Controls>
+				<Caption>@ATXAT:NewLabel11</Caption>
+				<DataSource>ATXBreakdownOrderLine</DataSource>
+			</FormControl>
+			<Parent>LineDetailsTab</Parent>
+			<PositionType>AfterItem</PositionType>
+			<PreviousSibling>TabLineGeneral</PreviousSibling>
+		</AxFormExtensionControl>
+	</Controls>
+	<DataSourceModifications />
+	<DataSourceReferences />
+	<DataSources>
+		<AxFormDataSource xmlns="">
+			<Name>ATXBreakdownOrderLine</Name>
+			<Table>ATXBreakdownOrderLine</Table>
+			<Fields>
+				<AxFormDataSourceField>
+					<DataField>BOMId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ConfigId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>DataAreaId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventColorId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventSizeId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventStyleId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventTransId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ItemId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Partition</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ProdQty</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Qty</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>QtyEnd</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>QtyOrig</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>RecId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>RefRecId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>SalesId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>SalesPrice</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>SplitQty</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>TableId</DataField>
+				</AxFormDataSourceField>
+			</Fields>
+			<ReferencedDataSources />
+			<JoinSource>SalesLine</JoinSource>
+			<AllowCreate>No</AllowCreate>
+			<AllowDelete>No</AllowDelete>
+			<AllowEdit>No</AllowEdit>
+			<InsertAtEnd>No</InsertAtEnd>
+			<InsertIfEmpty>No</InsertIfEmpty>
+			<DataSourceLinks />
+			<DerivedDataSources />
+		</AxFormDataSource>
+	</DataSources>
+	<Parts />
+	<PropertyModifications />
+</AxFormExtension>

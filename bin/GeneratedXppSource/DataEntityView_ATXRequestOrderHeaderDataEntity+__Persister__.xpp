@@ -1,0 +1,558 @@
+Private class __Persister__
+extends SysDataEntityPersister
+{
+    // Data source ID macros
+    #define.ATXRequestOrderHeader_ID(1)
+    
+    // Data source buffers
+    ATXRequestOrderHeader m_ATXRequestOrderHeader;
+    
+    protected void mapEntityToDataSources(DataEntityRuntimeContext _entityCtx)
+    {
+        this.validateFieldFailed = false;
+        this.mapEntityToDataSource(_entityCtx, _entityCtx.getRuntimeContextByName('ATXRequestOrderHeader'));
+        this.mapEntityToDataSourcesExtensions(_entityCtx);
+        if(this.validateFieldFailed)
+        {
+            throw Exception::ViewDataSourceValidation;
+        }
+    }
+    protected boolean saveDataSources(DataEntityRuntimeContext _entityCtx)
+    {
+        boolean rtrn = true;
+        DataEntityDataSourceRuntimeContext _dataSourceCtx = null;
+        // save data sources in topological order.
+        {
+            // handle datasources which are part of extensions and need to be saved before [ATXRequestOrderHeader]
+            if(!this.preSaveDataSource(_entityCtx, 'ATXRequestOrderHeader'))
+            {
+                return false;
+            }
+            _dataSourceCtx = _entityCtx.getRuntimeContextByName('ATXRequestOrderHeader');
+            // propagates foreign key values from referenced data sources which are part of extensions.
+            this.foreignKeyPropagationExtensions(_entityCtx, _dataSourceCtx);
+            // inserts/updates data source [ATXRequestOrderHeader].
+            if(!this.saveDataSource(_entityCtx, _dataSourceCtx))
+            {
+                // returns from here if the root data source fails to be saved.
+                return false;
+            }
+            this.postSaveDataSource();
+        }
+        // handle datasources which are part of extensions and need to be saved in last 
+        this.preSaveDataSource(_entityCtx, '');
+        return rtrn;
+    }
+    protected boolean deleteDataSources(DataEntityRuntimeContext _entityCtx)
+    {
+        boolean rtrn = true;
+        DataEntityDataSourceRuntimeContext _dataSourceCtx = null;
+        // delete data sources in reverse topological order.
+        {
+            // handle datasources which are part of extensions and need to be saved before [ATXRequestOrderHeader]
+            if(!this.preSaveDataSource(_entityCtx, 'ATXRequestOrderHeader'))
+            {
+                return false;
+            }
+            _dataSourceCtx = _entityCtx.getRuntimeContextByName('ATXRequestOrderHeader');
+            // deletes data source [ATXRequestOrderHeader].
+            if(!this.saveDataSource(_entityCtx, _dataSourceCtx))
+            {
+                // returns from here if the root data source fails to be saved.
+                return false;
+            }
+            this.postSaveDataSource();
+        }
+        // handle datasources which are part of extensions and need to be saved in last 
+        this.preSaveDataSource(_entityCtx, '');
+        return rtrn;
+    }
+    private void mapToDataSource_DS1(DataEntityRuntimeContext _entityCtx, DataEntityDataSourceRuntimeContext _dataSourceCtx, ATXRequestOrderHeader _aTXRequestOrderHeader, ATXRequestOrderHeaderDataEntity _aTXRequestOrderHeaderDataEntity)
+    {
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, CO), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, CO), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, Comments), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, Comments), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, CPO), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, CPO), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, CurrencyCode), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, CurrencyCode), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, CustAccount), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, CustAccount), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, CustClassId), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, CustClassId), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, CustPurchaseOrder), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, CustPurchaseOrder), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, CustRef), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, CustRef), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, DlvModeId), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, DlvModeId), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, Finiched), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, Finiched), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, InventLocationId), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, InventLocationId), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, InventSiteId), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, InventSiteId), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, InventTransRefId), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, InventTransRefId), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, InventTransType), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, InventTransType), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, PPK), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, PPK), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, ProdPoolId), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, ProdPoolId), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, RequestOrderCancelDate), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, RequestOrderCancelDate), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, RequestOrderCreated), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, RequestOrderCreated), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, RequestOrderDate), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, RequestOrderDate), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, RequestOrderGroupId), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, RequestOrderGroupId), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, RequestOrderId), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, RequestOrderId), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, RequestOrderStatus), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, RequestOrderStatus), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, RequestOrderType), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, RequestOrderType), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, ReviewedOrderDate), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, ReviewedOrderDate), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, SalesDlvTermId), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, SalesDlvTermId), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, SeasonId), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, SeasonId), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, BranchId), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, BranchId), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, ItemDivisionId), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, ItemDivisionId), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, SalesId), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, SalesId), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, ShipmentOrderDate), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, ShipmentOrderDate), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, UPC), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, UPC), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, DestinationPlaceId), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, DestinationPlaceId), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, SampleTypeId), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, SampleTypeId), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, AuthDate), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, AuthDate), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, CustRefOld), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, CustRefOld), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, PreviousRequestOrderId), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, PreviousRequestOrderId), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, LineOfBusinessId), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, LineOfBusinessId), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, IssueDate), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, IssueDate), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, PlanNumber), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, PlanNumber), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, ProdIdLink), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, ProdIdLink), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, ItemId), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, ItemId), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, QtyOv), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, QtyOv), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, SkipBOMValidation), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, SkipBOMValidation), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, CustPlanNumber), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, CustPlanNumber), 1);
+        
+        this.mapToDataSourceExtensions(_dataSourceCtx, _aTXRequestOrderHeader, _aTXRequestOrderHeaderDataEntity);
+        _aTXRequestOrderHeader.trackFieldExternallySet(false);
+    }
+    protected void doMapEntityToDataSource(DataEntityRuntimeContext _entityCtx, DataEntityDataSourceRuntimeContext _dataSourceCtx)
+    {
+        switch(_dataSourceCtx.id())
+        {
+            case #ATXRequestOrderHeader_ID:
+                this.mapToDataSource_DS1(_entityCtx, _dataSourceCtx, _dataSourceCtx.getBuffer(), _entityCtx.getEntityRecord());
+                break;
+            default :
+                this.doMapEntityToDataSourceExtensions(_entityCtx, _dataSourceCtx);
+                break;
+        }
+    }
+    private void mapFromDataSource_DS1(DataEntityDataSourceRuntimeContext _dataSourceCtx, ATXRequestOrderHeader _aTXRequestOrderHeader, ATXRequestOrderHeaderDataEntity _aTXRequestOrderHeaderDataEntity)
+    {
+        this.mapDataSourceFieldToEntityField(_aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, CO), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, CO), false);
+        this.mapDataSourceFieldToEntityField(_aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, Comments), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, Comments), false);
+        this.mapDataSourceFieldToEntityField(_aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, CPO), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, CPO), false);
+        this.mapDataSourceFieldToEntityField(_aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, CurrencyCode), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, CurrencyCode), false);
+        this.mapDataSourceFieldToEntityField(_aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, CustAccount), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, CustAccount), false);
+        this.mapDataSourceFieldToEntityField(_aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, CustClassId), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, CustClassId), false);
+        this.mapDataSourceFieldToEntityField(_aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, CustPurchaseOrder), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, CustPurchaseOrder), false);
+        this.mapDataSourceFieldToEntityField(_aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, CustRef), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, CustRef), false);
+        this.mapDataSourceFieldToEntityField(_aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, DlvModeId), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, DlvModeId), false);
+        this.mapDataSourceFieldToEntityField(_aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, Finiched), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, Finiched), false);
+        this.mapDataSourceFieldToEntityField(_aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, InventLocationId), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, InventLocationId), false);
+        this.mapDataSourceFieldToEntityField(_aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, InventSiteId), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, InventSiteId), false);
+        this.mapDataSourceFieldToEntityField(_aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, InventTransRefId), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, InventTransRefId), false);
+        this.mapDataSourceFieldToEntityField(_aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, InventTransType), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, InventTransType), false);
+        this.mapDataSourceFieldToEntityField(_aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, PPK), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, PPK), false);
+        this.mapDataSourceFieldToEntityField(_aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, ProdPoolId), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, ProdPoolId), false);
+        this.mapDataSourceFieldToEntityField(_aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, RequestOrderCancelDate), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, RequestOrderCancelDate), false);
+        this.mapDataSourceFieldToEntityField(_aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, RequestOrderCreated), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, RequestOrderCreated), false);
+        this.mapDataSourceFieldToEntityField(_aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, RequestOrderDate), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, RequestOrderDate), false);
+        this.mapDataSourceFieldToEntityField(_aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, RequestOrderGroupId), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, RequestOrderGroupId), false);
+        this.mapDataSourceFieldToEntityField(_aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, RequestOrderId), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, RequestOrderId), false);
+        this.mapDataSourceFieldToEntityField(_aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, RequestOrderStatus), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, RequestOrderStatus), false);
+        this.mapDataSourceFieldToEntityField(_aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, RequestOrderType), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, RequestOrderType), false);
+        this.mapDataSourceFieldToEntityField(_aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, ReviewedOrderDate), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, ReviewedOrderDate), false);
+        this.mapDataSourceFieldToEntityField(_aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, SalesDlvTermId), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, SalesDlvTermId), false);
+        this.mapDataSourceFieldToEntityField(_aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, SeasonId), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, SeasonId), false);
+        this.mapDataSourceFieldToEntityField(_aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, BranchId), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, BranchId), false);
+        this.mapDataSourceFieldToEntityField(_aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, ItemDivisionId), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, ItemDivisionId), false);
+        this.mapDataSourceFieldToEntityField(_aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, SalesId), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, SalesId), false);
+        this.mapDataSourceFieldToEntityField(_aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, ShipmentOrderDate), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, ShipmentOrderDate), false);
+        this.mapDataSourceFieldToEntityField(_aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, UPC), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, UPC), false);
+        this.mapDataSourceFieldToEntityField(_aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, DestinationPlaceId), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, DestinationPlaceId), false);
+        this.mapDataSourceFieldToEntityField(_aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, SampleTypeId), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, SampleTypeId), false);
+        this.mapDataSourceFieldToEntityField(_aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, AuthDate), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, AuthDate), false);
+        this.mapDataSourceFieldToEntityField(_aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, CustRefOld), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, CustRefOld), false);
+        this.mapDataSourceFieldToEntityField(_aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, PreviousRequestOrderId), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, PreviousRequestOrderId), false);
+        this.mapDataSourceFieldToEntityField(_aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, LineOfBusinessId), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, LineOfBusinessId), false);
+        this.mapDataSourceFieldToEntityField(_aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, IssueDate), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, IssueDate), false);
+        this.mapDataSourceFieldToEntityField(_aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, PlanNumber), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, PlanNumber), false);
+        this.mapDataSourceFieldToEntityField(_aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, ProdIdLink), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, ProdIdLink), false);
+        this.mapDataSourceFieldToEntityField(_aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, ItemId), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, ItemId), false);
+        this.mapDataSourceFieldToEntityField(_aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, QtyOv), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, QtyOv), false);
+        this.mapDataSourceFieldToEntityField(_aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, SkipBOMValidation), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, SkipBOMValidation), false);
+        this.mapDataSourceFieldToEntityField(_aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, CustPlanNumber), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, CustPlanNumber), false);
+        this.mapFromDataSourceExtensions(_dataSourceCtx, _aTXRequestOrderHeader, _aTXRequestOrderHeaderDataEntity);
+        // map system fields (e.g. recid and recversion) from data source buffer to view record.
+        _aTXRequestOrderHeaderDataEntity.fromViewDataSource(_dataSourceCtx.id(), _aTXRequestOrderHeader);
+    }
+    protected void doMapDataSourceToEntity(DataEntityRuntimeContext _entityCtx, DataEntityDataSourceRuntimeContext _dataSourceCtx)
+    {
+        switch(_dataSourceCtx.id())
+        {
+            case #ATXRequestOrderHeader_ID:
+                this.mapFromDataSource_DS1(_dataSourceCtx, _dataSourceCtx.getBuffer(), _entityCtx.getEntityRecord());
+                break;
+            default :
+                this.doMapDataSourceToEntityExtensions(_entityCtx, _dataSourceCtx);
+                break;
+        }
+    }
+    protected Common doFindDataSource(DataEntityRuntimeContext _entityCtx, DataEntityDataSourceRuntimeContext _dataSourceCtx)
+    {
+        Common rtrn = null;
+        switch(_dataSourceCtx.id())
+        {
+            case #ATXRequestOrderHeader_ID:
+                rtrn = this.LookForUniqueKeyMatch_DS1(_entityCtx.getEntityRecord(), _dataSourceCtx.getBuffer());
+                break;
+            default :
+                rtrn = this.doFindDataSourceExtensions(_entityCtx, _dataSourceCtx);
+                break;
+        }
+        return rtrn;
+    }
+    protected boolean isAnyMappedDataSourceFieldSet_DS1(ATXRequestOrderHeaderDataEntity _aTXRequestOrderHeaderDataEntity, str disabledConfigKey = null)
+    {
+        boolean rtrn = false;
+        if(_aTXRequestOrderHeaderDataEntity.isFieldSet(fieldnum(ATXRequestOrderHeaderDataEntity, CO)))
+        {
+            return true;
+        }
+        if(_aTXRequestOrderHeaderDataEntity.isFieldSet(fieldnum(ATXRequestOrderHeaderDataEntity, Comments)))
+        {
+            return true;
+        }
+        if(_aTXRequestOrderHeaderDataEntity.isFieldSet(fieldnum(ATXRequestOrderHeaderDataEntity, CPO)))
+        {
+            return true;
+        }
+        if(_aTXRequestOrderHeaderDataEntity.isFieldSet(fieldnum(ATXRequestOrderHeaderDataEntity, CurrencyCode)))
+        {
+            return true;
+        }
+        if(_aTXRequestOrderHeaderDataEntity.isFieldSet(fieldnum(ATXRequestOrderHeaderDataEntity, CustAccount)))
+        {
+            return true;
+        }
+        if(_aTXRequestOrderHeaderDataEntity.isFieldSet(fieldnum(ATXRequestOrderHeaderDataEntity, CustClassId)))
+        {
+            return true;
+        }
+        if(_aTXRequestOrderHeaderDataEntity.isFieldSet(fieldnum(ATXRequestOrderHeaderDataEntity, CustPurchaseOrder)))
+        {
+            return true;
+        }
+        if(_aTXRequestOrderHeaderDataEntity.isFieldSet(fieldnum(ATXRequestOrderHeaderDataEntity, CustRef)))
+        {
+            return true;
+        }
+        if(_aTXRequestOrderHeaderDataEntity.isFieldSet(fieldnum(ATXRequestOrderHeaderDataEntity, DlvModeId)))
+        {
+            return true;
+        }
+        if(_aTXRequestOrderHeaderDataEntity.isFieldSet(fieldnum(ATXRequestOrderHeaderDataEntity, Finiched)))
+        {
+            return true;
+        }
+        if(_aTXRequestOrderHeaderDataEntity.isFieldSet(fieldnum(ATXRequestOrderHeaderDataEntity, InventLocationId)))
+        {
+            return true;
+        }
+        if(_aTXRequestOrderHeaderDataEntity.isFieldSet(fieldnum(ATXRequestOrderHeaderDataEntity, InventSiteId)))
+        {
+            return true;
+        }
+        if(_aTXRequestOrderHeaderDataEntity.isFieldSet(fieldnum(ATXRequestOrderHeaderDataEntity, InventTransRefId)))
+        {
+            return true;
+        }
+        if(_aTXRequestOrderHeaderDataEntity.isFieldSet(fieldnum(ATXRequestOrderHeaderDataEntity, InventTransType)))
+        {
+            return true;
+        }
+        if(_aTXRequestOrderHeaderDataEntity.isFieldSet(fieldnum(ATXRequestOrderHeaderDataEntity, PPK)))
+        {
+            return true;
+        }
+        if(_aTXRequestOrderHeaderDataEntity.isFieldSet(fieldnum(ATXRequestOrderHeaderDataEntity, ProdPoolId)))
+        {
+            return true;
+        }
+        if(_aTXRequestOrderHeaderDataEntity.isFieldSet(fieldnum(ATXRequestOrderHeaderDataEntity, RequestOrderCancelDate)))
+        {
+            return true;
+        }
+        if(_aTXRequestOrderHeaderDataEntity.isFieldSet(fieldnum(ATXRequestOrderHeaderDataEntity, RequestOrderCreated)))
+        {
+            return true;
+        }
+        if(_aTXRequestOrderHeaderDataEntity.isFieldSet(fieldnum(ATXRequestOrderHeaderDataEntity, RequestOrderDate)))
+        {
+            return true;
+        }
+        if(_aTXRequestOrderHeaderDataEntity.isFieldSet(fieldnum(ATXRequestOrderHeaderDataEntity, RequestOrderGroupId)))
+        {
+            return true;
+        }
+        if(_aTXRequestOrderHeaderDataEntity.isFieldSet(fieldnum(ATXRequestOrderHeaderDataEntity, RequestOrderId)))
+        {
+            return true;
+        }
+        if(_aTXRequestOrderHeaderDataEntity.isFieldSet(fieldnum(ATXRequestOrderHeaderDataEntity, RequestOrderStatus)))
+        {
+            return true;
+        }
+        if(_aTXRequestOrderHeaderDataEntity.isFieldSet(fieldnum(ATXRequestOrderHeaderDataEntity, RequestOrderType)))
+        {
+            return true;
+        }
+        if(_aTXRequestOrderHeaderDataEntity.isFieldSet(fieldnum(ATXRequestOrderHeaderDataEntity, ReviewedOrderDate)))
+        {
+            return true;
+        }
+        if(_aTXRequestOrderHeaderDataEntity.isFieldSet(fieldnum(ATXRequestOrderHeaderDataEntity, SalesDlvTermId)))
+        {
+            return true;
+        }
+        if(_aTXRequestOrderHeaderDataEntity.isFieldSet(fieldnum(ATXRequestOrderHeaderDataEntity, SeasonId)))
+        {
+            return true;
+        }
+        if(_aTXRequestOrderHeaderDataEntity.isFieldSet(fieldnum(ATXRequestOrderHeaderDataEntity, BranchId)))
+        {
+            return true;
+        }
+        if(_aTXRequestOrderHeaderDataEntity.isFieldSet(fieldnum(ATXRequestOrderHeaderDataEntity, ItemDivisionId)))
+        {
+            return true;
+        }
+        if(_aTXRequestOrderHeaderDataEntity.isFieldSet(fieldnum(ATXRequestOrderHeaderDataEntity, SalesId)))
+        {
+            return true;
+        }
+        if(_aTXRequestOrderHeaderDataEntity.isFieldSet(fieldnum(ATXRequestOrderHeaderDataEntity, ShipmentOrderDate)))
+        {
+            return true;
+        }
+        if(_aTXRequestOrderHeaderDataEntity.isFieldSet(fieldnum(ATXRequestOrderHeaderDataEntity, UPC)))
+        {
+            return true;
+        }
+        if(_aTXRequestOrderHeaderDataEntity.isFieldSet(fieldnum(ATXRequestOrderHeaderDataEntity, DestinationPlaceId)))
+        {
+            return true;
+        }
+        if(_aTXRequestOrderHeaderDataEntity.isFieldSet(fieldnum(ATXRequestOrderHeaderDataEntity, SampleTypeId)))
+        {
+            return true;
+        }
+        if(_aTXRequestOrderHeaderDataEntity.isFieldSet(fieldnum(ATXRequestOrderHeaderDataEntity, AuthDate)))
+        {
+            return true;
+        }
+        if(_aTXRequestOrderHeaderDataEntity.isFieldSet(fieldnum(ATXRequestOrderHeaderDataEntity, CustRefOld)))
+        {
+            return true;
+        }
+        if(_aTXRequestOrderHeaderDataEntity.isFieldSet(fieldnum(ATXRequestOrderHeaderDataEntity, PreviousRequestOrderId)))
+        {
+            return true;
+        }
+        if(_aTXRequestOrderHeaderDataEntity.isFieldSet(fieldnum(ATXRequestOrderHeaderDataEntity, LineOfBusinessId)))
+        {
+            return true;
+        }
+        if(_aTXRequestOrderHeaderDataEntity.isFieldSet(fieldnum(ATXRequestOrderHeaderDataEntity, IssueDate)))
+        {
+            return true;
+        }
+        if(_aTXRequestOrderHeaderDataEntity.isFieldSet(fieldnum(ATXRequestOrderHeaderDataEntity, PlanNumber)))
+        {
+            return true;
+        }
+        if(_aTXRequestOrderHeaderDataEntity.isFieldSet(fieldnum(ATXRequestOrderHeaderDataEntity, ProdIdLink)))
+        {
+            return true;
+        }
+        if(_aTXRequestOrderHeaderDataEntity.isFieldSet(fieldnum(ATXRequestOrderHeaderDataEntity, ItemId)))
+        {
+            return true;
+        }
+        if(_aTXRequestOrderHeaderDataEntity.isFieldSet(fieldnum(ATXRequestOrderHeaderDataEntity, QtyOv)))
+        {
+            return true;
+        }
+        if(_aTXRequestOrderHeaderDataEntity.isFieldSet(fieldnum(ATXRequestOrderHeaderDataEntity, SkipBOMValidation)))
+        {
+            return true;
+        }
+        if(_aTXRequestOrderHeaderDataEntity.isFieldSet(fieldnum(ATXRequestOrderHeaderDataEntity, CustPlanNumber)))
+        {
+            return true;
+        }
+        rtrn = this.isAnyMappedDataSourceExtensionFieldSet(_aTXRequestOrderHeaderDataEntity, 'ATXRequestOrderHeader', disabledConfigKey);
+        return rtrn;
+    }
+    protected boolean isAnyMappedDataSourceFieldSet(DataEntityRuntimeContext _entityCtx, DataEntityDataSourceRuntimeContext _dataSourceCtx)
+    {
+        boolean rtrn = false;
+        switch(_dataSourceCtx.id())
+        {
+            case #ATXRequestOrderHeader_ID:
+                rtrn = this.isAnyMappedDataSourceFieldSet_DS1(_entityCtx.getEntityRecord());
+                break;
+            default :
+                rtrn = this.isAnyMappedDataSourceFieldSet_DSExtensions(_entityCtx, _dataSourceCtx);
+                break;
+        }
+        return rtrn;
+    }
+    private boolean validateDataSource_DS1(DataEntityRuntimeContext _entityCtx, ATXRequestOrderHeaderDataEntity _aTXRequestOrderHeaderDataEntity, DataEntityDataSourceRuntimeContext _dataSourceCtx, ATXRequestOrderHeader _aTXRequestOrderHeader)
+    {
+        boolean rtrn = true;
+        rtrn = this.validateMappedDataSourceField(_entityCtx, _dataSourceCtx, '', '', conNull(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, CO), 'ATXRequestOrderHeaderDataEntity.CO', _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, CO), false/*disallowEditOnCreate*/, true/*disallowEdit*/, true/*callValidateField*/, 1) ? rtrn : false;
+        rtrn = this.validateMappedDataSourceField(_entityCtx, _dataSourceCtx, '', '', conNull(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, Comments), 'ATXRequestOrderHeaderDataEntity.Comments', _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, Comments), false/*disallowEditOnCreate*/, false/*disallowEdit*/, true/*callValidateField*/, 1) ? rtrn : false;
+        rtrn = this.validateMappedDataSourceField(_entityCtx, _dataSourceCtx, '', '', conNull(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, CPO), 'ATXRequestOrderHeaderDataEntity.CPO', _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, CPO), false/*disallowEditOnCreate*/, false/*disallowEdit*/, true/*callValidateField*/, 1) ? rtrn : false;
+        rtrn = this.validateMappedDataSourceField(_entityCtx, _dataSourceCtx, '', '', conNull(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, CurrencyCode), 'ATXRequestOrderHeaderDataEntity.CurrencyCode', _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, CurrencyCode), false/*disallowEditOnCreate*/, false/*disallowEdit*/, true/*callValidateField*/, 1) ? rtrn : false;
+        rtrn = this.validateMappedDataSourceField(_entityCtx, _dataSourceCtx, '', '', conNull(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, CustAccount), 'ATXRequestOrderHeaderDataEntity.CustAccount', _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, CustAccount), false/*disallowEditOnCreate*/, false/*disallowEdit*/, true/*callValidateField*/, 1) ? rtrn : false;
+        rtrn = this.validateMappedDataSourceField(_entityCtx, _dataSourceCtx, '', '', conNull(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, CustClassId), 'ATXRequestOrderHeaderDataEntity.CustClassId', _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, CustClassId), false/*disallowEditOnCreate*/, false/*disallowEdit*/, true/*callValidateField*/, 1) ? rtrn : false;
+        rtrn = this.validateMappedDataSourceField(_entityCtx, _dataSourceCtx, '', '', conNull(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, CustPurchaseOrder), 'ATXRequestOrderHeaderDataEntity.CustPurchaseOrder', _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, CustPurchaseOrder), false/*disallowEditOnCreate*/, true/*disallowEdit*/, true/*callValidateField*/, 1) ? rtrn : false;
+        rtrn = this.validateMappedDataSourceField(_entityCtx, _dataSourceCtx, '', '', conNull(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, CustRef), 'ATXRequestOrderHeaderDataEntity.CustRef', _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, CustRef), false/*disallowEditOnCreate*/, false/*disallowEdit*/, true/*callValidateField*/, 1) ? rtrn : false;
+        rtrn = this.validateMappedDataSourceField(_entityCtx, _dataSourceCtx, '', '', conNull(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, DlvModeId), 'ATXRequestOrderHeaderDataEntity.DlvModeId', _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, DlvModeId), false/*disallowEditOnCreate*/, false/*disallowEdit*/, true/*callValidateField*/, 1) ? rtrn : false;
+        rtrn = this.validateMappedDataSourceField(_entityCtx, _dataSourceCtx, '', '', conNull(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, Finiched), 'ATXRequestOrderHeaderDataEntity.Finiched', _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, Finiched), false/*disallowEditOnCreate*/, false/*disallowEdit*/, true/*callValidateField*/, 1) ? rtrn : false;
+        rtrn = this.validateMappedDataSourceField(_entityCtx, _dataSourceCtx, '', '', conNull(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, InventLocationId), 'ATXRequestOrderHeaderDataEntity.InventLocationId', _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, InventLocationId), false/*disallowEditOnCreate*/, false/*disallowEdit*/, true/*callValidateField*/, 1) ? rtrn : false;
+        rtrn = this.validateMappedDataSourceField(_entityCtx, _dataSourceCtx, '', '', conNull(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, InventSiteId), 'ATXRequestOrderHeaderDataEntity.InventSiteId', _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, InventSiteId), false/*disallowEditOnCreate*/, false/*disallowEdit*/, true/*callValidateField*/, 1) ? rtrn : false;
+        rtrn = this.validateMappedDataSourceField(_entityCtx, _dataSourceCtx, '', '', conNull(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, InventTransRefId), 'ATXRequestOrderHeaderDataEntity.InventTransRefId', _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, InventTransRefId), false/*disallowEditOnCreate*/, false/*disallowEdit*/, true/*callValidateField*/, 1) ? rtrn : false;
+        rtrn = this.validateMappedDataSourceField(_entityCtx, _dataSourceCtx, '', '', conNull(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, InventTransType), 'ATXRequestOrderHeaderDataEntity.InventTransType', _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, InventTransType), false/*disallowEditOnCreate*/, false/*disallowEdit*/, true/*callValidateField*/, 1) ? rtrn : false;
+        rtrn = this.validateMappedDataSourceField(_entityCtx, _dataSourceCtx, '', '', conNull(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, PPK), 'ATXRequestOrderHeaderDataEntity.PPK', _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, PPK), false/*disallowEditOnCreate*/, false/*disallowEdit*/, true/*callValidateField*/, 1) ? rtrn : false;
+        rtrn = this.validateMappedDataSourceField(_entityCtx, _dataSourceCtx, '', '', conNull(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, ProdPoolId), 'ATXRequestOrderHeaderDataEntity.ProdPoolId', _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, ProdPoolId), false/*disallowEditOnCreate*/, false/*disallowEdit*/, true/*callValidateField*/, 1) ? rtrn : false;
+        rtrn = this.validateMappedDataSourceField(_entityCtx, _dataSourceCtx, '', '', conNull(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, RequestOrderCancelDate), 'ATXRequestOrderHeaderDataEntity.RequestOrderCancelDate', _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, RequestOrderCancelDate), false/*disallowEditOnCreate*/, false/*disallowEdit*/, true/*callValidateField*/, 1) ? rtrn : false;
+        rtrn = this.validateMappedDataSourceField(_entityCtx, _dataSourceCtx, '', '', conNull(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, RequestOrderCreated), 'ATXRequestOrderHeaderDataEntity.RequestOrderCreated', _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, RequestOrderCreated), false/*disallowEditOnCreate*/, false/*disallowEdit*/, true/*callValidateField*/, 1) ? rtrn : false;
+        rtrn = this.validateMappedDataSourceField(_entityCtx, _dataSourceCtx, '', '', conNull(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, RequestOrderDate), 'ATXRequestOrderHeaderDataEntity.RequestOrderDate', _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, RequestOrderDate), false/*disallowEditOnCreate*/, false/*disallowEdit*/, true/*callValidateField*/, 1) ? rtrn : false;
+        rtrn = this.validateMappedDataSourceField(_entityCtx, _dataSourceCtx, '', '', conNull(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, RequestOrderGroupId), 'ATXRequestOrderHeaderDataEntity.RequestOrderGroupId', _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, RequestOrderGroupId), false/*disallowEditOnCreate*/, false/*disallowEdit*/, true/*callValidateField*/, 1) ? rtrn : false;
+        rtrn = this.validateMappedDataSourceField(_entityCtx, _dataSourceCtx, '', '', conNull(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, RequestOrderId), 'ATXRequestOrderHeaderDataEntity.RequestOrderId', _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, RequestOrderId), false/*disallowEditOnCreate*/, true/*disallowEdit*/, true/*callValidateField*/, 1) ? rtrn : false;
+        rtrn = this.validateMappedDataSourceField(_entityCtx, _dataSourceCtx, '', '', conNull(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, RequestOrderStatus), 'ATXRequestOrderHeaderDataEntity.RequestOrderStatus', _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, RequestOrderStatus), true/*disallowEditOnCreate*/, true/*disallowEdit*/, true/*callValidateField*/, 1) ? rtrn : false;
+        rtrn = this.validateMappedDataSourceField(_entityCtx, _dataSourceCtx, '', '', conNull(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, RequestOrderType), 'ATXRequestOrderHeaderDataEntity.RequestOrderType', _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, RequestOrderType), false/*disallowEditOnCreate*/, false/*disallowEdit*/, true/*callValidateField*/, 1) ? rtrn : false;
+        rtrn = this.validateMappedDataSourceField(_entityCtx, _dataSourceCtx, '', '', conNull(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, ReviewedOrderDate), 'ATXRequestOrderHeaderDataEntity.ReviewedOrderDate', _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, ReviewedOrderDate), false/*disallowEditOnCreate*/, false/*disallowEdit*/, true/*callValidateField*/, 1) ? rtrn : false;
+        rtrn = this.validateMappedDataSourceField(_entityCtx, _dataSourceCtx, '', '', conNull(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, SalesDlvTermId), 'ATXRequestOrderHeaderDataEntity.SalesDlvTermId', _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, SalesDlvTermId), false/*disallowEditOnCreate*/, false/*disallowEdit*/, true/*callValidateField*/, 1) ? rtrn : false;
+        rtrn = this.validateMappedDataSourceField(_entityCtx, _dataSourceCtx, '', '', conNull(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, SeasonId), 'ATXRequestOrderHeaderDataEntity.SeasonId', _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, SeasonId), false/*disallowEditOnCreate*/, false/*disallowEdit*/, true/*callValidateField*/, 1) ? rtrn : false;
+        rtrn = this.validateMappedDataSourceField(_entityCtx, _dataSourceCtx, '', '', conNull(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, BranchId), 'ATXRequestOrderHeaderDataEntity.BranchId', _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, BranchId), false/*disallowEditOnCreate*/, false/*disallowEdit*/, true/*callValidateField*/, 1) ? rtrn : false;
+        rtrn = this.validateMappedDataSourceField(_entityCtx, _dataSourceCtx, '', '', conNull(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, ItemDivisionId), 'ATXRequestOrderHeaderDataEntity.ItemDivisionId', _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, ItemDivisionId), false/*disallowEditOnCreate*/, false/*disallowEdit*/, true/*callValidateField*/, 1) ? rtrn : false;
+        rtrn = this.validateMappedDataSourceField(_entityCtx, _dataSourceCtx, '', '', conNull(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, SalesId), 'ATXRequestOrderHeaderDataEntity.SalesId', _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, SalesId), true/*disallowEditOnCreate*/, true/*disallowEdit*/, true/*callValidateField*/, 1) ? rtrn : false;
+        rtrn = this.validateMappedDataSourceField(_entityCtx, _dataSourceCtx, '', '', conNull(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, ShipmentOrderDate), 'ATXRequestOrderHeaderDataEntity.ShipmentOrderDate', _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, ShipmentOrderDate), false/*disallowEditOnCreate*/, false/*disallowEdit*/, true/*callValidateField*/, 1) ? rtrn : false;
+        rtrn = this.validateMappedDataSourceField(_entityCtx, _dataSourceCtx, '', '', conNull(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, UPC), 'ATXRequestOrderHeaderDataEntity.UPC', _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, UPC), false/*disallowEditOnCreate*/, false/*disallowEdit*/, true/*callValidateField*/, 1) ? rtrn : false;
+        rtrn = this.validateMappedDataSourceField(_entityCtx, _dataSourceCtx, '', '', conNull(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, DestinationPlaceId), 'ATXRequestOrderHeaderDataEntity.DestinationPlaceId', _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, DestinationPlaceId), false/*disallowEditOnCreate*/, false/*disallowEdit*/, true/*callValidateField*/, 1) ? rtrn : false;
+        rtrn = this.validateMappedDataSourceField(_entityCtx, _dataSourceCtx, '', '', conNull(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, SampleTypeId), 'ATXRequestOrderHeaderDataEntity.SampleTypeId', _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, SampleTypeId), false/*disallowEditOnCreate*/, false/*disallowEdit*/, true/*callValidateField*/, 1) ? rtrn : false;
+        rtrn = this.validateMappedDataSourceField(_entityCtx, _dataSourceCtx, '', '', conNull(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, AuthDate), 'ATXRequestOrderHeaderDataEntity.AuthDate', _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, AuthDate), false/*disallowEditOnCreate*/, false/*disallowEdit*/, true/*callValidateField*/, 1) ? rtrn : false;
+        rtrn = this.validateMappedDataSourceField(_entityCtx, _dataSourceCtx, '', '', conNull(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, CustRefOld), 'ATXRequestOrderHeaderDataEntity.CustRefOld', _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, CustRefOld), false/*disallowEditOnCreate*/, false/*disallowEdit*/, true/*callValidateField*/, 1) ? rtrn : false;
+        rtrn = this.validateMappedDataSourceField(_entityCtx, _dataSourceCtx, '', '', conNull(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, PreviousRequestOrderId), 'ATXRequestOrderHeaderDataEntity.PreviousRequestOrderId', _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, PreviousRequestOrderId), false/*disallowEditOnCreate*/, false/*disallowEdit*/, true/*callValidateField*/, 1) ? rtrn : false;
+        rtrn = this.validateMappedDataSourceField(_entityCtx, _dataSourceCtx, '', '', conNull(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, LineOfBusinessId), 'ATXRequestOrderHeaderDataEntity.LineOfBusinessId', _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, LineOfBusinessId), false/*disallowEditOnCreate*/, false/*disallowEdit*/, true/*callValidateField*/, 1) ? rtrn : false;
+        rtrn = this.validateMappedDataSourceField(_entityCtx, _dataSourceCtx, '', '', conNull(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, IssueDate), 'ATXRequestOrderHeaderDataEntity.IssueDate', _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, IssueDate), false/*disallowEditOnCreate*/, false/*disallowEdit*/, true/*callValidateField*/, 1) ? rtrn : false;
+        rtrn = this.validateMappedDataSourceField(_entityCtx, _dataSourceCtx, '', '', conNull(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, PlanNumber), 'ATXRequestOrderHeaderDataEntity.PlanNumber', _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, PlanNumber), false/*disallowEditOnCreate*/, false/*disallowEdit*/, true/*callValidateField*/, 1) ? rtrn : false;
+        rtrn = this.validateMappedDataSourceField(_entityCtx, _dataSourceCtx, '', '', conNull(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, ProdIdLink), 'ATXRequestOrderHeaderDataEntity.ProdIdLink', _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, ProdIdLink), false/*disallowEditOnCreate*/, false/*disallowEdit*/, true/*callValidateField*/, 1) ? rtrn : false;
+        rtrn = this.validateMappedDataSourceField(_entityCtx, _dataSourceCtx, '', '', conNull(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, ItemId), 'ATXRequestOrderHeaderDataEntity.ItemId', _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, ItemId), false/*disallowEditOnCreate*/, false/*disallowEdit*/, true/*callValidateField*/, 1) ? rtrn : false;
+        rtrn = this.validateMappedDataSourceField(_entityCtx, _dataSourceCtx, '', '', conNull(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, QtyOv), 'ATXRequestOrderHeaderDataEntity.QtyOv', _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, QtyOv), false/*disallowEditOnCreate*/, false/*disallowEdit*/, true/*callValidateField*/, 1) ? rtrn : false;
+        rtrn = this.validateMappedDataSourceField(_entityCtx, _dataSourceCtx, '', '', conNull(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, SkipBOMValidation), 'ATXRequestOrderHeaderDataEntity.SkipBOMValidation', _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, SkipBOMValidation), false/*disallowEditOnCreate*/, false/*disallowEdit*/, true/*callValidateField*/, 1) ? rtrn : false;
+        rtrn = this.validateMappedDataSourceField(_entityCtx, _dataSourceCtx, '', '', conNull(), _aTXRequestOrderHeaderDataEntity, fieldnum(ATXRequestOrderHeaderDataEntity, CustPlanNumber), 'ATXRequestOrderHeaderDataEntity.CustPlanNumber', _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, CustPlanNumber), false/*disallowEditOnCreate*/, false/*disallowEdit*/, true/*callValidateField*/, 1) ? rtrn : false;
+        rtrn = this.validateDataSourceExtensions(_entityCtx, _aTXRequestOrderHeaderDataEntity, _dataSourceCtx, _aTXRequestOrderHeader) ? rtrn : false;
+        return rtrn;
+    }
+    protected boolean validateDataSource(DataEntityRuntimeContext _entityCtx, DataEntityDataSourceRuntimeContext _dataSourceCtx)
+    {
+        boolean rtrn = true;
+        switch(_dataSourceCtx.id())
+        {
+            case #ATXRequestOrderHeader_ID:
+                rtrn = this.validateDataSource_DS1(_entityCtx,_entityCtx.getEntityRecord(),_dataSourceCtx,_dataSourceCtx.getBuffer());
+                break;
+            default :
+                rtrn = this.validateDataSourceExtensions_DSExtensions(_entityCtx, _dataSourceCtx);
+                break;
+        }
+        return rtrn;
+    }
+    private void mapToMatchingRecord_DS1(DataEntityDataSourceRuntimeContext _dataSourceCtx, ATXRequestOrderHeader _aTXRequestOrderHeader, ATXRequestOrderHeader _matchingRecord)
+    {
+        // map data changes in bound fields.
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, CO), _matchingRecord, fieldnum(ATXRequestOrderHeader, CO), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, Comments), _matchingRecord, fieldnum(ATXRequestOrderHeader, Comments), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, CPO), _matchingRecord, fieldnum(ATXRequestOrderHeader, CPO), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, CurrencyCode), _matchingRecord, fieldnum(ATXRequestOrderHeader, CurrencyCode), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, CustAccount), _matchingRecord, fieldnum(ATXRequestOrderHeader, CustAccount), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, CustClassId), _matchingRecord, fieldnum(ATXRequestOrderHeader, CustClassId), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, CustPurchaseOrder), _matchingRecord, fieldnum(ATXRequestOrderHeader, CustPurchaseOrder), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, CustRef), _matchingRecord, fieldnum(ATXRequestOrderHeader, CustRef), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, DlvModeId), _matchingRecord, fieldnum(ATXRequestOrderHeader, DlvModeId), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, Finiched), _matchingRecord, fieldnum(ATXRequestOrderHeader, Finiched), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, InventLocationId), _matchingRecord, fieldnum(ATXRequestOrderHeader, InventLocationId), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, InventSiteId), _matchingRecord, fieldnum(ATXRequestOrderHeader, InventSiteId), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, InventTransRefId), _matchingRecord, fieldnum(ATXRequestOrderHeader, InventTransRefId), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, InventTransType), _matchingRecord, fieldnum(ATXRequestOrderHeader, InventTransType), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, PPK), _matchingRecord, fieldnum(ATXRequestOrderHeader, PPK), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, ProdPoolId), _matchingRecord, fieldnum(ATXRequestOrderHeader, ProdPoolId), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, RequestOrderCancelDate), _matchingRecord, fieldnum(ATXRequestOrderHeader, RequestOrderCancelDate), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, RequestOrderCreated), _matchingRecord, fieldnum(ATXRequestOrderHeader, RequestOrderCreated), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, RequestOrderDate), _matchingRecord, fieldnum(ATXRequestOrderHeader, RequestOrderDate), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, RequestOrderGroupId), _matchingRecord, fieldnum(ATXRequestOrderHeader, RequestOrderGroupId), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, RequestOrderId), _matchingRecord, fieldnum(ATXRequestOrderHeader, RequestOrderId), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, RequestOrderStatus), _matchingRecord, fieldnum(ATXRequestOrderHeader, RequestOrderStatus), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, RequestOrderType), _matchingRecord, fieldnum(ATXRequestOrderHeader, RequestOrderType), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, ReviewedOrderDate), _matchingRecord, fieldnum(ATXRequestOrderHeader, ReviewedOrderDate), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, SalesDlvTermId), _matchingRecord, fieldnum(ATXRequestOrderHeader, SalesDlvTermId), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, SeasonId), _matchingRecord, fieldnum(ATXRequestOrderHeader, SeasonId), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, BranchId), _matchingRecord, fieldnum(ATXRequestOrderHeader, BranchId), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, ItemDivisionId), _matchingRecord, fieldnum(ATXRequestOrderHeader, ItemDivisionId), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, SalesId), _matchingRecord, fieldnum(ATXRequestOrderHeader, SalesId), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, ShipmentOrderDate), _matchingRecord, fieldnum(ATXRequestOrderHeader, ShipmentOrderDate), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, UPC), _matchingRecord, fieldnum(ATXRequestOrderHeader, UPC), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, DestinationPlaceId), _matchingRecord, fieldnum(ATXRequestOrderHeader, DestinationPlaceId), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, SampleTypeId), _matchingRecord, fieldnum(ATXRequestOrderHeader, SampleTypeId), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, AuthDate), _matchingRecord, fieldnum(ATXRequestOrderHeader, AuthDate), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, CustRefOld), _matchingRecord, fieldnum(ATXRequestOrderHeader, CustRefOld), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, PreviousRequestOrderId), _matchingRecord, fieldnum(ATXRequestOrderHeader, PreviousRequestOrderId), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, LineOfBusinessId), _matchingRecord, fieldnum(ATXRequestOrderHeader, LineOfBusinessId), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, IssueDate), _matchingRecord, fieldnum(ATXRequestOrderHeader, IssueDate), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, PlanNumber), _matchingRecord, fieldnum(ATXRequestOrderHeader, PlanNumber), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, ProdIdLink), _matchingRecord, fieldnum(ATXRequestOrderHeader, ProdIdLink), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, ItemId), _matchingRecord, fieldnum(ATXRequestOrderHeader, ItemId), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, QtyOv), _matchingRecord, fieldnum(ATXRequestOrderHeader, QtyOv), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, SkipBOMValidation), _matchingRecord, fieldnum(ATXRequestOrderHeader, SkipBOMValidation), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXRequestOrderHeader, fieldnum(ATXRequestOrderHeader, CustPlanNumber), _matchingRecord, fieldnum(ATXRequestOrderHeader, CustPlanNumber), 1);
+        this.mapToMatchingRecordExtensions(_dataSourceCtx, tablestr(ATXRequestOrderHeaderDataEntity), _aTXRequestOrderHeader, _matchingRecord);
+    }
+    protected void mapDataSourceToMatchingRecord(DataEntityDataSourceRuntimeContext _dataSourceCtx, Common _matchingRecord)
+    {
+        switch(_dataSourceCtx.id())
+        {
+            case #ATXRequestOrderHeader_ID:
+                this.mapToMatchingRecord_DS1(_dataSourceCtx, _dataSourceCtx.getBuffer(), _matchingRecord);
+                break;
+            default :
+                this.mapDataSourceToMatchingRecordExtensions(_dataSourceCtx, _matchingRecord);
+                break;
+        }
+    }
+    protected void validateConfigurationKeys(DataEntityRuntimeContext _entityCtx)
+    {
+    }
+    protected void initializeDataSources(DataEntityRuntimeContext _entityCtx)
+    {
+        this.initializeDataSource(_entityCtx, 'ATXRequestOrderHeader', m_ATXRequestOrderHeader, this.getDataSourceId('ATXRequestOrderHeader'), this.getDataSourceRuntimeId('ATXRequestOrderHeader'), false/* optional */, false/* readonly */, false/* oneToMany */, false/* dateEffective */, false/* applyDateFilter */);
+        this.initializeDataSourcesExtensions(_entityCtx);
+    }
+    private ATXRequestOrderHeader LookForUniqueKeyMatch_DS1(ATXRequestOrderHeaderDataEntity _aTXRequestOrderHeaderDataEntity, ATXRequestOrderHeader _aTXRequestOrderHeader)
+    {
+        ATXRequestOrderHeader aTXRequestOrderHeader_ = null;
+        
+        select
+            forUpdate
+            firstOnly
+                aTXRequestOrderHeader_
+        where
+            aTXRequestOrderHeader_.RequestOrderId == _aTXRequestOrderHeader.RequestOrderId
+        ;
+        
+        if (aTXRequestOrderHeader_)
+        {
+            return aTXRequestOrderHeader_;
+        }
+        
+        return aTXRequestOrderHeader_;
+    }
+
+}
+

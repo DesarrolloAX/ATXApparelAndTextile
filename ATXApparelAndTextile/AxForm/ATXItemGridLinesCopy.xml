@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxForm xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="Microsoft.Dynamics.AX.Metadata.V6">
+	<Name>ATXItemGridLinesCopy</Name>
+	<SourceCode>
+		<Methods xmlns="">
+			<Method>
+				<Name>classDeclaration</Name>
+				<Source><![CDATA[
+[Form]
+public class ATXItemGridLinesCopy extends FormRun
+{
+    EcoResProductMaster productMasterCaller;
+    ATXDimComboType dimComboType;
+
+}
+]]></Source>
+			</Method>
+			<Method>
+				<Name>init</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    public void init()
+    {
+        ATXItemGridLines tmpTable, queryTable;
+        
+        super();
+
+        dimComboType = element.args().parmEnumeration();
+        if (element.args().record() && element.args().dataset() == tableNum(EcoResProductMaster))
+        {
+            productMasterCaller = element.args().record();
+            ATXItemGridLines.setTmp();
+            tmpTable.setTmp();
+
+            switch (dimComboType)
+            {
+                case ATXDimComboType::Size:
+                    tmpTable.skipDataMethods(true);
+                    insert_recordset tmpTable(ItemGridId, ItemGridValue, Description, RetailDisplayOrder)
+                        select ItemGridId, ItemGridValue, Description, RetailDisplayOrder from queryTable
+                        where queryTable.ItemGridId   == InventTable::findByProduct(productMasterCaller.RecId).ATXItemSizeGridValue
+                        ;
+                    break;
+                case ATXDimComboType::Color:
+                    tmpTable.skipDataMethods(true);
+                    insert_recordset tmpTable(ItemGridId, ItemGridValue, Description, RetailDisplayOrder)
+                        select ItemGridId, ItemGridValue, Description, RetailDisplayOrder from queryTable
+                        where queryTable.ItemGridId   == InventTable::findByProduct(productMasterCaller.RecId).ATXItemColorGridValue
+                        ;
+                    break;
+            }
+            ATXItemGridLines.setTmpData(tmptable);
+        }
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+		<DataSources xmlns="" />
+		<DataControls xmlns="">
+			<Control>
+				<Name>SelectAll</Name>
+				<Type>Button</Type>
+				<Methods>
+					<Method>
+						<Name>clicked</Name>
+						<Source><![CDATA[
+        /// <summary>
+        ///
+        /// </summary>
+        public void clicked()
+        {
+            super();
+            while select  ATXItemGridLines
+            {
+                ATXItemGridLines.Check = true;
+                ATXItemGridLines.update();
+            }
+            ATXItemGridLines_ds.research();
+        }
+
+]]></Source>
+					</Method>
+				</Methods>
+			</Control>
+			<Control>
+				<Name>Copy</Name>
+				<Type>Button</Type>
+				<Methods>
+					<Method>
+						<Name>clicked</Name>
+						<Source><![CDATA[
+        /// <summary>
+        ///
+        /// </summary>
+        public void clicked()
+        {
+            FormRun callerFormRun;
+            ;
+
+            super();
+            new ATXItemGridEngine(productMasterCaller).copyDimensions(ATXItemGridLines_ds, dimComboType);
+            
+            if (element.args().caller())
+            {
+                callerFormRun = element.args().caller() as FormRun;
+                if (callerFormRun)
+                {
+                    if (formHasMethod(callerFormRun, identifierStr(doResearch)))
+                    {
+                        element.args().caller().doResearch();
+                    }
+                }
+
+                if (callerFormRun)
+                {
+                    switch (dimComboType)
+                    {
+                        case ATXDimComboType::Configuration:
+                            callerFormRun.dataSource(FormDataSourceStr(EcoResProductMasterDimension, EcoResProductMasterConfiguration)).research();
+                            break;
+
+                        case ATXDimComboType::Size:
+                            callerFormRun.dataSource(FormDataSourceStr(EcoResProductMasterDimension, EcoResProductMasterSize)).research();
+                            break;
+
+                        case ATXDimComboType::Color:
+                            callerFormRun.dataSource(FormDataSourceStr(EcoResProductMasterDimension, EcoResProductMasterColor)).research();
+                            break;
+
+                        case ATXDimComboType::Style:
+                            callerFormRun.dataSource(FormDataSourceStr(EcoResProductMasterDimension, EcoResProductMasterStyle)).research();
+                            break;
+                    }
+                    
+                }
+            }
+
+            element.close();
+        }
+
+]]></Source>
+					</Method>
+				</Methods>
+			</Control>
+		</DataControls>
+		<Members xmlns="" />
+	</SourceCode>
+	<DataSources>
+		<AxFormDataSource xmlns="">
+			<Name>ATXItemGridLines</Name>
+			<Table>ATXItemGridLines</Table>
+			<Fields>
+				<AxFormDataSourceField>
+					<DataField>Active</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Check</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ColorDate</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ColorReference</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>DataAreaId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Description</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ItemGridId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ItemGridValue</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Partition</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>RecId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>RetailDisplayOrder</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>TableId</DataField>
+				</AxFormDataSourceField>
+			</Fields>
+			<ReferencedDataSources />
+			<AllowCreate>No</AllowCreate>
+			<AllowDelete>No</AllowDelete>
+			<InsertAtEnd>No</InsertAtEnd>
+			<InsertIfEmpty>No</InsertIfEmpty>
+			<DataSourceLinks />
+			<DerivedDataSources />
+		</AxFormDataSource>
+	</DataSources>
+	<Design>
+		<Caption xmlns="">@ATXAT:NewLabel110</Caption>
+		<Pattern xmlns="">SimpleList</Pattern>
+		<PatternVersion xmlns="">1.1</PatternVersion>
+		<Style xmlns="">SimpleList</Style>
+		<ViewEditMode xmlns="">Edit</ViewEditMode>
+		<Controls xmlns="">
+			<AxFormControl xmlns=""
+				i:type="AxFormActionPaneControl">
+				<Name>FormActionPaneControl</Name>
+				<Type>ActionPane</Type>
+				<FormControlExtension
+					i:nil="true" />
+				<Controls>
+					<AxFormControl xmlns=""
+						i:type="AxFormButtonGroupControl">
+						<Name>FormButtonGroupControl</Name>
+						<Type>ButtonGroup</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<Controls>
+							<AxFormControl xmlns=""
+								i:type="AxFormButtonControl">
+								<Name>SelectAll</Name>
+								<Type>Button</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<Text>@ATXAT:NewLabel115</Text>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormButtonControl">
+								<Name>Copy</Name>
+								<Type>Button</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<Text>@ATXAT:NewLabel116</Text>
+							</AxFormControl>
+						</Controls>
+					</AxFormControl>
+				</Controls>
+			</AxFormControl>
+			<AxFormControl xmlns=""
+				i:type="AxFormGroupControl">
+				<Name>FormGroupControl</Name>
+				<Pattern>CustomAndQuickFilters</Pattern>
+				<PatternVersion>1.1</PatternVersion>
+				<Type>Group</Type>
+				<WidthMode>SizeToAvailable</WidthMode>
+				<FormControlExtension
+					i:nil="true" />
+				<Controls>
+					<AxFormControl>
+						<Name>QuickFilterControl</Name>
+						<FormControlExtension>
+							<Name>QuickFilterControl</Name>
+							<ExtensionComponents />
+							<ExtensionProperties>
+								<AxFormControlExtensionProperty>
+									<Name>targetControlName</Name>
+									<Type>String</Type>
+									<Value>FormGridControl</Value>
+								</AxFormControlExtensionProperty>
+								<AxFormControlExtensionProperty>
+									<Name>placeholderText</Name>
+									<Type>String</Type>
+								</AxFormControlExtensionProperty>
+								<AxFormControlExtensionProperty>
+									<Name>defaultColumnName</Name>
+									<Type>String</Type>
+								</AxFormControlExtensionProperty>
+							</ExtensionProperties>
+						</FormControlExtension>
+					</AxFormControl>
+				</Controls>
+				<ArrangeMethod>HorizontalLeft</ArrangeMethod>
+				<FrameType>None</FrameType>
+				<Style>CustomFilter</Style>
+				<ViewEditMode>Edit</ViewEditMode>
+			</AxFormControl>
+			<AxFormControl xmlns=""
+				i:type="AxFormGridControl">
+				<Name>FormGridControl</Name>
+				<Type>Grid</Type>
+				<FormControlExtension
+					i:nil="true" />
+				<Controls>
+					<AxFormControl xmlns=""
+						i:type="AxFormStringControl">
+						<Name>FormGridControl_ItemGridValue</Name>
+						<AllowEdit>No</AllowEdit>
+						<Type>String</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<DataField>ItemGridValue</DataField>
+						<DataSource>ATXItemGridLines</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormStringControl">
+						<Name>FormGridControl_Description</Name>
+						<AllowEdit>No</AllowEdit>
+						<Type>String</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<DataField>Description</DataField>
+						<DataSource>ATXItemGridLines</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormRealControl">
+						<Name>FormGridControl_RetailDisplayOrder</Name>
+						<AllowEdit>No</AllowEdit>
+						<Type>Real</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<DataField>RetailDisplayOrder</DataField>
+						<DataSource>ATXItemGridLines</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormCheckBoxControl">
+						<Name>ATXItemGridLines_Check</Name>
+						<Type>CheckBox</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<DataField>Check</DataField>
+						<DataSource>ATXItemGridLines</DataSource>
+					</AxFormControl>
+				</Controls>
+				<DataSource>ATXItemGridLines</DataSource>
+				<MultiSelect>No</MultiSelect>
+				<Style>Tabular</Style>
+			</AxFormControl>
+		</Controls>
+	</Design>
+	<Parts />
+</AxForm>

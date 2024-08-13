@@ -1,0 +1,646 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXInventMovement</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+class ATXInventMovement
+{
+    ProdTable               prodTable;
+    ProdJournalTable        prodJournalTable;
+    boolean                 reverseMovement;
+    Map                     salesLineMap;
+
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>new</Name>
+				<Source><![CDATA[
+    void new(ProdJournalTable _prodJournalTable, boolean _reverse = false)
+    {
+        ;
+
+        prodJournalTable    = _prodJournalTable;
+        prodTable           = ProdTable::find(prodJournalTable.ProdId);
+        salesLineMap        = new Map(Types::Int64, Types::Real);
+        reverseMovement     = _reverse;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>run</Name>
+				<Source><![CDATA[
+    void run()
+    {
+        SalesLine salesLineforValidate;
+        SalesLine salesLine = SalesLine::findInventTransId(ProdTable.ATXInventRefTransId);
+        ProdJournalProd prodJournalProdQry, prodJournalProdCutId, prodJournalProdWMSLoc;
+        InventDim inventDimNew;
+        InventTransOrigin inventTransOrigin;
+        InventTrans inventTrans;
+        
+        SalesTable              salesTable          = salesLine.salesTable();
+        //ATXFCMatrixConfigTable  FCMatrixConfigTable = ATXFCMatrixConfigTable::findInventlocationByCust(salesTable.CustAccount);
+
+        try
+        {
+            ttsbegin;
+            {
+                /*if (ProdParameters_AT::find().AllowPostDummy)
+                {
+                    select firstonly inventTransOrigin
+                        where inventTransOrigin.InventTransId == SalesLine.InventTransId
+                        join inventTrans
+                        where inventTrans.inventTransOrigin == inventTransOrigin.RecId
+                        && inventTrans.StatusIssue == StatusIssue::ReservOrdered;
+                    if (inventTransOrigin)
+                    {
+                        // Delete marking
+                        InventTransOrigin::deleteMarking(inventTrans.MarkingRefInventTransOrigin, inventTrans.InventTransOrigin, -inventTrans.Qty, true);
+                        InventTransOrigin::deleteMarking(inventTrans.InventTransOrigin, inventTrans.MarkingRefInventTransOrigin, inventTrans.Qty, true);
+
+                        ATXTools::reserveLine(salesLine, salesLine.inventDim(), -SalesLine.SalesQty);
+                    }
+
+                    select sum(QtyGood) from prodJournalProdQry
+                        index LineIdx
+                        where prodJournalProdQry.JournalId == prodJournalTable.JournalId;
+
+                    // Get WMSLocationId from movement
+                    select firstonly prodJournalProdWMSLoc
+                        index LineIdx
+                        where prodJournalProdWMSLoc.JournalId == prodJournalTable.JournalId;
+                    
+
+                    // POST TRANSFER WITH # AND CUTID
+                    this.transferJournal();
+
+                    if (prodJournalProdWMSLoc.ATXWMSLocationId)
+                    {
+                        // Reduce salesLineQty
+                        this.reduceSalesLine(salesLine, -prodJournalProdQry.QtyGood);
+                    }
+                    else
+                    {
+                        if (ProdParameters_AT::find().ReservOnFinished)
+                        {
+                            //<DGNAVA 23/3/2020 VALIDATE If is Reported By Sizes>
+                            info(strFmt("Tallas %1", ProdRouteMultiRegisterProd_AT::isReportedBySize(prodTable, ATXTools::getLastProdOperation(prodTable.ProdId)) == true ? "Tallas" : "General"));
+                            //<DGNAVA 23/3/2020 VALIDATE If is Reported By Sizes>
+                            
+                            if(ProdRouteMultiRegisterProd_AT::isReportedBySize(prodTable, ATXTools::getLastProdOperation(prodTable.ProdId)) == NoYes::No)
+                            {
+                                select firstonly prodJournalProdCutId
+                                    index LineIdx
+                                    where prodJournalProdCutId.JournalId == prodJournalTable.JournalId;
+
+                                if (prodJournalProdCutId.CutId_AT)
+                                {
+                                    inventDimNew = salesLine.inventDim();
+                                    inventDimNew.inventBatchId = prodJournalProdCutId.CutId_AT;
+                                    ATXTools::reserveLine(salesLine, inventDimNew, prodJournalProdQry.QtyGood);
+                                }
+                            }
+                        }
+                    }
+                }
+                else
+                {*/
+                    ATXTools::reserveLine(salesLine,salesLine.inventDim(),-SalesLine.SalesQty);
+                    this.updateSalesLine();
+                    this.transferJournal();
+                    salesLine.reread();
+                //}
+                // Clear BOM
+                //this.clearSalesBOMId(salesLine);
+            }
+            ttscommit;
+        }
+        catch(Exception::Error)
+        {
+            ttsabort;
+        }
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>updateSalesLine</Name>
+				<Source><![CDATA[
+    void updateSalesLine()
+    {
+        ProdJournalProd prodJournalProd;
+
+        while select prodJournalProd
+            where   prodJournalProd.JournalId == prodJournalTable.JournalId
+            &&  prodJournalProd.QtyGood != 0
+            &&  prodJournalProd.ATXBOMId
+        {
+            /*if (prodJournalProd.ProdQualityId_AT)
+            {
+                continue;
+            }*/
+
+            if (prodJournalProd.QtyGood > 0)
+            {
+                this.createSalesLine(prodJournalProd);
+            }
+            else
+            {
+                this.removeSalesLine(prodJournalProd);
+            }
+        }
+
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>createSalesLine</Name>
+				<Source><![CDATA[
+    private void createSalesLine(ProdJournalProd _prodJournalProd)
+    {
+        ATXBreakdownOrderLine breakDownOrderLine;
+        salesLine               origSalesLine,
+                                newSalesLine;
+        InventTable             inventTable;
+        InventDim               inventDim,
+                                inventDimProd,
+                                inventDimVarian;
+        WMSLocationId           wmsLocationId;
+
+        AxSalesLine             axSalesLine;
+        Qty                     qty;
+
+        WMSOrderCreate          wmsOrderCreate;
+        WMSOrder                wmsOrder;
+
+        inventDimProd = _prodJournalProd.inventDim();
+        origSalesLine = SalesLine::findInventTransId(prodTable.ATXInventRefTransId, true);
+        inventTable = InventTable::find(prodTable.ItemId);
+
+        wmsLocationId = _prodJournalProd.ATXWMSLocationId? _prodJournalProd.ATXWMSLocationId : _prodJournalProd.inventDim().wMSLocationId;
+        if (wmsLocationId != prodTable.inventDim().wMSLocationId)
+        {
+            this.updateBreakownFinished(origSalesLine, _prodJournalProd);
+            return;
+        }
+
+        qty = UnitOfMeasureConverter::convert(
+            _prodJournalProd.QtyGood,
+            UnitOfMeasure::findBySymbol(inventTable.inventUnitId()).RecId,
+            UnitOfMeasure::findBySymbol(origSalesLine.SalesUnit).RecId,
+            NoYes::No,
+            inventTable.Product);
+
+        if (origSalesLine.SalesQty)
+        {
+            axSalesLine  = AxSalesLine::newSalesLine(origSalesLine);
+            axSalesLine.parmSalesQty(origSalesLine.SalesQty - qty);
+            axSalesLine.parmSalesPrice(origSalesLine.SalesPrice);
+            Amount verify = axSalesLine.parmSalesQty();
+            Amount verify2 = origSalesLine.calcLineAmount(axSalesLine.parmSalesQty());
+            axSalesLine.parmLineAmount(origSalesLine.calcLineAmount(axSalesLine.parmSalesQty()));
+            axSalesLine.parmReceiptDateConfirmed(origSalesLine.ReceiptDateConfirmed);
+            axSalesLine.parmShippingDateConfirmed(origSalesLine.ShippingDateConfirmed);
+            axSalesLine.save();
+        }
+        else
+        {
+            warning("Se generan mas unidades de las pedidas");
+        }
+
+        inventDim.configId          = _prodJournalProd.ATXConfigId;
+        inventDim.InventSizeId      = _prodJournalProd.ATXInventSizeId;
+        inventDim.InventColorId     = _prodJournalProd.ATXInventcolorId;
+        inventDim.InventStyleId     = _prodJournalProd.ATXInventStyleId;
+
+        inventDim.InventSiteId      = inventDimProd.InventSiteId;
+        inventDim.InventLocationId  = inventDimProd.InventLocationId;
+        inventDim.wMSLocationId     = inventDimProd.wMSLocationId;
+        inventDim.inventBatchId     = inventDimProd.inventBatchId;
+        inventDim                   = inventDim::findOrCreate(inventDim);
+
+        // Find salesLine without # dimension
+        newSalesLine = SalesLine::atxFindItemDim(prodTable.ATXInventRefId, prodTable.ItemId, inventDim, prodTable.ATXInventRefTransId);
+        breakDownOrderLine = ATXBreakdownOrderLine::findBySalesTransBOMId(prodTable.ATXInventRefId, prodTable.ATXInventRefTransId, _prodJournalProd.ATXBOMId);
+
+        if (newSalesLine.RecId)
+        {
+            newSalesLine.selectForUpdate(true);
+            axSalesLine = AxSalesLine::newSalesLine(newSalesLine);
+            axSalesLine.parmSalesQty(newSalesLine.SalesQty + qty);
+            axSalesLine.setFieldAsTouched(fieldnum(salesLine, inventDimId));
+            axSalesLine.parmSalesPrice(origSalesLine.SalesPrice);
+            axSalesLine.modify();
+            axSalesLine.parmSalesPrice(breakDownORderLine.SalesPrice);
+            axSalesLine.parmLineAmount(newSalesLine.calcLineAmountForced(axSalesLine.parmSalesQty()));
+            axSalesLine.save();
+        }
+        else
+        {
+            inventDimVarian.configId        = inventDim.configId;
+            inventDimVarian.InventSizeId    = inventDim.InventSizeId;
+            inventDimVarian.InventColorId   = inventDim.InventColorId;
+            inventDimVarian.InventStyleId   = inventDim.InventStyleId;
+            inventDimVarian                 = InventDim::findOrCreate(inventDimVarian);
+
+            newSalesLine.clear();
+            newSalesLine.initValue();
+            newSalesLine.initFromSalesTable(SalesTable::find(origSalesLine.SalesId));
+            newSalesLine.SalesQty = qty;
+            newSalesLine.SalesPrice = breakDownORderLine.SalesPrice;
+
+            axSalesLine = AxSalesLine::construct();
+            axSalesLine.parmSalesId(origSalesLine.SalesId);
+            axSalesLine.parmItemId(origSalesLine.ItemId);
+            axSalesLine.setFieldAsTouched(fieldnum(salesLine, ItemId));
+            axSalesLine.modify();
+            axSalesLine.parmUnderDeliveryPct(origSalesLine.UnderDeliveryPct);
+            axSalesLine.parmOverDeliveryPct(origSalesLine.OverDeliveryPct);
+            axSalesLine.parmRetailVariantId(InventDimCombination::find(origSalesLine.ItemId,inventDimVarian.inventDimId).RetailVariantId);
+            axSalesLine.parmInventDimId(inventDim.inventDimId);
+            axSalesLine.setFieldAsTouched(fieldnum(salesLine, inventDimId));
+            axSalesLine.modify();
+            axSalesLine.parmSalesUnit(origSalesLine.SalesUnit);
+            axSalesLine.setFieldAsTouched(fieldnum(salesLine, SalesUnit));
+            axSalesLine.modify();
+            axSalesLine.parmSalesQty(qty);
+            axSalesLine.parmSalesPrice(breakDownORderLine.SalesPrice);
+            axSalesLine.parmLineAmount(newSalesLine.calcLineAmountForced(qty));
+            axSalesLine.save();
+
+            newSalesLine = axSalesLine.salesLine();
+            newSalesLine.selectForUpdate(true);
+            newSalesLine.ATXInventTransIdOrigin = origSalesLine.InventTransId;
+            newSalesLine.doUpdate();
+        }
+
+        /*if (SalesParameters_AT::find().WMSOrderForSales)
+        {
+            while select wmsOrder
+                where wmsOrder.inventTransId    == newSalesLine.InventTransId
+                && wmsOrder.status          == WMSOrderStatus::New
+            {
+                ttsBegin;
+                wmsOrder.selectForUpdate(true);
+                wmsOrder.delete();
+                ttsCommit;
+            }
+
+            wmsOrderCreate  = WMSOrderCreate::newMovement(InventMovement::construct(axSalesLine.salesLine()), -newSalesLine.RemainInventPhysical, true);
+            wmsOrderCreate.parmMustBeWMSOrderControlled(true);
+            wmsOrderCreate.run();
+        }*/
+
+        if(salesLineMap.exists(newSalesLine.RecId))
+        {
+            salesLineMap.insert(newSalesLine.RecId, salesLineMap.lookup(newSalesLine.RecId) + _prodJournalProd.QtyGood);
+        }
+        else
+        {
+            salesLineMap.insert(newSalesLine.RecId, _prodJournalProd.QtyGood);
+        }
+
+        this.updateBreakownFinished(origSalesLine, _prodJournalProd);
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>updateBreakownFinished</Name>
+				<Source><![CDATA[
+    private void updateBreakownFinished(SalesLine _salesLine, ProdJournalProd _prodJournalProd)
+    {
+        ATXBreakdownOrderLine   breakdownOrderLine;
+
+        ;
+
+        breakdownOrderLine = ATXBreakdownOrderLine::findBySalesTransBOMId(_salesLine.SalesId, _salesLine.InventTransId, _prodJournalProd.ATXBOMId, true);
+        breakdownOrderLine.QtyEnd += _prodJournalProd.QtyGood;
+        breakdownOrderLine.update();
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>removeSalesLine</Name>
+				<Source><![CDATA[
+    private void removeSalesLine(ProdJournalProd _prodJournalProd)
+    {
+        SalesLine origSalesLine, newSalesLine;
+        InventTable inventTable;
+        InventDim inventDim, prodInventDim;
+        prodTable removeProdTable;
+        WMSOrder wmsOrder;
+        WMSOrderCreate wmsOrderCreate;
+        WMSLocationId wmsLocationId;
+        Qty             qty;
+
+        AxSalesLine axSalesLine;
+        inventTable = InventTable::find(prodTable.ItemId);
+        origSalesLine = SalesLine::findInventTransId(prodTable.ATXInventRefTransId, true);
+        removeProdTable = _prodJournalProd.prodTable();
+
+        wmsLocationId = _prodJournalProd.ATXWMSLocationId ? _prodJournalProd.ATXWMSLocationId : _prodJournalProd.inventDim().wMSLocationId;
+
+        if (removeProdTable.inventDim().wMSLocationId != wmsLocationId)
+        {
+            this.updateBreakownFinished(origSalesLine, _prodJournalProd);
+            return;
+        }
+
+        qty = UnitOfMeasureConverter::convert(
+                _prodJournalProd.QtyGood,
+                UnitOfMeasure::findBySymbol(inventTable.inventUnitId()).RecId,
+                UnitOfMeasure::findBySymbol(origSalesLine.SalesUnit).RecId,
+                NoYes::No,
+                inventTable.Product);
+
+        if (origSalesLine.SalesQty)
+        {
+            axSalesLine  = AxSalesLine::newSalesLine(origSalesLine);
+            axSalesLine.parmSalesQty(origSalesLine.SalesQty - qty);
+            axSalesLine.parmSalesPrice(origSalesLine.salesPrice);
+            axSalesLine.parmLineAmount(origSalesLine.calcLineAmountForced(axSalesLine.parmSalesQty()));
+            axSalesLine.parmReceiptDateConfirmed(origSalesLine.ReceiptDateConfirmed);
+            axSalesLine.parmShippingDateConfirmed(origSalesLine.ShippingDateConfirmed);
+            axSalesLine.save();
+
+            prodInventDim = _prodJournalProd.inventDim();
+
+            inventDim.InventSiteId = prodInventDim.InventSiteId;
+            inventDim.InventLocationId = prodInventDim.InventLocationId;
+            inventDim.wMSLocationId = prodInventDim.wMSLocationId;
+            inventDim.configId = _prodJournalProd.ATXConfigId;
+            inventDim.InventSizeId = _prodJournalProd.ATXInventSizeId;
+            inventDim.InventColorId = _prodJournalProd.ATXInventcolorId;
+            inventDim.InventStyleId = _prodJournalProd.ATXInventStyleId;
+            inventDim = inventDim::findOrCreate(inventDim);
+
+            // Find salesLine without # dimension
+            newSalesLine = SalesLine::atxFindItemDim(origSalesLine.SalesId, origSalesLine.ItemId, inventDim,origSalesLine.InventTransId);
+            // TODO AGM 22/Nov original if (newSalesLine.SalesQty && newSalesLine.SalesQty > abs(qty))
+            if (newSalesLine.SalesQty && newSalesLine.SalesQty > qty)
+            {
+                // TODO Delete OutputOrder
+                while select wmsOrder
+                where wmsOrder.inventTransId    == newSalesLine.InventTransId
+                    && wmsOrder.status          == WMSOrderStatus::New
+                {
+                    ttsBegin;
+                    wmsOrder.selectForUpdate(true);
+                    wmsOrder.delete();
+                    ttsCommit;
+                }
+
+                newSalesLine.selectForUpdate(true);
+                axSalesLine = AxSalesLine::newSalesLine(newSalesLine);
+                axSalesLine.parmSalesQty(axSalesLine.parmSalesQty() + qty);
+                axSalesLine.parmSalesPrice(newSalesLine.SalesPrice);
+                axSalesLine.parmLineAmount(newSalesLine.calcLineAmountForced(axSalesLine.parmSalesQty()));
+                axSalesLine.save();
+
+                // Create new Output order
+                /*
+                if (SalesParameters_AT::find().WMSOrderForSales)
+                {
+                    wmsOrderCreate  = WMSOrderCreate::newMovement(InventMovement::construct(newSalesLine), -newSalesLine.RemainInventPhysical, true);
+                    wmsOrderCreate.parmMustBeWMSOrderControlled(true);
+                    wmsOrderCreate.run();
+                }*/
+            }
+            else
+            {
+                throw error(strFmt("No es posible retornar %1 %2 solo hay en orden de venta %3 para la combinación %4",
+                    qty,
+                    newSalesLine.SalesUnit,
+                    newSalesLine.SalesQty,
+                    _prodJournalProd.ATXBOMId));
+            }
+        }
+        else
+        {
+            throw error(strFmt("No es posible retornar %1 %2 solo hay en orden de venta %3 para el Artículo %4",
+                    qty,
+                    newSalesLine.SalesUnit,
+                    newSalesLine.SalesQty,
+                    prodTable.itemid));
+        }
+
+        salesLineMap.insert(newSalesLine.RecId, _prodJournalProd.QtyGood);
+        this.updateBreakownFinished(origSalesLine, _prodJournalProd);
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>transferJournal</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Transfer from ProdJournalPost to InventoryDim
+    /// # -> #
+    /// # -> Size
+    /// ProdBatch -> InventoryBatch
+    /// ProdLocation -> InventoryLocation
+    /// </summary>
+    private void transferJournal()
+    {
+        InventJournalTable inventJournalTable;
+        ProdJournalProd prodJournalProd;
+        InventJournalTrans inventJournalTrans;
+        InventDim fromInventDim, toInventDim;
+        ATXInventJournalMuilti inventJournalMulti   = new ATXInventJournalMuilti();
+        SalesLine salesLine = SalesLine::findInventTransId(prodTable.ATXInventRefTransId);
+        //<DGNAVA 19/3/2020>
+        //ATXFCMatrixConfigTable  FCMatrixConfigTable;
+        SalesTable              salesTable = salesLine.salesTable();
+        //<DGNAVA 19/3/2020>
+
+        boolean             post;
+        ;
+
+
+        //FCMatrixConfigTable = ATXFCMatrixConfigTable::findInventlocationByCust(salesTable.CustAccount);
+        inventJournalTable = inventJournalMulti.newInventJournalTable(InventJournalType::Transfer,strFmt(ATXProdParameters::find().JournalMovDescription, prodTable.ProdId, prodJournalTable.JournalId));
+        // Update prod reference
+        ttsBegin;
+        inventJournalTable.selectForUpdate(true);
+        inventJournalTable.ATXProdJournalId = prodJournalTable.JournalId;
+        inventJournalTable.update();
+        ttsCommit;
+
+        while select prodJournalProd
+            where prodJournalProd.JournalId == prodJournalTable.JournalId
+            && prodJournalProd.QtyGood > 0
+            // Deprecated && prodJournalProd.BOMId_AT
+        {
+            inventJournalTrans.clear();
+            inventJournalTrans.initValue();
+            inventJournalTrans.initFromInventJournalTable(inventJournalTable);
+            inventJournalTrans.ItemId = prodTable.ItemId;
+            fromInventDim = InventDim::find(prodJournalProd.inventDimId);
+
+            toInventDim.clear();
+            toInventDim.data(fromInventDim);
+            toInventDim.inventDimId = "";
+            toInventDim.configId = prodJournalProd.ATXConfigId ? prodJournalProd.ATXConfigId : fromInventDim.configId;
+            toInventDim.InventSizeId = prodJournalProd.ATXInventSizeId ? prodJournalProd.ATXInventSizeId : fromInventDim.InventSizeId;
+            toInventDim.InventColorId = prodJournalProd.ATXInventColorId ? prodJournalProd.ATXInventColorId : fromInventDim.InventColorId;
+            toInventDim.InventStyleId = prodJournalProd.ATXInventStyleId ? prodJournalProd.ATXInventStyleId : fromInventDim.InventStyleId;
+            // Change inventory dim
+            if (prodJournalProd.ATXTransferCheck)
+            {
+                //<DGANAVA 19/3/2020>
+                /*if(FCMatrixConfigTable.RecId)
+                {
+                    toInventDim.InventLocationId = FCMatrixConfigTable.InventLocationId;
+                    toInventDim.wMSLocationId = prodJournalProd.ATXWMSLocationId ? prodJournalProd.ATXWMSLocationId : fromInventDim.wMSLocationId;
+                }
+                else
+                {*/
+                    toInventDim.InventLocationId = prodJournalProd.ATXInventLocationId ? prodJournalProd.ATXInventLocationId : fromInventDim.InventLocationId;
+                    toInventDim.wMSLocationId = prodJournalProd.ATXWMSLocationId ? prodJournalProd.ATXWMSLocationId : fromInventDim.wMSLocationId;
+                //}
+                //</DGANAVA 19/3/2020>
+                inventJournalTrans.ATXInventSizeIdTransfer = prodJournalProd.ATXInventSizeIdTransfer ? prodJournalProd.ATXInventSizeIdTransfer : fromInventDim.InventSizeId;
+                toInventDim.inventBatchId = prodJournalProd.ATXCutId ? prodJournalProd.ATXCutId : fromInventDim.inventBatchId;
+            }
+            toInventDim = InventDim::findOrCreate(toInventDim);
+
+            if (prodJournalProd.QtyGood < 0)
+            {
+                inventJournalTrans.InventDimId     = toInventDim.inventDimId;
+                inventJournalTrans.ToInventDimId   = fromInventDim.inventDimId;
+                inventJournalTrans.Qty             = prodJournalProd.QtyGood;
+            }
+            else
+            {
+                inventJournalTrans.InventDimId     = fromInventDim.inventDimId;
+                inventJournalTrans.ToInventDimId   = toInventDim.inventDimId;
+                inventJournalTrans.Qty             = prodJournalProd.QtyGood*-1;
+            }
+            if(inventJournalTrans.validateWrite())
+            {
+                inventJournalTrans.insert();
+                post = true;
+            }
+        }
+
+        if(post)
+        {
+            inventJournalMulti.postInventJournal(inventJournalTable);
+        }
+        else
+        {
+            if (inventJournalTable)
+            {
+                ttsBegin;
+                inventJournalTable.selectForUpdate(true);
+                inventJournalTable.delete();
+                ttsCommit;
+            }
+        }
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>transferJournalReversal</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Reverse transfer journal
+    /// </summary>
+    /// <param name = "_prodJournalTable"></param>
+    static void transferJournalReversal(ProdJournalTable _prodJournalTable)
+    {
+        ProdTable               prodTableRef = ProdTable::find(_prodJournalTable.ProdId);
+        InventJournalTable      inventJournalTable;
+        ProdJournalProd         prodJournalProd;
+        InventJournalTrans      inventJournalTrans;
+        InventDim               fromInventDim, toInventDim;
+        ATXInventJournalMuilti  inventJournalMulti   = new ATXInventJournalMuilti();
+        SalesLine               salesLine = SalesLine::findInventTransId(prodTableRef.ATXInventRefTransId);
+        boolean                     post;
+        ;
+
+        inventJournalTable = inventJournalMulti.newInventJournalTable(InventJournalType::Transfer, strFmt(ATXProdParameters::find().ReverseInvMovJournalName, _prodJournalTable.ProdId));
+
+        ttsBegin;
+        inventJournalTable.selectForUpdate(true);
+        inventJournalTable.ATXProdJournalId = _prodJournalTable.JournalId;
+        inventJournalTable.update();
+        ttsCommit;
+
+        while select prodJournalProd
+            where prodJournalProd.JournalId   == _prodJournalTable.JournalId
+            && prodJournalProd.QtyGood     < 0
+            // DEPRECATED && prodJournalProd.BOMId_AT
+        {
+            inventJournalTrans.clear();
+            inventJournalTrans.initValue();
+            inventJournalTrans.initFromInventJournalTable(inventJournalTable);
+            inventJournalTrans.ItemId   = prodTableRef.ItemId;
+
+            fromInventDim   = InventDim::find(prodJournalProd.prodTable().InventDimId);
+            toInventDim     = InventDim::find(prodJournalProd.prodTable().InventDimId);
+
+            fromInventDim.configId = prodJournalProd.ATXConfigId ? prodJournalProd.ATXConfigId : fromInventDim.configId;
+            fromInventDim.InventSizeId = prodJournalProd.ATXInventSizeId ? prodJournalProd.ATXInventSizeId : fromInventDim.InventSizeId;
+            fromInventDim.InventColorId = prodJournalProd.ATXInventcolorId ? prodJournalProd.ATXInventcolorId : fromInventDim.InventColorId;
+            fromInventDim.InventStyleId = prodJournalProd.ATXInventStyleId ? prodJournalProd.ATXInventStyleId : fromInventDim.InventStyleId;
+
+            if (prodJournalProd.ATXTransferCheck)
+            {
+                if (prodJournalProd.ATXInventLocationId)
+                {
+                    fromInventDim.InventLocationId= prodJournalProd.ATXInventLocationId;
+                }
+                if (prodJournalProd.ATXWMSLocationId)
+                {
+                    fromInventDim.wMSLocationId   = prodJournalProd.ATXWMSLocationId;
+                }
+                if (prodJournalProd.ATXCutId)
+                {
+                    fromInventDim.inventBatchId = prodJournalProd.ATXCutId;
+                }
+            }
+
+            fromInventDim = InventDim::findOrCreate(fromInventDim);
+
+            if (prodJournalProd.QtyGood < 0)
+            {
+                inventJournalTrans.InventDimId     = fromInventDim.inventDimId;
+                inventJournalTrans.ToInventDimId   = toInventDim.inventDimId;
+                inventJournalTrans.Qty             = prodJournalProd.QtyGood;
+            }
+
+            if (inventJournalTrans.validateWrite())
+            {
+                inventJournalTrans.insert();
+                post = true;
+            }
+        }
+
+        if (post)
+        {
+            inventJournalMulti.postInventJournal(inventJournalTable);
+        }
+        else
+        {
+            if (inventJournalTable)
+            {
+                ttsBegin;
+                inventJournalTable.selectForUpdate(true);
+                inventJournalTable.delete();
+                ttsCommit;
+            }
+        }
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>

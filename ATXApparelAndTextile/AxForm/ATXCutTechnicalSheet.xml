@@ -1,0 +1,1279 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxForm xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="Microsoft.Dynamics.AX.Metadata.V6">
+	<Name>ATXCutTechnicalSheet</Name>
+	<SourceCode>
+		<Methods xmlns="">
+			<Method>
+				<Name>classDeclaration</Name>
+				<Source><![CDATA[
+[Form]
+public class ATXCutTechnicalSheet extends FormRun
+{
+}
+]]></Source>
+			</Method>
+			<Method>
+				<Name>init</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    public void init()
+    {
+        super();
+
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+		<DataSources xmlns="" />
+		<DataControls xmlns="" />
+		<Members xmlns="" />
+	</SourceCode>
+	<DataSources>
+		<AxFormDataSource xmlns="">
+			<Name>ATXCutTechnicalSheet</Name>
+			<Table>ATXCutTechnicalSheet</Table>
+			<Fields>
+				<AxFormDataSourceField>
+					<DataField>Accesory</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>CutAccesoryItem</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>CutDirection</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>CutSubprocess</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>CutWidth</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>DataAreaId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Fabric</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ItemId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Notes</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Partition</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Placement</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Pressure</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>PressureUOM</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>RecId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>RouteOprId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Supply</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>TableId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Temp</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Time</DataField>
+				</AxFormDataSourceField>
+			</Fields>
+			<ReferencedDataSources />
+			<DataSourceLinks />
+			<DerivedDataSources />
+		</AxFormDataSource>
+		<AxFormDataSource xmlns="">
+			<Name>ATXCutTechnicalSheetInterlining</Name>
+			<Table>ATXCutTechnicalSheetInterlining</Table>
+			<Fields>
+				<AxFormDataSourceField>
+					<DataField>Accesory</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>CutAccesoryItem</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>CutDirection</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>CutWidth</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>DataAreaId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Description</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ItemId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Notes</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Partition</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Placement</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Pressure</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>PressureUOM</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>RecId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>RouteOprId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Supply</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>TableId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Temp</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Time</DataField>
+				</AxFormDataSourceField>
+			</Fields>
+			<ReferencedDataSources />
+			<DataSourceLinks />
+			<DerivedDataSources />
+		</AxFormDataSource>
+		<AxFormDataSource xmlns="">
+			<Name>ATXCutTechnicalSheetApp</Name>
+			<Table>ATXCutTechnicalSheetApp</Table>
+			<Fields>
+				<AxFormDataSourceField>
+					<DataField>Accesory</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>BendingType</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>CutAccesoryItem</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>CutDirection</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>DataAreaId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InWidth</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ItemId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Notes</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>OutWidth</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Partition</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Placement</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Pressure</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>PressureUOM</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>RecId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>RouteOprId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>SewMachine</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Supply</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>TableId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Temp</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Time</DataField>
+				</AxFormDataSourceField>
+			</Fields>
+			<ReferencedDataSources />
+			<DataSourceLinks />
+			<DerivedDataSources />
+		</AxFormDataSource>
+		<AxFormDataSource xmlns="">
+			<Name>ATXCutTechnicalSheetWash</Name>
+			<Table>ATXCutTechnicalSheetWash</Table>
+			<Fields>
+				<AxFormDataSourceField>
+					<DataField>Accesory</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>BendingType</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ClothGarment</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Combinations</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>CutAccesoryItem</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>CutDirection</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>DataAreaId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>DyeingType</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InWidth</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ItemId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Notes</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>OutWidth</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Partition</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Placement</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Pressure</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>PressureUOM</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>RecId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>RouteOprId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>SendBy</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Service</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>SewMachine</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Sleeves</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>SpecialComponent</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Supply</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>TableId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Temp</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Time</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>WashType</DataField>
+				</AxFormDataSourceField>
+			</Fields>
+			<ReferencedDataSources />
+			<DataSourceLinks />
+			<DerivedDataSources />
+		</AxFormDataSource>
+		<AxFormDataSource xmlns="">
+			<Name>ATXCutTechnicalSheetEmbroidery</Name>
+			<Table>ATXCutTechnicalSheetEmbroidery</Table>
+			<Fields>
+				<AxFormDataSourceField>
+					<DataField>Accesory</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>BendingType</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ClothGarment</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Combinations</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>CutAccesoryItem</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>CutDirection</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>DataAreaId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>EmbroideryType</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ItemId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Length</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Notes</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Partition</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Placement</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Pressure</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>PressureUOM</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>RecId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>RouteOprId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>SendBy</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Service</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>SewMachine</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Sleeves</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>SpecialComponent</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Stitches</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Supply</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>TableId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Temp</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Width</DataField>
+				</AxFormDataSourceField>
+			</Fields>
+			<ReferencedDataSources />
+			<DataSourceLinks />
+			<DerivedDataSources />
+		</AxFormDataSource>
+		<AxFormDataSource xmlns="">
+			<Name>ATXSewOperationMeasurements</Name>
+			<Table>ATXSewOperationMeasurements</Table>
+			<Fields>
+				<AxFormDataSourceField>
+					<DataField>DataAreaId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ItemId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Partition</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>RecId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Size</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>SizeCopy1</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>SizeCopy10</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>SizeCopy11</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>SizeCopy12</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>SizeCopy13</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>SizeCopy14</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>SizeCopy15</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>SizeCopy2</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>SizeCopy3</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>SizeCopy4</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>SizeCopy5</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>SizeCopy6</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>SizeCopy7</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>SizeCopy8</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>SizeCopy9</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>SubOperationId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>TableId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ToleranceDown</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ToleranceUp</DataField>
+				</AxFormDataSourceField>
+			</Fields>
+			<ReferencedDataSources />
+			<DataSourceLinks />
+			<DerivedDataSources />
+		</AxFormDataSource>
+	</DataSources>
+	<Design>
+		<Caption xmlns="">@ATXPLM:NewLabel30</Caption>
+		<Pattern xmlns="">Custom</Pattern>
+		<Controls xmlns="">
+			<AxFormControl xmlns=""
+				i:type="AxFormTabControl">
+				<Name>FormTabControl1</Name>
+				<Type>Tab</Type>
+				<FormControlExtension
+					i:nil="true" />
+				<Controls>
+					<AxFormControl xmlns=""
+						i:type="AxFormTabPageControl">
+						<Name>CutAccesories</Name>
+						<Type>TabPage</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<Controls>
+							<AxFormControl xmlns=""
+								i:type="AxFormGroupControl">
+								<Name>FormGroupControl1</Name>
+								<Type>Group</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<Controls>
+									<AxFormControl xmlns=""
+										i:type="AxFormGridControl">
+										<Name>FormGridControl1</Name>
+										<Type>Grid</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<Controls>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>FormGridControl1_CutAccesoryItem</Name>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>CutAccesoryItem</DataField>
+												<DataSource>ATXCutTechnicalSheet</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>FormGridControl1_Fabric</Name>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>Fabric</DataField>
+												<DataSource>ATXCutTechnicalSheet</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>FormGridControl1_Placement</Name>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>Placement</DataField>
+												<DataSource>ATXCutTechnicalSheet</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormRealControl">
+												<Name>FormGridControl1_CutWidth</Name>
+												<Type>Real</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>CutWidth</DataField>
+												<DataSource>ATXCutTechnicalSheet</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>FormGridControl1_CutDirection</Name>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>CutDirection</DataField>
+												<DataSource>ATXCutTechnicalSheet</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>FormGridControl1_Supply</Name>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>Supply</DataField>
+												<DataSource>ATXCutTechnicalSheet</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>FormGridControl1_Notes</Name>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>Notes</DataField>
+												<DataSource>ATXCutTechnicalSheet</DataSource>
+											</AxFormControl>
+										</Controls>
+										<DataGroup>CutAccesories</DataGroup>
+										<DataSource>ATXCutTechnicalSheet</DataSource>
+									</AxFormControl>
+								</Controls>
+							</AxFormControl>
+						</Controls>
+						<Caption>@ATXPLM:NewLabel24</Caption>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormTabPageControl">
+						<Name>CutInterlining</Name>
+						<Type>TabPage</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<Controls>
+							<AxFormControl xmlns=""
+								i:type="AxFormGroupControl">
+								<Name>FormGroupControl2</Name>
+								<Type>Group</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<Controls>
+									<AxFormControl xmlns=""
+										i:type="AxFormGridControl">
+										<Name>FormGridControl2</Name>
+										<Type>Grid</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<Controls>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>FormGridControl2_CutAccesoryItem</Name>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>CutAccesoryItem</DataField>
+												<DataSource>ATXCutTechnicalSheetInterlining</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>FormGridControl2_Description</Name>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>Description</DataField>
+												<DataSource>ATXCutTechnicalSheetInterlining</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>FormGridControl2_Placement</Name>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>Placement</DataField>
+												<DataSource>ATXCutTechnicalSheetInterlining</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormRealControl">
+												<Name>FormGridControl2_CutWidth</Name>
+												<Type>Real</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>CutWidth</DataField>
+												<DataSource>ATXCutTechnicalSheetInterlining</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>FormGridControl2_CutDirection</Name>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>CutDirection</DataField>
+												<DataSource>ATXCutTechnicalSheetInterlining</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>FormGridControl2_Supply</Name>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>Supply</DataField>
+												<DataSource>ATXCutTechnicalSheetInterlining</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>FormGridControl2_Notes</Name>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>Notes</DataField>
+												<DataSource>ATXCutTechnicalSheetInterlining</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormRealControl">
+												<Name>FormGridControl2_Temp</Name>
+												<Type>Real</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>Temp</DataField>
+												<DataSource>ATXCutTechnicalSheetInterlining</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormRealControl">
+												<Name>FormGridControl2_Time</Name>
+												<Type>Real</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>Time</DataField>
+												<DataSource>ATXCutTechnicalSheetInterlining</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormRealControl">
+												<Name>FormGridControl2_Pressure</Name>
+												<Type>Real</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>Pressure</DataField>
+												<DataSource>ATXCutTechnicalSheetInterlining</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>FormGridControl2_PressureUOM</Name>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>PressureUOM</DataField>
+												<DataSource>ATXCutTechnicalSheetInterlining</DataSource>
+											</AxFormControl>
+										</Controls>
+										<DataGroup>Interlining</DataGroup>
+										<DataSource>ATXCutTechnicalSheetInterlining</DataSource>
+									</AxFormControl>
+								</Controls>
+							</AxFormControl>
+						</Controls>
+						<Caption>@ATXPLM:NewLabel31</Caption>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormTabPageControl">
+						<Name>CutApp</Name>
+						<Type>TabPage</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<Controls>
+							<AxFormControl xmlns=""
+								i:type="AxFormGroupControl">
+								<Name>FormGroupControl2Copy1</Name>
+								<Type>Group</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<Controls>
+									<AxFormControl xmlns=""
+										i:type="AxFormGridControl">
+										<Name>FormGridControl2Copy1</Name>
+										<Type>Grid</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<Controls>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>FormGridControl2Copy1_CutAccesoryItem</Name>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>CutAccesoryItem</DataField>
+												<DataSource>ATXCutTechnicalSheetApp</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>FormGridControl2Copy1_Placement</Name>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>Placement</DataField>
+												<DataSource>ATXCutTechnicalSheetApp</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>FormGridControl2Copy1_SewMachine</Name>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>SewMachine</DataField>
+												<DataSource>ATXCutTechnicalSheetApp</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormRealControl">
+												<Name>FormGridControl2Copy1_InWidth</Name>
+												<Type>Real</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>InWidth</DataField>
+												<DataSource>ATXCutTechnicalSheetApp</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormRealControl">
+												<Name>FormGridControl2Copy1_OutWidth</Name>
+												<Type>Real</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>OutWidth</DataField>
+												<DataSource>ATXCutTechnicalSheetApp</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>FormGridControl2Copy1_CutDirection</Name>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>CutDirection</DataField>
+												<DataSource>ATXCutTechnicalSheetApp</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>FormGridControl2Copy1_BendingType</Name>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>BendingType</DataField>
+												<DataSource>ATXCutTechnicalSheetApp</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>FormGridControl2Copy1_Notes</Name>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>Notes</DataField>
+												<DataSource>ATXCutTechnicalSheetApp</DataSource>
+											</AxFormControl>
+										</Controls>
+										<DataGroup>App</DataGroup>
+										<DataSource>ATXCutTechnicalSheetApp</DataSource>
+									</AxFormControl>
+								</Controls>
+							</AxFormControl>
+						</Controls>
+						<Caption>@ATXPLM:NewLabel39</Caption>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormTabPageControl">
+						<Name>Washing</Name>
+						<Type>TabPage</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<Controls>
+							<AxFormControl xmlns=""
+								i:type="AxFormGroupControl">
+								<Name>FormGroupControl2Copy1Copy1</Name>
+								<Type>Group</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<Controls>
+									<AxFormControl xmlns=""
+										i:type="AxFormGridControl">
+										<Name>FormGridControl2Copy1Copy1</Name>
+										<Type>Grid</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<Controls>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>FormGridControl2Copy1Copy1_CutAccesoryItem</Name>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>CutAccesoryItem</DataField>
+												<DataSource>ATXCutTechnicalSheetWash</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>FormGridControl2Copy1Copy1_ItemName</Name>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataMethod>ItemName</DataMethod>
+												<DataSource>ATXCutTechnicalSheetWash</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>FormGridControl2Copy1Copy1_ClothGarment</Name>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>ClothGarment</DataField>
+												<DataSource>ATXCutTechnicalSheetWash</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>FormGridControl2Copy1Copy1_SendBy</Name>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>SendBy</DataField>
+												<DataSource>ATXCutTechnicalSheetWash</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>FormGridControl2Copy1Copy1_Sleeves</Name>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>Sleeves</DataField>
+												<DataSource>ATXCutTechnicalSheetWash</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>FormGridControl2Copy1Copy1_SpecialComponent</Name>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>SpecialComponent</DataField>
+												<DataSource>ATXCutTechnicalSheetWash</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>FormGridControl2Copy1Copy1_Service</Name>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>Service</DataField>
+												<DataSource>ATXCutTechnicalSheetWash</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>FormGridControl2Copy1Copy1_WashType</Name>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>WashType</DataField>
+												<DataSource>ATXCutTechnicalSheetWash</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>FormGridControl2Copy1Copy1_DyeingType</Name>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>DyeingType</DataField>
+												<DataSource>ATXCutTechnicalSheetWash</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>FormGridControl2Copy1Copy1_Combinations</Name>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>Combinations</DataField>
+												<DataSource>ATXCutTechnicalSheetWash</DataSource>
+											</AxFormControl>
+										</Controls>
+										<DataGroup>Overview</DataGroup>
+										<DataSource>ATXCutTechnicalSheetWash</DataSource>
+									</AxFormControl>
+								</Controls>
+							</AxFormControl>
+						</Controls>
+						<Caption>@ATXPLM:NewLabel48</Caption>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormTabPageControl">
+						<Name>Embroidery</Name>
+						<Type>TabPage</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<Controls>
+							<AxFormControl xmlns=""
+								i:type="AxFormGroupControl">
+								<Name>FormGroupControl2Copy1Copy1Copy1</Name>
+								<Type>Group</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<Controls>
+									<AxFormControl xmlns=""
+										i:type="AxFormGridControl">
+										<Name>EmbroideryGrid</Name>
+										<Type>Grid</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<Controls>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>EmbroideryGrid_CutAccesoryItem</Name>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>CutAccesoryItem</DataField>
+												<DataSource>ATXCutTechnicalSheetEmbroidery</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>EmbroideryGrid_ItemName</Name>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataMethod>ItemName</DataMethod>
+												<DataSource>ATXCutTechnicalSheetEmbroidery</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>EmbroideryGrid_Placement</Name>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>Placement</DataField>
+												<DataSource>ATXCutTechnicalSheetEmbroidery</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>EmbroideryGrid_ClothGarment</Name>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>ClothGarment</DataField>
+												<DataSource>ATXCutTechnicalSheetEmbroidery</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>EmbroideryGrid_EmbroideryType</Name>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>EmbroideryType</DataField>
+												<DataSource>ATXCutTechnicalSheetEmbroidery</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormRealControl">
+												<Name>EmbroideryGrid_Length</Name>
+												<Type>Real</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>Length</DataField>
+												<DataSource>ATXCutTechnicalSheetEmbroidery</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormRealControl">
+												<Name>EmbroideryGrid_Width</Name>
+												<Type>Real</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>Width</DataField>
+												<DataSource>ATXCutTechnicalSheetEmbroidery</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormRealControl">
+												<Name>EmbroideryGrid_Stitches</Name>
+												<Type>Real</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>Stitches</DataField>
+												<DataSource>ATXCutTechnicalSheetEmbroidery</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>EmbroideryGrid_Service</Name>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>Service</DataField>
+												<DataSource>ATXCutTechnicalSheetEmbroidery</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>EmbroideryGrid_Notes</Name>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>Notes</DataField>
+												<DataSource>ATXCutTechnicalSheetEmbroidery</DataSource>
+											</AxFormControl>
+										</Controls>
+										<DataGroup>Overview</DataGroup>
+										<DataSource>ATXCutTechnicalSheetEmbroidery</DataSource>
+									</AxFormControl>
+								</Controls>
+							</AxFormControl>
+						</Controls>
+						<Caption>@ATXPLM:NewLabel53</Caption>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormTabPageControl">
+						<Name>SewMeasurement</Name>
+						<Type>TabPage</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<Controls>
+							<AxFormControl xmlns=""
+								i:type="AxFormGroupControl">
+								<Name>FormGroupControl2Copy1Copy1Copy1Copy1</Name>
+								<Type>Group</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<Controls>
+									<AxFormControl xmlns=""
+										i:type="AxFormGridControl">
+										<Name>SewMeasurementGrid</Name>
+										<Type>Grid</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<Controls>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>SewMeasurementGrid_SubOperationId</Name>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>SubOperationId</DataField>
+												<DataSource>ATXSewOperationMeasurements</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>SewMeasurementGrid_SubOperationName</Name>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataMethod>SubOperationName</DataMethod>
+												<DataSource>ATXSewOperationMeasurements</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>SewMeasurementGrid_ToleranceUp</Name>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>ToleranceUp</DataField>
+												<DataSource>ATXSewOperationMeasurements</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>SewMeasurementGrid_ToleranceDown</Name>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>ToleranceDown</DataField>
+												<DataSource>ATXSewOperationMeasurements</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>SewMeasurementGrid_SizeCopy1</Name>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>SizeCopy1</DataField>
+												<DataSource>ATXSewOperationMeasurements</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>SewMeasurementGrid_SizeCopy2</Name>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>SizeCopy2</DataField>
+												<DataSource>ATXSewOperationMeasurements</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>SewMeasurementGrid_SizeCopy3</Name>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>SizeCopy3</DataField>
+												<DataSource>ATXSewOperationMeasurements</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>SewMeasurementGrid_SizeCopy4</Name>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>SizeCopy4</DataField>
+												<DataSource>ATXSewOperationMeasurements</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>SewMeasurementGrid_SizeCopy5</Name>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>SizeCopy5</DataField>
+												<DataSource>ATXSewOperationMeasurements</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>SewMeasurementGrid_SizeCopy6</Name>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>SizeCopy6</DataField>
+												<DataSource>ATXSewOperationMeasurements</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>SewMeasurementGrid_SizeCopy7</Name>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>SizeCopy7</DataField>
+												<DataSource>ATXSewOperationMeasurements</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>SewMeasurementGrid_SizeCopy8</Name>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>SizeCopy8</DataField>
+												<DataSource>ATXSewOperationMeasurements</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>SewMeasurementGrid_SizeCopy9</Name>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>SizeCopy9</DataField>
+												<DataSource>ATXSewOperationMeasurements</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>SewMeasurementGrid_SizeCopy10</Name>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>SizeCopy10</DataField>
+												<DataSource>ATXSewOperationMeasurements</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>SewMeasurementGrid_SizeCopy11</Name>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>SizeCopy11</DataField>
+												<DataSource>ATXSewOperationMeasurements</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>SewMeasurementGrid_SizeCopy12</Name>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>SizeCopy12</DataField>
+												<DataSource>ATXSewOperationMeasurements</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>SewMeasurementGrid_SizeCopy13</Name>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>SizeCopy13</DataField>
+												<DataSource>ATXSewOperationMeasurements</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>SewMeasurementGrid_SizeCopy14</Name>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>SizeCopy14</DataField>
+												<DataSource>ATXSewOperationMeasurements</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>SewMeasurementGrid_SizeCopy15</Name>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>SizeCopy15</DataField>
+												<DataSource>ATXSewOperationMeasurements</DataSource>
+											</AxFormControl>
+										</Controls>
+										<DataGroup>Overview</DataGroup>
+										<DataSource>ATXSewOperationMeasurements</DataSource>
+									</AxFormControl>
+								</Controls>
+							</AxFormControl>
+						</Controls>
+						<Caption>@ATXPLM:NewLabel54</Caption>
+					</AxFormControl>
+				</Controls>
+			</AxFormControl>
+		</Controls>
+	</Design>
+	<Parts />
+</AxForm>

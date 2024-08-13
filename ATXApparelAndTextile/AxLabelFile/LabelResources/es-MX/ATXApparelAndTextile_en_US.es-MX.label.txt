@@ -1,0 +1,262 @@
+﻿ATXL00001=Cabecera de pedidos
+ ;Cabecera de pedidos
+ATXL00002=Comentarios
+ ;Comentarios
+ATXL00003=CPO
+ ;CPO
+ATXL00004=lbl class
+ ;lbl class
+ATXL00005=Fecha de cancelación
+ ;Fecha de cancelación
+ATXL00006=Fecha de entrega
+ ;Fecha de entrega
+ATXL00007=Agrupador
+ ;Agrupador
+ATXL00008=LBL - Agrupador
+ ;LBL - Agrupador
+ATXL00009=General
+ ;General
+ATXL00010=Agrupador de pedidos
+ ;Agrupador de pedidos
+ATXL00011=Requisición
+ ;Requisición
+ATXL00012=Estado
+ ;Estado
+ATXL00013=Cargado
+ ;Cargado
+ATXL00014=Autorizado
+ ;Autorizado
+ATXL00015=Terminado
+ ;Terminado
+ATXL00016=Rechazado
+ ;Rechazado
+ATXL00017=Error
+ ;Error
+ATXL00018=Tipo de orden
+ ;Tipo de orden
+ATXL00019=Muestras
+ ;Muestras
+ATXL00020=Venta
+ ;Venta
+ATXL00021=Fecha revisada
+ ;Fecha revisada
+ATXL00022=Temporada
+ ;Temporada
+ATXL00023=Tienda
+ ;Tienda
+ATXL00024=Marca
+ ;Marca
+ATXL00025=División
+ ;División
+ATXL00026=Destino
+ ;Destino
+ATXL00027=Tipo de muestra
+ ;Tipo de muestra
+ATXL00028=Fecha de autorización
+ ;Fecha de autorización
+ATXL00029=Referencia del cliente anterior
+ ;Referencia del cliente anterior
+ATXL00030=Original ReqId
+ ;Original ReqId
+ATXL00031=Fecha de emisión
+ ;Fecha de emisión
+ATXL00032=Número de plan
+ ;Número de plan
+ATXL00033=Cantidad OV
+ ;Cantidad OV
+ATXL00034=Saltar validación de L. MAT
+ ;Saltar validación de L. MAT
+ATXL00035=Datos del cliente ()
+ ; Datos del cliente ()
+ATXL00036=Fechas ()
+ ;Fechas ()
+ATXL00037=Dimensiones fisicas ()
+ ;Dimensiones fisicas ()
+ATXL00038=Filtros ()
+ ;Filtros ()
+ATXL00039=Tela ()
+ ;Tela ()
+ATXL00040=Categoria
+ ;Categoria
+ATXL00041=NAFTA
+ ;NAFTA
+ATXL00042=No NAFTA
+ ;No NAFTA
+ATXL00043=Clasificación NAFTA
+ ;Clasificación NAFTA
+ATXL00044=Version ()
+ ;Version ()
+ATXL00045=Fecha de revisión
+ ;Fecha de revisión
+ATXL00046=Alerta
+ ;Alerta
+ATXL00047=Correos
+ ;Correos
+ATXL00048=Bloque de L.MAT
+ ;Bloque de L.MAT
+ATXL00049=BOM TypeBlock
+ ;BOM TypeBlock
+ATXL00050=Generar L. MAT cuando se autoriza el pedido
+ ;Generar L. MAT cuando se autoriza el pedido
+ATXL00051=Liberar solicitud de pedidos
+ ;Liberar solicitud de pedidos
+ATXL00052=Cambio de pedido del cliente
+ ;Cambio de pedido del cliente
+ATXL00053=Cambio de talla o cantidad
+ ;Cambio de talla o cantidad
+ATXL00054=Liberar solicitud de pedidos de muestras
+ ;Liberar solicitud de pedidos de muestras
+ATXL00055=Alerta para alta de artículos
+ ;Alerta para alta de artículos
+ATXL00056=Conjunto de producción [Extracción]
+ ;Conjunto de producción [Extracción]
+ATXL00057=Confirmación (Time & Action)
+ ;Confirmación (Time & Action)
+ATXL00058=Aprobado
+ ;Aprobado
+ATXL00059=Cuadrícula
+ ;Cuadrícula
+ATXL00060=Tallas
+ ;Tallas
+ATXL00061=LBL - Lineas de matriz de dimension
+ ;LBL - Lineas de matriz de dimension
+ATXL00062=Matriz de configuración
+ ;Matriz de configuración
+ATXL00063=Matriz de talla
+ ;Matriz de talla
+ATXL00064=Matriz de color
+ ;Matriz de color
+ATXL00065=Matriz de estilo
+ ;Matriz de estilo
+ATXL00066=No se puede eliminar una matriz en uso. () en el articulo %1
+ ;No se puede eliminar una matriz en uso. () en el articulo %1
+ATXL00067=Colocación ()
+ ;Colocación ()
+ATXL00068=Texto alternativo
+ ;Texto alternativo
+ATXL00069=Tipo
+ ;Tipo
+ATXL00070=Colocación
+ ;Colocación
+ATXL00071=Colocación L. MAT
+ ;Colocación L. MAT
+ATXL00072=Plantilla
+ ;Plantilla
+ATXL00073=Estilo
+ ;Estilo
+ATXL00074=Lista de materiales
+ ;Lista de materiales
+ATXL00075=Muestras
+ ;Muestras
+ATXL00076=Tipo de plantilla
+ ;Tipo de plantilla
+ATXL00077=Bloquear plantilla de L. MAT
+ ;Bloquear plantilla de L. MAT
+ATXL00078=Código de configuración extra de corte
+ ;Código de configuración extra de corte
+ATXL00079=Grupo de materiales
+ ;Grupo de materiales
+ATXL00080=Agrupador de dimensiones [Solicitud de pedidos]
+ ;Agrupador de dimensiones [Solicitud de pedidos]
+ATXL00081=Cantidad sin decimales
+ ;Cantidad sin decimales
+ATXL00082=Cantidad producción
+ ;Cantidad producción
+ATXL00083=Producido
+ ;Producido
+ATXL00084=Cantidad cliente
+ ;Cantidad cliente
+ATXL00085=Cantidad dividida
+ ;Cantidad dividida
+ATXL00086=Cabecera de pedidos
+ ;Cabecera de pedidos
+ATXL00087=Fecha de carga
+ ;Fecha de carga
+ATXL00088=Crear versión
+ ;Crear versión
+ATXL00089=Versión creada
+ ;Versión creada
+ATXL00090=Solicitud de pedidos
+ ;Solicitud de pedidos
+ATXL00091=Apparel And Textile
+ ;Apparel And Textile
+ATXL00092=Actualizar cantidad en Orden de venta
+ ;Actualizar cantidad en Orden de venta
+ATXL00093=Crear solicitud de pedido
+ ;Crear solicitud de pedido
+ATXL00094=Cancelar pedido
+ ;Cancelar pedido
+ATXL00095=No. de versión
+ ;No. de versión
+ATXL00096=Copiar pedido
+ ;Copiar pedido
+ATXL00098=Crear versión
+ ;Crear versión
+ATXL00099=Cambiar pedido del cliente
+ ;Cambiar pedido del cliente
+ATXL00100=Pendiente
+ ;Pendiente
+ATXL00101=Actualizar referencias de producción
+ ;Actualizar referencias de producción
+ATXL00102=Fin del archivo
+ ;Fin del archivo
+ATXL00103=Existen errores en la carga de información
+ ;Existen errores en la carga de información
+ATXL00104=Número de plan
+ ;Número de plan
+ATXL00105=Archivo migrado
+ ;Archivo migrado
+ATXL00106=Solicitud de pedidos
+ ;Solicitud de pedidos
+ATXL00107=Registro de errores migración
+ ;Registro de errores migración
+ATXL00108=Limpiar registro
+ ;Limpiar registro
+ATXL00109=No se ha liberado la configuración %1 del artículo %2
+ ;No se ha liberado la configuración %1 del artículo %2
+ATXL00110=No se ha liberado el tamaño %1 del artículo %2
+ ;No se ha liberado el tamaño %1 del artículo %2
+ATXL00111=No se ha liberado el color %1 del artículo %2
+ ;No se ha liberado el color %1 del artículo %2
+ATXL00112=Cliente %1 no existe
+ ;Cliente %1 no existe
+ATXL00113=El cliente %1 no tiene configurado la divisa
+ ;El cliente %1 no tiene configurado la divisa
+ATXL00114=No se ha configurado el conjunto de producción %1
+ ;No se ha configurado el conjunto de producción %1
+ATXL00115=Temporada %1 no existe
+ ;Temporada %1 no existe
+ATXL00116=Destino %1 no existe
+ ;Destino %1 no existe
+ATXL00117=División %1 no existe
+ ;División %1 no existe
+ATXL00118=Tienda %1 no existe
+ ;Tienda %1 no existe
+ATXL00119=Artículo %1 no existe
+ ;Artículo %1 no existe
+ATXL00120=Sitio %1 no existe
+ ;Sitio %1 no existe
+ATXL00121=Almacén %1 no existe
+ ;Almacén %1 no existe
+ATXL00122=Tipo de muestra %1 no existe
+ ;Tipo de muestra %1 no existe
+ATXL00123=No se ha liberado la configuración %1 para el artículo %2
+ ;No se ha liberado la configuración %1 para el artículo %2
+ATXL00124=No se ha liberado la talla %1 para el artículo %2
+ ;No se ha liberado la talla %1 para el artículo %2
+ATXL00125=No se ha liberado el color %1 para el artículo %2
+ ;No se ha liberado el color %1 para el artículo %2
+ATXL00126=La línea esta ligada con el numero de referencia %1
+ ;La línea esta ligada con el numero de referencia %1
+ATXL00127=Cargar archivo
+ ;Cargar archivo
+ATXL00128=Configurar
+ ;Configurar
+ATXL00129=Parámetros de venta
+ ;Parámetros de venta
+ATXL00130=Parámetros de Apparel And Textile
+ ;Parámetros de Apparel And Textile
+ATXL00131=Secuencia [Solicitud de pedidos]
+ ;Secuencia [Solicitud de pedidos]
+ATXL00132=Matriz de dimensión
+ ;Matriz de dimensión

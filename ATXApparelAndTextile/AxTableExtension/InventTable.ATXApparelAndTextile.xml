@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxTableExtension xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>InventTable.ATXApparelAndTextile</Name>
+	<FieldGroupExtensions />
+	<FieldGroups>
+		<AxTableFieldGroup>
+			<Name>ATXBOMMatrixTemplate</Name>
+			<Label>@ATXApparelAndTextile_en_US:ATXL00132</Label>
+			<Fields>
+				<AxTableFieldGroupField>
+					<DataField>ATXItemSizeGridValue</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>ATXItemColorGridValue</DataField>
+				</AxTableFieldGroupField>
+			</Fields>
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>ATXProductOvercut</Name>
+			<Label>@ATXAT:NewLabel133</Label>
+			<Fields>
+				<AxTableFieldGroupField>
+					<DataField>ATXProductOvercutId</DataField>
+				</AxTableFieldGroupField>
+			</Fields>
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>ATXSampleBook</Name>
+			<Label>@ATXPLM:NewLabel14</Label>
+			<Fields>
+				<AxTableFieldGroupField>
+					<DataField>ATXSampleBookId</DataField>
+				</AxTableFieldGroupField>
+			</Fields>
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>ATXGeneral</Name>
+			<Label>@SYS35893</Label>
+			<Fields>
+				<AxTableFieldGroupField>
+					<DataField>ATXFabricComposition</DataField>
+				</AxTableFieldGroupField>
+			</Fields>
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>ATXCut</Name>
+			<Label>@ATXAT:NewLabel201</Label>
+			<Fields>
+				<AxTableFieldGroupField>
+					<DataField>ATXCutPackQty</DataField>
+				</AxTableFieldGroupField>
+			</Fields>
+		</AxTableFieldGroup>
+	</FieldGroups>
+	<FieldModifications />
+	<Fields>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>ATXItemConfigGridValue</Name>
+			<ExtendedDataType>ATXItemGridId</ExtendedDataType>
+			<Label>@ATXAT:NewLabel111</Label>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>ATXItemSizeGridValue</Name>
+			<ExtendedDataType>ATXItemGridId</ExtendedDataType>
+			<Label>@ATXAT:NewLabel112</Label>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>ATXItemColorGridValue</Name>
+			<ExtendedDataType>ATXItemGridId</ExtendedDataType>
+			<Label>@ATXAT:NewLabel113</Label>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>ATXItemStyleGridValue</Name>
+			<ExtendedDataType>ATXItemGridId</ExtendedDataType>
+			<Label>@ATXAT:NewLabel114</Label>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>ATXItemMaterialGroupId</Name>
+			<ExtendedDataType>ATXItemMaterialGroupId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>ATXItemCategoryId</Name>
+			<ExtendedDataType>ATXItemCategoryId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>ATXProductOvercutId</Name>
+			<ExtendedDataType>ATXProductOvercutId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>ATXSampleBookId</Name>
+			<ExtendedDataType>ATXSampleBookId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>ATXFabricComposition</Name>
+			<ExtendedDataType>ATXFabricComposition</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldReal">
+			<Name>ATXCutPackQty</Name>
+			<ExtendedDataType>ATXCutPackQty</ExtendedDataType>
+		</AxTableField>
+	</Fields>
+	<FullTextIndexes />
+	<Indexes />
+	<Mappings />
+	<PropertyModifications />
+	<RelationExtensions />
+	<RelationModifications />
+	<Relations>
+		<AxTableRelation>
+			<Name>ATXItemColorGrid</Name>
+			<RelatedTable>ATXItemGridTable</RelatedTable>
+			<Constraints>
+				<AxTableRelationConstraint xmlns=""
+					i:type="AxTableRelationConstraintField">
+					<Name>ATXItemColorGridValue</Name>
+					<Field>ATXItemColorGridValue</Field>
+					<RelatedField>ItemGridId</RelatedField>
+				</AxTableRelationConstraint>
+				<AxTableRelationConstraint xmlns=""
+					i:type="AxTableRelationConstraintRelatedFixed">
+					<Name>DimComboType</Name>
+					<RelatedField>DimComboType</RelatedField>
+					<ValueStr>ATXDimComboType::Color</ValueStr>
+				</AxTableRelationConstraint>
+			</Constraints>
+		</AxTableRelation>
+		<AxTableRelation>
+			<Name>ATXItemConfigGrid</Name>
+			<RelatedTable>ATXItemGridTable</RelatedTable>
+			<Constraints>
+				<AxTableRelationConstraint xmlns=""
+					i:type="AxTableRelationConstraintField">
+					<Name>ATXItemConfigGridValue</Name>
+					<Field>ATXItemConfigGridValue</Field>
+					<RelatedField>ItemGridId</RelatedField>
+				</AxTableRelationConstraint>
+				<AxTableRelationConstraint xmlns=""
+					i:type="AxTableRelationConstraintRelatedFixed">
+					<Name>DimComboType</Name>
+					<RelatedField>DimComboType</RelatedField>
+					<ValueStr>ATXDimComboType::Configuration</ValueStr>
+				</AxTableRelationConstraint>
+			</Constraints>
+		</AxTableRelation>
+		<AxTableRelation>
+			<Name>ATXItemSizeGrid</Name>
+			<RelatedTable>ATXItemGridTable</RelatedTable>
+			<Constraints>
+				<AxTableRelationConstraint xmlns=""
+					i:type="AxTableRelationConstraintField">
+					<Name>ATXItemSizeGridValue</Name>
+					<Field>ATXItemSizeGridValue</Field>
+					<RelatedField>ItemGridId</RelatedField>
+				</AxTableRelationConstraint>
+				<AxTableRelationConstraint xmlns=""
+					i:type="AxTableRelationConstraintRelatedFixed">
+					<Name>DimComboType</Name>
+					<RelatedField>DimComboType</RelatedField>
+					<ValueStr>ATXDimComboType::Size</ValueStr>
+				</AxTableRelationConstraint>
+			</Constraints>
+		</AxTableRelation>
+		<AxTableRelation>
+			<Name>ATXItemStyleGrid</Name>
+			<RelatedTable>ATXItemGridTable</RelatedTable>
+			<Constraints>
+				<AxTableRelationConstraint xmlns=""
+					i:type="AxTableRelationConstraintField">
+					<Name>ATXItemStyleGridValue</Name>
+					<Field>ATXItemStyleGridValue</Field>
+					<RelatedField>ItemGridId</RelatedField>
+				</AxTableRelationConstraint>
+				<AxTableRelationConstraint xmlns=""
+					i:type="AxTableRelationConstraintRelatedFixed">
+					<Name>DimComboType</Name>
+					<RelatedField>DimComboType</RelatedField>
+					<ValueStr>ATXDimComboType::Style</ValueStr>
+				</AxTableRelationConstraint>
+			</Constraints>
+		</AxTableRelation>
+		<AxTableRelation>
+			<Name>ATXProductOvercut</Name>
+			<RelatedTable>ATXProductOvercut</RelatedTable>
+			<Constraints>
+				<AxTableRelationConstraint xmlns=""
+					i:type="AxTableRelationConstraintField">
+					<Name>ATXProductOvercutId</Name>
+					<Field>ATXProductOvercutId</Field>
+					<RelatedField>ProductOvercutId</RelatedField>
+				</AxTableRelationConstraint>
+			</Constraints>
+		</AxTableRelation>
+		<AxTableRelation>
+			<Name>ATXSampleBookTable</Name>
+			<RelatedTable>ATXSampleBookTable</RelatedTable>
+			<Constraints>
+				<AxTableRelationConstraint xmlns=""
+					i:type="AxTableRelationConstraintField">
+					<Name>ATXSampleBookId</Name>
+					<Field>ATXSampleBookId</Field>
+					<RelatedField>SampleBookId</RelatedField>
+				</AxTableRelationConstraint>
+			</Constraints>
+		</AxTableRelation>
+	</Relations>
+</AxTableExtension>

@@ -1,0 +1,417 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxForm xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="Microsoft.Dynamics.AX.Metadata.V6">
+	<Name>ATXItemDimGrids</Name>
+	<SourceCode>
+		<Methods xmlns="">
+			<Method>
+				<Name>classDeclaration</Name>
+				<Source><![CDATA[
+[Form]
+public class ATXItemDimGrids extends FormRun
+{
+}
+
+]]></Source>
+			</Method>
+		</Methods>
+		<DataSources xmlns="" />
+		<DataControls xmlns="" />
+		<Members xmlns="" />
+	</SourceCode>
+	<DataSources>
+		<AxFormDataSource xmlns="">
+			<Name>ATXItemGridTable</Name>
+			<Table>ATXItemGridTable</Table>
+			<Fields>
+				<AxFormDataSourceField>
+					<DataField>DataAreaId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>DimComboType</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>GridIdName</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ItemGridId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Partition</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>RecId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>TableId</DataField>
+				</AxFormDataSourceField>
+			</Fields>
+			<ReferencedDataSources />
+			<DataSourceLinks />
+			<DerivedDataSources />
+		</AxFormDataSource>
+		<AxFormDataSource xmlns="">
+			<Name>ATXItemGridLines</Name>
+			<Table>ATXItemGridLines</Table>
+			<Fields>
+				<AxFormDataSourceField>
+					<DataField>Active</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Check</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ColorDate</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ColorReference</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>DataAreaId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Description</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ItemGridId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ItemGridValue</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Partition</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>RecId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>RetailDisplayOrder</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>TableId</DataField>
+				</AxFormDataSourceField>
+			</Fields>
+			<ReferencedDataSources />
+			<JoinSource>ATXItemGridTable</JoinSource>
+			<DataSourceLinks />
+			<DerivedDataSources />
+		</AxFormDataSource>
+	</DataSources>
+	<Design>
+		<Caption xmlns="">@ATXAT:NewLabel64</Caption>
+		<Pattern xmlns="">SimpleListDetails-Grid</Pattern>
+		<PatternVersion xmlns="">1.4</PatternVersion>
+		<Style xmlns="">SimpleListDetails</Style>
+		<Controls xmlns="">
+			<AxFormControl xmlns=""
+				i:type="AxFormActionPaneControl">
+				<Name>FormActionPaneControl1</Name>
+				<Type>ActionPane</Type>
+				<FormControlExtension
+					i:nil="true" />
+				<Controls />
+			</AxFormControl>
+			<AxFormControl xmlns=""
+				i:type="AxFormGroupControl">
+				<Name>List</Name>
+				<HeightMode>SizeToAvailable</HeightMode>
+				<Type>Group</Type>
+				<Width>300</Width>
+				<WidthMode>Manual</WidthMode>
+				<FormControlExtension
+					i:nil="true" />
+				<Controls>
+					<AxFormControl>
+						<Name>QuickFilterControl</Name>
+						<WidthMode>SizeToAvailable</WidthMode>
+						<FormControlExtension>
+							<Name>QuickFilterControl</Name>
+							<ExtensionComponents />
+							<ExtensionProperties>
+								<AxFormControlExtensionProperty>
+									<Name>targetControlName</Name>
+									<Type>String</Type>
+									<Value>GridTable</Value>
+								</AxFormControlExtensionProperty>
+								<AxFormControlExtensionProperty>
+									<Name>placeholderText</Name>
+									<Type>String</Type>
+								</AxFormControlExtensionProperty>
+								<AxFormControlExtensionProperty>
+									<Name>defaultColumnName</Name>
+									<Type>String</Type>
+								</AxFormControlExtensionProperty>
+							</ExtensionProperties>
+						</FormControlExtension>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormGroupControl">
+						<Name>CustomFilterGroup</Name>
+						<Type>Group</Type>
+						<WidthMode>SizeToAvailable</WidthMode>
+						<FormControlExtension
+							i:nil="true" />
+						<Controls />
+						<FrameType>None</FrameType>
+						<Style>CustomFilter</Style>
+						<ViewEditMode>Edit</ViewEditMode>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormGridControl">
+						<Name>GridTable</Name>
+						<AllowEdit>No</AllowEdit>
+						<Type>Grid</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<Controls>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>GridTable_ItemGridId</Name>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>ItemGridId</DataField>
+								<DataSource>ATXItemGridTable</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>GridTable_GridIdName</Name>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>GridIdName</DataField>
+								<DataSource>ATXItemGridTable</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormComboBoxControl">
+								<Name>GridTable_DimComboType</Name>
+								<Type>ComboBox</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>DimComboType</DataField>
+								<DataSource>ATXItemGridTable</DataSource>
+								<Items />
+							</AxFormControl>
+						</Controls>
+						<DataGroup>General</DataGroup>
+						<DataSource>ATXItemGridTable</DataSource>
+						<MultiSelect>No</MultiSelect>
+						<ShowRowLabels>No</ShowRowLabels>
+						<Style>Tabular</Style>
+					</AxFormControl>
+				</Controls>
+				<FrameType>None</FrameType>
+				<Style>SidePanel</Style>
+			</AxFormControl>
+			<AxFormControl xmlns=""
+				i:type="AxFormGroupControl">
+				<Name>ListDetailSplitter</Name>
+				<Type>Group</Type>
+				<FormControlExtension
+					i:nil="true" />
+				<Controls />
+				<Style>SplitterVerticalContainer</Style>
+			</AxFormControl>
+			<AxFormControl xmlns=""
+				i:type="AxFormGroupControl">
+				<Name>DetailsGroup</Name>
+				<Pattern>FieldsFieldGroups</Pattern>
+				<PatternVersion>1.1</PatternVersion>
+				<Type>Group</Type>
+				<WidthMode>SizeToAvailable</WidthMode>
+				<FormControlExtension
+					i:nil="true" />
+				<Controls>
+					<AxFormControl xmlns=""
+						i:type="AxFormStringControl">
+						<Name>DetailsGroup_ItemGridId</Name>
+						<Type>String</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<DataField>ItemGridId</DataField>
+						<DataSource>ATXItemGridTable</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormStringControl">
+						<Name>DetailsGroup_GridIdName</Name>
+						<Type>String</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<DataField>GridIdName</DataField>
+						<DataSource>ATXItemGridTable</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormComboBoxControl">
+						<Name>DetailsGroup_DimComboType</Name>
+						<Type>ComboBox</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<DataField>DimComboType</DataField>
+						<DataSource>ATXItemGridTable</DataSource>
+						<Items />
+					</AxFormControl>
+				</Controls>
+				<ColumnsMode>Fill</ColumnsMode>
+				<DataGroup>General</DataGroup>
+				<DataSource>ATXItemGridTable</DataSource>
+				<FrameType>None</FrameType>
+			</AxFormControl>
+			<AxFormControl xmlns=""
+				i:type="AxFormTabControl">
+				<Name>FormTabControl1</Name>
+				<Type>Tab</Type>
+				<FormControlExtension
+					i:nil="true" />
+				<Controls>
+					<AxFormControl xmlns=""
+						i:type="AxFormTabPageControl">
+						<Name>FormTabPageControl1</Name>
+						<Pattern>ToolbarList</Pattern>
+						<PatternVersion>1.2</PatternVersion>
+						<Type>TabPage</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<Controls>
+							<AxFormControl xmlns=""
+								i:type="AxFormActionPaneControl">
+								<Name>LinesFormActionPaneControl</Name>
+								<Type>ActionPane</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<Controls>
+									<AxFormControl xmlns=""
+										i:type="AxFormActionPaneTabControl">
+										<Name>LinesActionPaneTab</Name>
+										<ElementPosition>1431655764</ElementPosition>
+										<FilterExpression>%1</FilterExpression>
+										<HeightMode>Auto</HeightMode>
+										<Type>ActionPaneTab</Type>
+										<VerticalSpacing>-1</VerticalSpacing>
+										<WidthMode>Auto</WidthMode>
+										<FormControlExtension
+											i:nil="true" />
+										<Controls>
+											<AxFormControl xmlns=""
+												i:type="AxFormButtonGroupControl">
+												<Name>LinesButtonGroup</Name>
+												<ElementPosition>1431655764</ElementPosition>
+												<FilterExpression>%1</FilterExpression>
+												<HeightMode>Auto</HeightMode>
+												<LeftMode>AutoLeft</LeftMode>
+												<Type>ButtonGroup</Type>
+												<VerticalSpacing>-1</VerticalSpacing>
+												<WidthMode>Auto</WidthMode>
+												<FormControlExtension
+													i:nil="true" />
+												<Controls>
+													<AxFormControl xmlns=""
+														i:type="AxFormCommandButtonControl">
+														<Name>Add</Name>
+														<ElementPosition>1073741822</ElementPosition>
+														<FilterExpression>%1</FilterExpression>
+														<HeightMode>Auto</HeightMode>
+														<NeededPermission>Manual</NeededPermission>
+														<Type>CommandButton</Type>
+														<VerticalSpacing>-1</VerticalSpacing>
+														<WidthMode>Auto</WidthMode>
+														<FormControlExtension
+															i:nil="true" />
+														<ButtonDisplay>TextWithImageLeft</ButtonDisplay>
+														<Command>New</Command>
+														<NormalImage>New</NormalImage>
+														<Text>@SYS60080</Text>
+													</AxFormControl>
+													<AxFormControl xmlns=""
+														i:type="AxFormCommandButtonControl">
+														<Name>Remove</Name>
+														<ElementPosition>1610612734</ElementPosition>
+														<FilterExpression>%1</FilterExpression>
+														<HeightMode>Auto</HeightMode>
+														<NeededPermission>Manual</NeededPermission>
+														<Type>CommandButton</Type>
+														<VerticalSpacing>-1</VerticalSpacing>
+														<WidthMode>Auto</WidthMode>
+														<FormControlExtension
+															i:nil="true" />
+														<ButtonDisplay>TextWithImageLeft</ButtonDisplay>
+														<Command>DeleteRecord</Command>
+														<NeedsRecord>Yes</NeedsRecord>
+														<NormalImage>Delete</NormalImage>
+														<SaveRecord>No</SaveRecord>
+														<Text>@SYS135131</Text>
+													</AxFormControl>
+												</Controls>
+												<DataSource>ATXItemGridLines</DataSource>
+											</AxFormControl>
+										</Controls>
+										<AlignChild>No</AlignChild>
+										<AlignChildren>No</AlignChildren>
+										<ArrangeMethod>Vertical</ArrangeMethod>
+									</AxFormControl>
+								</Controls>
+								<DataSource>ATXItemGridLines</DataSource>
+								<Style>Strip</Style>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormGroupControl">
+								<Name>LinesGroup</Name>
+								<Pattern>CustomFilters</Pattern>
+								<PatternVersion>1.1</PatternVersion>
+								<Type>Group</Type>
+								<WidthMode>SizeToAvailable</WidthMode>
+								<FormControlExtension
+									i:nil="true" />
+								<Controls />
+								<ArrangeMethod>HorizontalLeft</ArrangeMethod>
+								<FrameType>None</FrameType>
+								<Style>CustomFilter</Style>
+								<ViewEditMode>Edit</ViewEditMode>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormGridControl">
+								<Name>LinesFormGridControl</Name>
+								<Type>Grid</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<Controls>
+									<AxFormControl xmlns=""
+										i:type="AxFormStringControl">
+										<Name>FormGridControl1_ItemGridValue</Name>
+										<Type>String</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<DataField>ItemGridValue</DataField>
+										<DataSource>ATXItemGridLines</DataSource>
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormStringControl">
+										<Name>LinesFormGridControl_Description</Name>
+										<Type>String</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<DataField>Description</DataField>
+										<DataSource>ATXItemGridLines</DataSource>
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormRealControl">
+										<Name>FormGridControl1_RetailDisplayOrder</Name>
+										<Type>Real</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<DataField>RetailDisplayOrder</DataField>
+										<DataSource>ATXItemGridLines</DataSource>
+									</AxFormControl>
+								</Controls>
+								<DataGroup>Overview</DataGroup>
+								<DataSource>ATXItemGridLines</DataSource>
+								<Style>Tabular</Style>
+							</AxFormControl>
+						</Controls>
+						<Caption>@ATXAT:NewLabel109</Caption>
+					</AxFormControl>
+				</Controls>
+				<Style>FastTabs</Style>
+			</AxFormControl>
+		</Controls>
+	</Design>
+	<Parts />
+</AxForm>

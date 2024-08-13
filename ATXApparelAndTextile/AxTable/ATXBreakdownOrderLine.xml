@@ -1,0 +1,388 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxTable xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXBreakdownOrderLine</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+public class ATXBreakdownOrderLine extends common
+{
+
+
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>findBySalesTransBOMId</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Find Breakdown line
+    /// </summary>
+    /// <param name = "_salesId">Sales order</param>
+    /// <param name = "_inventTransId">Line ID</param>
+    /// <param name = "_bomId">Line BOM ID</param>
+    /// <param name = "_forUpdate">Update?</param>
+    /// <returns></returns>
+    static ATXBreakdownOrderLine findBySalesTransBOMId(
+        SalesId         _salesId,
+        InventTransId   _inventTransId,
+        BomId           _bomId,
+        boolean         _forUpdate = false)
+    {
+        ATXBreakdownOrderLine breakdownOrderLine;
+
+        if (_salesId && _inventTransId && _bomId)
+        {
+            breakdownOrderLine.selectForUpdate(_forUpdate);
+            select firstOnly breakdownOrderLine
+                where breakdownOrderLine.SalesId == _salesId
+                && breakdownOrderLine.InventTransId == _inventTransId
+                && breakdownOrderLine.BOMId == _bomId;
+        }
+        return breakdownOrderLine;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>validateWrite</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Change qty when order is being reported as finished is not allowed
+    /// </summary>
+    /// <returns></returns>
+    public boolean validateWrite()
+    {
+        boolean ret;
+        ret = super();
+
+        if (ret)
+        {
+            if (this.Qty < this.QtyEnd)
+            {
+                ret = checkFailed(strfmt("@ATXAT:NewLabel42",
+                    this.orig().Qty,
+                    this.Qty,
+                    this.qty,
+                    this.InventSizeId,
+                    this.InventColorId)
+                );
+            }
+        }
+
+        return ret;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>modifiedField</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name = "_fieldId"></param>
+    public void modifiedField(fieldId _fieldId)
+    {
+        BOMVersion          bomVersion;
+
+        super(_fieldId);
+        switch (_fieldId)
+        {
+            case fieldNum(ATXBreakdownOrderLine, BOMId):
+                bomVersion = BOMVersion::ATXfindByItemBOMId(this.ItemId, this.BOMId);
+                if (bomVersion)
+                {
+                    this.ConfigId       = bomVersion.ATXConfigId;
+                    this.InventSizeId   = bomVersion.ATXInventSizeId;
+                    this.InventColorId  = bomVersion.ATXInventColorId;
+                    this.InventStyleId  = bomVersion.ATXInventStyleId;
+                }
+                break;
+            case fieldNum(ATXBreakdownOrderLine, QtyOrig):
+                this.Qty = this.QtyOrig;
+                break;
+        }
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>sumQtyLines</Name>
+				<Source><![CDATA[
+    SalesQty sumQtyLines()
+    {
+        return (select sum(Qty) from ATXBreakdownOrderLine
+            index InventTransIdx
+            where   ATXBreakdownOrderLine.SalesId == this.SalesId
+            &&  ATXBreakdownOrderLine.InventTransId != this.InventTransId).Qty;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>validateField</Name>
+				<Source><![CDATA[
+    public boolean validateField(FieldId _fieldIdToCheck)
+    {
+        boolean ret;
+        ret = super(_fieldIdToCheck);
+
+        switch(_fieldIdToCheck)
+        {
+            case fieldNum(ATXBreakdownOrderLine, QtyOrig):
+                if (this.QtyOrig < 0)
+                {
+                    ret = checkFailed("@ATXAT:NewLabel48");
+                }
+                break;
+        }
+
+        return ret;
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+	<Label>@ATXAT:NewLabel11</Label>
+	<SubscriberAccessLevel>
+		<Read>Allow</Read>
+	</SubscriberAccessLevel>
+	<TitleField1>SalesId</TitleField1>
+	<TitleField2>BOMId</TitleField2>
+	<ClusteredIndex>InventTransIdx</ClusteredIndex>
+	<PrimaryIndex>InventTransIdx</PrimaryIndex>
+	<DeleteActions />
+	<FieldGroups>
+		<AxTableFieldGroup>
+			<Name>AutoReport</Name>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoLookup</Name>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoIdentification</Name>
+			<AutoPopulate>Yes</AutoPopulate>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoSummary</Name>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoBrowse</Name>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>Request</Name>
+			<Label>@ATXAT:NewLabel9</Label>
+			<Fields>
+				<AxTableFieldGroupField>
+					<DataField>ConfigId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>InventSizeId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>InventColorId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>InventStyleId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>QtyOrig</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>Qty</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>QtyEnd</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>SalesPrice</DataField>
+				</AxTableFieldGroupField>
+			</Fields>
+		</AxTableFieldGroup>
+	</FieldGroups>
+	<Fields>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>BOMId</Name>
+			<ExtendedDataType>BOMId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>ConfigId</Name>
+			<ExtendedDataType>EcoResConfigurationName</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>InventColorId</Name>
+			<ExtendedDataType>EcoResColorName</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>InventSizeId</Name>
+			<ExtendedDataType>EcoResSizeName</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>InventStyleId</Name>
+			<ExtendedDataType>EcoResStyleName</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>InventTransId</Name>
+			<ExtendedDataType>InventTransId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>ItemId</Name>
+			<ExtendedDataType>ItemId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldReal">
+			<Name>ProdQty</Name>
+			<ExtendedDataType>ATXQtyWithoutDecimals</ExtendedDataType>
+			<Label>@ATXAT:NewLabel44</Label>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldReal">
+			<Name>QtyEnd</Name>
+			<ExtendedDataType>ATXQtyWithoutDecimals</ExtendedDataType>
+			<Label>@ATXAT:NewLabel43</Label>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldReal">
+			<Name>QtyOrig</Name>
+			<ExtendedDataType>ATXQtyWithoutDecimals</ExtendedDataType>
+			<Label>@ATXAT:NewLabel45</Label>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>SalesId</Name>
+			<ExtendedDataType>SalesId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldReal">
+			<Name>SalesPrice</Name>
+			<ExtendedDataType>SalesPrice</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldReal">
+			<Name>SplitQty</Name>
+			<ExtendedDataType>ATXQtyWithoutDecimals</ExtendedDataType>
+			<Label>@ATXAT:NewLabel46</Label>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldInt64">
+			<Name>RefRecId</Name>
+			<ExtendedDataType>RefRecId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldReal">
+			<Name>Qty</Name>
+			<AllowEdit>No</AllowEdit>
+			<AllowEditOnCreate>No</AllowEditOnCreate>
+			<ExtendedDataType>Qty</ExtendedDataType>
+		</AxTableField>
+	</Fields>
+	<FullTextIndexes />
+	<Indexes>
+		<AxTableIndex>
+			<Name>InventTransIdx</Name>
+			<AlternateKey>Yes</AlternateKey>
+			<Fields>
+				<AxTableIndexField>
+					<DataField>InventTransId</DataField>
+				</AxTableIndexField>
+				<AxTableIndexField>
+					<DataField>SalesId</DataField>
+				</AxTableIndexField>
+				<AxTableIndexField>
+					<DataField>BOMId</DataField>
+				</AxTableIndexField>
+			</Fields>
+		</AxTableIndex>
+		<AxTableIndex>
+			<Name>BOMTableIdx</Name>
+			<AllowDuplicates>Yes</AllowDuplicates>
+			<Fields>
+				<AxTableIndexField>
+					<DataField>BOMId</DataField>
+				</AxTableIndexField>
+			</Fields>
+		</AxTableIndex>
+	</Indexes>
+	<Mappings />
+	<Relations>
+		<AxTableRelation>
+			<Name>SalesTable</Name>
+			<RelatedTable>SalesTable</RelatedTable>
+			<Constraints>
+				<AxTableRelationConstraint xmlns=""
+					i:type="AxTableRelationConstraintField">
+					<Name>SalesId</Name>
+					<Field>SalesId</Field>
+					<RelatedField>SalesId</RelatedField>
+				</AxTableRelationConstraint>
+			</Constraints>
+		</AxTableRelation>
+		<AxTableRelation>
+			<Name>InventTable</Name>
+			<RelatedTable>InventTable</RelatedTable>
+			<Constraints>
+				<AxTableRelationConstraint xmlns=""
+					i:type="AxTableRelationConstraintField">
+					<Name>ItemId</Name>
+					<Field>ItemId</Field>
+					<RelatedField>ItemId</RelatedField>
+				</AxTableRelationConstraint>
+			</Constraints>
+		</AxTableRelation>
+		<AxTableRelation>
+			<Name>BOMTable</Name>
+			<RelatedTable>BOMTable</RelatedTable>
+			<Constraints>
+				<AxTableRelationConstraint xmlns=""
+					i:type="AxTableRelationConstraintField">
+					<Name>BOMId</Name>
+					<Field>BOMId</Field>
+					<RelatedField>BOMId</RelatedField>
+				</AxTableRelationConstraint>
+			</Constraints>
+		</AxTableRelation>
+		<AxTableRelation>
+			<Name>SalesLine</Name>
+			<RelatedTable>SalesLine</RelatedTable>
+			<Constraints>
+				<AxTableRelationConstraint xmlns=""
+					i:type="AxTableRelationConstraintField">
+					<Name>InventTransId</Name>
+					<Field>InventTransId</Field>
+					<RelatedField>InventTransId</RelatedField>
+				</AxTableRelationConstraint>
+			</Constraints>
+		</AxTableRelation>
+		<AxTableRelation>
+			<Name>ProdTable</Name>
+			<RelatedTable>ProdTable</RelatedTable>
+			<Constraints>
+				<AxTableRelationConstraint xmlns=""
+					i:type="AxTableRelationConstraintField">
+					<Name>SalesId</Name>
+					<Field>SalesId</Field>
+					<RelatedField>ATXInventRefId</RelatedField>
+				</AxTableRelationConstraint>
+				<AxTableRelationConstraint xmlns=""
+					i:type="AxTableRelationConstraintField">
+					<Name>InventTransId</Name>
+					<Field>InventTransId</Field>
+					<RelatedField>ATXInventRefTransId</RelatedField>
+				</AxTableRelationConstraint>
+			</Constraints>
+		</AxTableRelation>
+	</Relations>
+	<StateMachines />
+</AxTable>

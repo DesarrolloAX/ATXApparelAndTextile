@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Diagnostics
+  GenerationTime="2024-08-13T17:09:55.8631913+00:00">
+  <Items>
+    <Diagnostic>
+      <DiagnosticType>Metadata</DiagnosticType>
+      <Severity>Error</Severity>
+      <Path>AxDataEntityViewExtension/ProdRouteCardProductionJournalEntryEntity.ATXApparelAndTextile/Relations/DefaultDimensionDimensionSet/RelatedDataEntity</Path>
+      <Moniker>TableDoesNotExist</Moniker>
+      <Message>Table 'DimensionSetEntity' does not exist.</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>Metadata</DiagnosticType>
+      <Severity>Error</Severity>
+      <Path>AxDataEntityViewExtension/ProdRouteCardProductionJournalEntryEntity.ATXApparelAndTextile/ViewMetadata/DataSources/ProdJournalRoute/DataSources/DefaultDimensionDAVS/Table</Path>
+      <Moniker>TableDoesNotExist</Moniker>
+      <Message>Table 'DimensionSetEntity' does not exist.</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>Metadata</DiagnosticType>
+      <Severity>Error</Severity>
+      <Path>AxDataEntityViewExtension/ProdRouteCardProductionJournalEntryEntity.ATXApparelAndTextile/Fields/DefaultDimensionDisplayValue/DataField</Path>
+      <Moniker>DataSourceFieldDoesNotExist</Moniker>
+      <Message>Field 'DisplayValue' does not exist on data source 'DefaultDimensionDAVS'.</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>Metadata</DiagnosticType>
+      <Severity>Error</Severity>
+      <Path>AxDataEntityView/ProdRouteCardProductionJournalEntryEntity/Metadata/ProdJournalRoute/DataSources/DefaultDimensionDAVS/Relations/QueryDataSourceRelation1/TableField</Path>
+      <Moniker>MissingTableField</Moniker>
+      <Message>Failed to locate table field for DimensionSetEntity.RecId.</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>Metadata</DiagnosticType>
+      <Severity>Error</Severity>
+      <Path>AxDataEntityView/ProdRouteCardProductionJournalEntryEntity/Metadata/ProdJournalRoute/DataSources/DefaultDimensionDAVS</Path>
+      <Moniker>CouldNotFindTableOrViewOrDataEntity</Moniker>
+      <Message>The table/view/data entity 'DefaultDimensionDAVS' could not be found.</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>Compile</DiagnosticType>
+      <Severity>Error</Severity>
+      <Path>dynamics://Form/ATXProductionFloorControl/FormDesign/AxFormDesign/FormTabControl/FloorControlTab/FormTabPageControl/FloorControlTabPage/FormGroupControl/ProdGroup/FormGroupControl/RejectionGroup/FormCheckBoxControl/RejectionCtrl/Method/paste</Path>
+      <ElementType>Form Control Method</ElementType>
+      <Moniker>ObsoleteEntityUsageWithReason</Moniker>
+      <Line>838</Line>
+      <Column>13</Column>
+      <EndLine>838</EndLine>
+      <EndColumn>20</EndColumn>
+      <Message>'paste' is obsolete: 'This method is not supported in the web client.'.</Message>
+    </Diagnostic>
+  </Items>
+  <Aliases />
+</Diagnostics>

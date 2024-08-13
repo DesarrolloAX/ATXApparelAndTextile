@@ -1,0 +1,503 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXBOMTemplateEngine</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+class ATXBOMTemplateEngine
+{
+    ATXBOMTemplateLine  bomTemplateLine;
+    BOMId               bomId;
+    ItemId              itemIdBOMVersion;
+    NoYesId             singleLine;
+    boolean             matrixConfig;
+
+    NoYesId             configActive, sizeActive, colorActive, styleActive;
+    AxdRecordAction     recordAction;
+
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>new</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Initialize variables
+    /// </summary>
+    /// <param name = "_bomTemplateLine">BOM Template line</param>
+    /// <param name = "_matrixConfig">Has matrix active?</param>
+    public void new(
+        ATXBOMTemplateLine  _bomTemplateLine,
+        boolean             _matrixConfig = false
+    )
+    {
+        matrixConfig    = _matrixConfig;
+        this.parmBOMTemplateLine(_bomTemplateLine);
+        this.parmBOMId(_bomTemplateLine.BOMId);
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmBOMTemplateLine</Name>
+				<Source><![CDATA[
+    public ATXBOMTemplateLine parmBOMTemplateLine(ATXBOMTemplateLine _bomTemplateLine = bomTemplateLine)
+    {
+        bomTemplateLine = _bomTemplateLine;
+
+        return bomTemplateLine;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmBOMId</Name>
+				<Source><![CDATA[
+    public BOMId parmBOMId(BOMId _bomId = bomId)
+    {
+        bomId = _bomId;
+
+        return bomId;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>updateFromDoApply</Name>
+				<Source><![CDATA[
+    void updateFromDoApply()
+    {
+        if (!matrixConfig)
+        {
+            if (this.parmBOMTemplateLine())
+            {
+                // Init parmameters for templatebomline
+                this.initParmsFromBOMTemplateLine(this.parmBOMTemplateLine());
+                // Insert or update data on BOM table
+                this.insertOrUpdateBOMLine();
+            }
+            else
+            {
+                throw error("@ATXAT:NewLabel119");
+            }
+        }
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>initParmsFromBOMTemplateLine</Name>
+				<Source><![CDATA[
+    private void initParmsFromBOMTemplateLine(ATXBOMTemplateLine _bomTemplateLine)
+    {
+        if (this.parmBOMTemplateLine())
+        {
+            this.parmConfigActive(this.parmBOMTemplateLine().ConfigIdFlag);
+            this.parmSizeActive(this.parmBOMTemplateLine().InventSizeIdFlag);
+            this.parmColorActive(this.parmBOMTemplateLine().InventColorIdFlag);
+            this.parmStyleActive(this.parmBOMTemplateLine().InventStyleIdFlag);
+        }
+        else
+        {
+            throw error(strFmt("@ATXAT:NewLabel120"));
+        }
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmColorActive</Name>
+				<Source><![CDATA[
+    public NoYesId parmColorActive(NoYesId _colorActive = colorActive)
+    {
+        colorActive = _colorActive;
+
+        return colorActive;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmConfigActive</Name>
+				<Source><![CDATA[
+    public NoYesId parmConfigActive(NoYesId _configActive = configActive)
+    {
+        configActive = _configActive;
+
+        return configActive;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmSizeActive</Name>
+				<Source><![CDATA[
+    public NoYesId parmSizeActive(NoYesId _sizeActive = sizeActive)
+    {
+        sizeActive = _sizeActive;
+
+        return sizeActive;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmStyleActive</Name>
+				<Source><![CDATA[
+    public NoYesId parmStyleActive(NoYesId _styleActive = styleActive)
+    {
+        styleActive = _styleActive;
+
+        return styleActive;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>insertOrUpdateBOMLine</Name>
+				<Source><![CDATA[
+    private void insertOrUpdateBOMLine()
+    {
+        ;
+
+        // Check if a line in BOM table already exists
+        this.checkRecordAction();
+        switch (this.parmAxdRecordAction())
+        {
+            case AxdRecordAction::Create:
+                this.createBOMLine();
+                //this.updateBOMTemplate();
+                break;
+            /*case AxdRecordAction::Update:
+                // TODO AGM No se debe de eliminar todo lo que ya esta configurado correctamente. Solo generar nuevos casos
+                this.updateBOMLineFromRefId();
+                break;*/
+        }
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>checkRecordAction</Name>
+				<Source><![CDATA[
+    private void checkRecordAction()
+    {
+        BOM bom;
+
+        // Find a link on BOM table
+        select firstOnly bom
+            where bom.ATXBOMTemplateLine == this.parmBOMTemplateLine().RecId;
+
+        // if it exists, record action = update
+        if (bom)
+        {
+            this.parmAxdRecordAction(AxdRecordAction::Update);
+        }
+        // if a link record doesn't exist, record action = insert
+        else
+        {
+            this.parmAxdRecordAction(AxdRecordAction::Create);
+        }
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmAxdRecordAction</Name>
+				<Source><![CDATA[
+    public AxdRecordAction parmAxdRecordAction(AxdRecordAction _recordAction = recordAction)
+    {
+        recordAction = _recordAction;
+
+        return recordAction;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>createBOMLine</Name>
+				<Source><![CDATA[
+    private void createBOMLine()
+    {
+        InventDimCombination    inventDimCombination, inventDimCombinationQry;
+        InventDim               inventDim, inventDimQry;
+        InventDimParm           inventDimParm;
+        Map                     combinations;
+        MapIterator             tmpMi;
+        Integer                 allCount, countSection, tmpCnt;
+        BOM                     bom;
+
+        ATXProductDimensionConfigurationLookup prodDimConfigView;
+        ATXProductDimensionSizeLookup          prodDimSizeView;
+        ATXProductDimensionColorLookup         prodDimColorView;
+        ATXProductDimensionStyleLookup         prodDimStyleView;
+
+        InventTable                         inventTable;
+        EcoResProduct                       ecoResProduct;
+        EcoResProductMasterConfiguration    ecoResProductMasterConfiguration;
+        EcoResProductMasterSize             ecoResProductMasterSize;
+        EcoResProductMasterColor            ecoResProductMasterColor;
+        EcoResProductMasterStyle            ecoResProductMasterStyle;
+        EcoResConfiguration                 ecoResConfiguration;
+        EcoResSize                          ecoResSize;
+        EcoResColor                         ecoResColor;
+        EcoResStyle                         ecoResStyle;
+        RefRecId                            productDimensionAttribute;
+        SysGroup                            dummyValue = ATXProductParameters::find().DummyValue;
+
+        ;
+
+        // If line doesn't have product dimension variations
+        if (!this.parmConfigActive() && !this.parmSizeActive() && !this.parmColorActive() && !this.parmStyleActive())
+        {
+            // Insert line with no Product master dim
+            this.insertBOMLineFromProductMasterDim(inventDim);
+        }
+        else
+        {
+
+            combinations =new Map(Types::Integer, Types::Record);
+            if (this.parmConfigActive())
+            {
+                productDimensionAttribute = EcoResProductDimensionAttribute::inventDimFieldId2DimensionAttributeRecId(fieldNum(InventDim, ConfigId));
+                while select ItemId, Product from inventTable
+                index Itemidx
+                where inventTable.ItemId == this.parmBOMTemplateLine().ProductMasterItemId
+                join ecoResProductMasterConfiguration
+                    where   ecoResProductMasterConfiguration.ConfigProductMaster == inventtable.Product
+                        &&  ecoResProductMasterConfiguration.ConfigProductDimensionAttribute == productDimensionAttribute
+                join ecoResConfiguration
+                    where   ecoResConfiguration.RecId == ecoResProductMasterConfiguration.Configuration
+                        &&  ecoResConfiguration.Name != dummyValue
+                {
+                    allCount++;
+                    inventDim.configId = ecoResConfiguration.Name;
+                    combinations.insert(allCount, inventDim);
+                }
+                countSection = allCount;
+            }
+
+            if (this.parmSizeActive())
+            {
+                productDimensionAttribute = EcoResProductDimensionAttribute::inventDimFieldId2DimensionAttributeRecId(fieldNum(InventDim, InventSizeId));
+                while select ItemId, Product from inventTable
+                index Itemidx
+                where inventTable.ItemId == this.parmBOMTemplateLine().ProductMasterItemId
+                join ecoResProductMasterSize
+                    where ecoResProductMasterSize.SizeProductMaster == inventTable.Product
+                       && ecoResProductMasterSize.SizeProductDimensionAttribute == productDimensionAttribute
+                join ecoResSize
+                    where   ecoResSize.RecId == ecoResProductMasterSize.Size
+                        &&  ecoResSize.Name != dummyValue
+                {
+                    if (countSection == 0)
+                    {
+                        allCount++;
+                        inventDim.InventSizeId = ecoResSize.Name;
+                        combinations.insert(allCount, inventDim);
+                        continue;
+                    }
+                    tmpCnt = 0;
+                    tmpMi  = new MapIterator(combinations);
+                    tmpMi.begin();
+                    while (tmpMi.more() && tmpCnt < countSection)
+                    {
+                        inventDim = combinations.lookup(tmpMi.key());
+                        if (!inventDim.InventSizeId)
+                        {
+                            inventDim.InventSizeId   = ecoResSize.Name;
+                            combinations.insert(tmpMi.key(), inventDim);
+                        }
+                        else
+                        {
+                            allCount++;
+                            inventDim.InventSizeId = ecoResSize.Name;
+                            combinations.insert(allCount, inventDim);
+                        }
+                        tmpCnt++;
+                        tmpMi.next();
+                    }
+                }
+                countSection    = allCount;
+            }
+
+            if (this.parmColorActive())
+            {
+                productDimensionAttribute = EcoResProductDimensionAttribute::inventDimFieldId2DimensionAttributeRecId(fieldNum(InventDim, InventColorId));
+                while select ItemId, Product from inventTable
+                index Itemidx
+                where inventTable.ItemId == this.parmBOMTemplateLine().ProductMasterItemId
+                join ecoResProductMasterColor
+                    where ecoResProductMasterColor.ColorProductMaster == inventTable.Product
+                       && ecoResProductMasterColor.ColorProductDimensionAttribute == productDimensionAttribute
+                join ecoResColor
+                    where   ecoResColor.RecId == ecoResProductMasterColor.Color
+                        &&  ecoResColor.Name != dummyValue
+                {
+                    if (countSection == 0)
+                    {
+                        allCount++;
+                        inventDim.InventColorId = ecoResColor.Name;
+                        combinations.insert(allCount, inventDim);
+                        continue;
+                    }
+                    tmpCnt = 0;
+                    tmpMi  = new MapIterator(combinations);
+                    tmpMi.begin();
+                    while (tmpMi.more() && tmpCnt < countSection)
+                    {
+                        inventDim = combinations.lookup(tmpMi.key());
+                        if (!inventDim.InventColorId)
+                        {
+                            inventDim.InventColorId   = ecoResColor.Name;
+                            combinations.insert(tmpMi.key(), inventDim);
+                        }
+                        else
+                        {
+                            allCount++;
+                            inventDim.InventColorId = ecoResColor.Name;
+                            combinations.insert(allCount, inventDim);
+                        }
+                        tmpCnt++;
+                        tmpMi.next();
+                    }
+                }
+                countSection    = allCount;
+            }
+
+            if (this.parmStyleActive())
+            {
+                productDimensionAttribute = EcoResProductDimensionAttribute::inventDimFieldId2DimensionAttributeRecId(fieldNum(InventDim, InventStyleId));
+                while select ItemId, Product from inventTable
+                index Itemidx
+                where inventTable.ItemId == this.parmBOMTemplateLine().ProductMasterItemId
+                join ecoResProductMasterStyle
+                    where   ecoResProductMasterStyle.StyleProductMaster == inventTable.Product
+                        &&  ecoResProductMasterStyle.StyleProductDimensionAttribute == productDimensionAttribute
+                join ecoResStyle
+                    where   ecoResStyle.RecId == ecoResProductMasterStyle.Style
+                        &&  ecoResStyle.Name != dummyValue
+                {
+                    if (countSection == 0)
+                    {
+                        allCount++;
+                        inventDim.InventStyleId = ecoResStyle.Name;
+                        combinations.insert(allCount, inventDim);
+                        continue;
+                    }
+                    tmpCnt = 0;
+                    tmpMi  = new MapIterator(combinations);
+                    tmpMi.begin();
+                    while (tmpMi.more() && tmpCnt < countSection)
+                    {
+                        inventDim = combinations.lookup(tmpMi.key());
+                        if (!inventDim.InventStyleId)
+                        {
+                            inventDim.InventStyleId   = ecoResStyle.Name;
+                            combinations.insert(tmpMi.key(), inventDim);
+                        }
+                        else
+                        {
+                            allCount++;
+                            inventDim.InventStyleId = ecoResStyle.Name;
+                            combinations.insert(allCount, inventDim);
+                        }
+                        tmpCnt++;
+                        tmpMi.next();
+                    }
+                }
+                countSection    = allCount;
+            }
+
+            tmpMi  = new MapIterator(combinations);
+
+            tmpMi.begin();
+            while (tmpMi.more())
+            {
+                inventDim               = combinations.lookup(tmpMi.key());
+                /*inventDim.ConfigId      = inventDim.ConfigId;
+                inventDim.InventSizeId  = inventDim.InventSizeId;
+                inventDim.InventColorId = inventDim.InventColorId;
+                inventDim.InventStyleId = inventDim.InventStyleId;
+                */
+                inventDimParm.initFromInventDim(inventDim);
+
+                select firstOnly inventDimCombinationQry
+                    where inventDimCombinationQry.ItemId == this.parmBOMTemplateLine().ProductMasterItemId
+                    join inventDimQry
+                    where inventDimQry.inventDimId == inventDimCombinationQry.InventDimId
+                    && (!inventDimParm.ConfigIdFlag         || inventDimQry.configId == inventDim.configId)
+                    && (!inventDimParm.InventSizeIdFlag     || inventDimQry.InventSizeId == inventDim.InventSizeId)
+                    && (!inventDimParm.InventColorIdFlag    || inventDimQry.InventColorId == inventDim.InventColorId)
+                    && (!inventDimParm.InventStyleIdFlag    || inventDimQry.InventStyleId == inventDim.InventStyleId)
+                ;
+
+                if (inventDimCombinationQry)
+                {
+                    this.insertBOMLineFromProductMasterDim(inventDim);
+                }
+
+                tmpMi.next();
+            }
+        }
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>insertBOMLineFromProductMasterDim</Name>
+				<Source><![CDATA[
+    private void insertBOMLineFromProductMasterDim(InventDim _inventDim)
+    {
+        BOM bom;
+
+        bom.clear();
+        bom.initValue();
+        bom.BOMId                   = this.parmBOMTemplateLine().BOMId;
+        if (!bom.BOMId)
+        {
+            bom.BOMId               = bomId;
+            if (!bom.BOMId)
+            {
+                throw error("@ATXAT:NewLabel121");
+            }
+        }
+        bom.BOMQtySerie             = this.parmBOMTemplateLine().BOMQtySerie;
+        bom.LineNum                 = BOM::lastLineNum(bom.BOMId) + 1;
+        bom.BOMConsump              = this.parmBOMTemplateLine().BOMConsumpType;
+        bom.BOMQty                  = this.parmBOMTemplateLine().BOMQty;
+        bom.ItemId                  = this.parmBOMTemplateLine().ItemId;
+        bom.UnitId                  = this.parmBOMTemplateLine().UnitId;
+        bom.ScrapConst              = this.parmBOMTemplateLine().ScrapConst;
+        bom.ScrapVar                = this.parmBOMTemplateLine().ScrapVar;
+        bom.ATXBOMTemplateLine      = this.parmBOMTemplateLine().RecId;
+        bom.ATXRouteOprId           = this.parmBOMTemplateLine().RouteOprId;
+        bom.ATXOprNum               = this.parmBOMTemplateLine().OprNum;
+        bom.InventDimId             = this.parmBOMTemplateLine().InventDimId;
+        //bom.ATXRequestOrderId       = this.parmBOMTemplateLine().ATXRequestOrderId;
+        //bom.ATXDestinationPlaceId   = this.parmBOMTemplateLine().ATXDestinationPlaceId;
+        //bom.ATXSeasonId             = this.parmBOMTemplateLine().ATXSeasonId;
+
+        if (this.parmConfigActive())
+        {
+            bom.ATXConfigId         = _inventDim.configId;
+        }
+        if (this.parmSizeActive())
+        {
+            bom.ATXInventSizeId     = _inventDim.InventSizeId;
+        }
+        if (this.parmColorActive())
+        {
+            bom.ATXInventColorId    = _inventDim.InventColorId;
+        }
+        if (this.parmStyleActive())
+        {
+            bom.ATXInventStyleId    = _inventDim.InventStyleId;
+        }
+        bom.insert();
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>

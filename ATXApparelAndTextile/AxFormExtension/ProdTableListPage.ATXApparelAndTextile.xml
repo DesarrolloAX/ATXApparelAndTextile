@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxFormExtension xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="Microsoft.Dynamics.AX.Metadata.V6">
+	<Name>ProdTableListPage.ATXApparelAndTextile</Name>
+	<ControlModifications />
+	<Controls>
+		<AxFormExtensionControl xmlns="">
+			<Name>FormExtensionControlmubtxge01</Name>
+			<FormControl xmlns=""
+				i:type="AxFormActionPaneTabControl">
+				<Name>ATXProdCutPlanTab</Name>
+				<Type>ActionPaneTab</Type>
+				<FormControlExtension
+					i:nil="true" />
+				<Controls>
+					<AxFormControl xmlns=""
+						i:type="AxFormButtonGroupControl">
+						<Name>ATXGeneralGroup</Name>
+						<Type>ButtonGroup</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<Controls>
+							<AxFormControl xmlns=""
+								i:type="AxFormMenuFunctionButtonControl">
+								<Name>ATXProdCutPlan</Name>
+								<Type>MenuFunctionButton</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataSource>ProdTable</DataSource>
+								<MenuItemName>ATXProdCutPlan</MenuItemName>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormMenuFunctionButtonControl">
+								<Name>ATXProdCutPackages</Name>
+								<Type>MenuFunctionButton</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataSource>ProdTable</DataSource>
+								<MenuItemName>ATXProdCutPackages</MenuItemName>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormMenuFunctionButtonControl">
+								<Name>ATXProdCutPackagesPost</Name>
+								<Type>MenuFunctionButton</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataSource>ProdTable</DataSource>
+								<MenuItemName>ATXProdCutPackagesPost</MenuItemName>
+							</AxFormControl>
+						</Controls>
+						<Caption>@ATXAT:NewLabel160</Caption>
+						<DataSource>ProdTable</DataSource>
+					</AxFormControl>
+				</Controls>
+				<Caption>@ATXAT:NewLabel201</Caption>
+				<DataSource>ProdTable</DataSource>
+			</FormControl>
+			<Parent>ActionPane</Parent>
+		</AxFormExtensionControl>
+		<AxFormExtensionControl xmlns="">
+			<Name>FormExtensionControl4vtas1af1</Name>
+			<FormControl xmlns=""
+				i:type="AxFormMenuFunctionButtonControl">
+				<Name>ATXRouteCardController</Name>
+				<Type>MenuFunctionButton</Type>
+				<FormControlExtension
+					i:nil="true" />
+				<DataSource>ProdTable</DataSource>
+				<MenuItemName>ATXRouteCardController</MenuItemName>
+				<MenuItemType>Output</MenuItemType>
+			</FormControl>
+			<Parent>OrderDetails</Parent>
+		</AxFormExtensionControl>
+	</Controls>
+	<DataSourceModifications />
+	<DataSourceReferences />
+	<DataSources />
+	<Parts />
+	<PropertyModifications />
+</AxFormExtension>

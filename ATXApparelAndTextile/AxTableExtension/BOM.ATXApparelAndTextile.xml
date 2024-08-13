@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxTableExtension xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>BOM.ATXApparelAndTextile</Name>
+	<FieldGroupExtensions />
+	<FieldGroups>
+		<AxTableFieldGroup>
+			<Name>ATXReference</Name>
+			<Label>@SYS40441</Label>
+			<Fields>
+				<AxTableFieldGroupField>
+					<DataField>ATXSeasonId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>ATXDestinationPlaceId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>ATXRequestOrderId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>ATXConfigId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>ATXInventSizeId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>ATXInventColorId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>ATXInventStyleId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>ATXRouteOprId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>ATXOprNum</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>ATXBOMTemplateLine</DataField>
+				</AxTableFieldGroupField>
+			</Fields>
+		</AxTableFieldGroup>
+	</FieldGroups>
+	<FieldModifications />
+	<Fields>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>ATXRouteOprId</Name>
+			<ExtendedDataType>RouteOprId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldInt">
+			<Name>ATXOprNum</Name>
+			<ExtendedDataType>OprNumBOMLine</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>ATXSeasonId</Name>
+			<ExtendedDataType>ATXSeasonId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>ATXDestinationPlaceId</Name>
+			<ExtendedDataType>ATXDestinationPlaceId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldInt64">
+			<Name>ATXBOMTemplateLine</Name>
+			<ExtendedDataType>RefRecId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>ATXRequestOrderId</Name>
+			<ExtendedDataType>ATXRequestOrderId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>ATXConfigId</Name>
+			<ExtendedDataType>EcoResConfigurationName</ExtendedDataType>
+			<Label>@ATXAT:NewLabel55</Label>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>ATXInventSizeId</Name>
+			<ExtendedDataType>EcoResSizeName</ExtendedDataType>
+			<Label>@ATXAT:NewLabel56</Label>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>ATXInventColorId</Name>
+			<ExtendedDataType>EcoResColorName</ExtendedDataType>
+			<Label>@ATXAT:NewLabel57</Label>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>ATXInventStyleId</Name>
+			<ExtendedDataType>EcoResStyleName</ExtendedDataType>
+			<Label>@ATXAT:NewLabel58</Label>
+		</AxTableField>
+	</Fields>
+	<FullTextIndexes />
+	<Indexes />
+	<Mappings />
+	<PropertyModifications />
+	<RelationExtensions />
+	<RelationModifications />
+	<Relations />
+</AxTableExtension>

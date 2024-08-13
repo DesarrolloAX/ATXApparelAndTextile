@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXProdJournalCheckPostProd_Extension</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+[ExtensionOf(classStr(ProdJournalCheckPostProd))]
+final class ATXProdJournalCheckPostProd_Extension
+{
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>ProdJournalCheckPostProd_Post_run</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="args"></param>
+    [PostHandlerFor(classStr(ProdJournalCheckPostProd), methodStr(ProdJournalCheckPostProd, run))]
+    public static void ProdJournalCheckPostProd_Post_run(XppPrePostArgs args)
+    {
+        ProdJournalCheckPostProd prodJournalCheckPostProd = args.getThis();
+        ProdJournalTable         prodJournalTable = ProdJournalTable::find(prodJournalCheckPostProd.parmJournalId());
+        
+        //<DGANAVA Enable or disable Apparel And Textile>
+        if(ATXApparelAndTextileParameters::find().Active == NoYes::Yes)
+        {
+            new ATXInventMovement(prodJournalTable).run();
+        }
+        //</DGANAVA Enable or disable Apparel And Textile>
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>

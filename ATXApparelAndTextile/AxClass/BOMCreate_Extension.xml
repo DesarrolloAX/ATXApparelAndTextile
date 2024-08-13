@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>BOMCreate_Extension</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+/// <summary>
+/// Update BOM type on BOMCreate for Templates
+/// </summary>
+[ExtensionOf(classStr(BOMCreate))]
+final class BOMCreate_Extension
+{
+    public container value;
+
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>createNewBom</Name>
+				<Source><![CDATA[
+    protected BOMTable createNewBom(
+        BOMId           _bomId,
+        ItemGroupId     _itemGroupId,
+        InventSiteId    _dialogSiteId,
+        Name            _dialogName,
+        boolean         _pmfIsFormula
+        )
+    {
+        BOMTable        bomTable;
+        NoYes           active;
+        BOMCreateDialog createDialog;
+
+        bomTable = next createNewBom(_bomId, _itemGroupId, _dialogSiteId, _dialogName, _pmfIsFormula);
+        createDialog = this.bomCreateDialog;
+        active = createDialog.atxTemplateActive;
+
+        if (bomTable)
+        {
+            if (active == NoYes::Yes)
+            {
+                ttsbegin;
+                bomTable.selectForUpdate(true);
+                bomTable.ATXBOMType = ATXBOMType::Template;
+                bomTable.update();
+                ttscommit;
+            }
+        }
+
+        return bomTable;
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>

@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxFormExtension xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="Microsoft.Dynamics.AX.Metadata.V6">
+	<Name>EcoResProductDetailsExtended.ATXApparelAndTextile</Name>
+	<ControlModifications />
+	<Controls>
+		<AxFormExtensionControl xmlns="">
+			<Name>FormExtensionControl4jz3l1fp1</Name>
+			<FormControl xmlns=""
+				i:type="AxFormTabPageControl">
+				<Name>ATXTabPageApparelAndTextile</Name>
+				<AutoDeclaration>Yes</AutoDeclaration>
+				<Type>TabPage</Type>
+				<FormControlExtension
+					i:nil="true" />
+				<Controls>
+					<AxFormControl xmlns=""
+						i:type="AxFormGroupControl">
+						<Name>ATXMatrixGroup</Name>
+						<Type>Group</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<Controls>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>ATXMatrixGroup_ATXItemSizeGridValue</Name>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>ATXItemSizeGridValue</DataField>
+								<DataSource>InventTable</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>ATXMatrixGroup_ATXItemColorGridValue</Name>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>ATXItemColorGridValue</DataField>
+								<DataSource>InventTable</DataSource>
+							</AxFormControl>
+						</Controls>
+						<ColumnsMode>Fill</ColumnsMode>
+						<DataGroup>ATXBOMMatrixTemplate</DataGroup>
+						<DataSource>InventTable</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormGroupControl">
+						<Name>ATXProductOvercut</Name>
+						<Type>Group</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<Controls>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>ATXProductOvercut_ATXProductOvercutId</Name>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>ATXProductOvercutId</DataField>
+								<DataSource>InventTable</DataSource>
+							</AxFormControl>
+						</Controls>
+						<ColumnsMode>Fill</ColumnsMode>
+						<DataGroup>ATXProductOvercut</DataGroup>
+						<DataSource>InventTable</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormGroupControl">
+						<Name>ATXSampleBook</Name>
+						<Type>Group</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<Controls>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>SampleBook_ATXSampleBookId</Name>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>ATXSampleBookId</DataField>
+								<DataSource>InventTable</DataSource>
+							</AxFormControl>
+						</Controls>
+						<DataGroup>ATXSampleBook</DataGroup>
+						<DataSource>InventTable</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormGroupControl">
+						<Name>ATXGeneral</Name>
+						<Type>Group</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<Controls>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>ATXGeneral_ATXFabricComposition</Name>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>ATXFabricComposition</DataField>
+								<DataSource>InventTable</DataSource>
+							</AxFormControl>
+						</Controls>
+						<DataGroup>ATXGeneral</DataGroup>
+						<DataSource>InventTable</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormGroupControl">
+						<Name>ATXCut</Name>
+						<Type>Group</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<Controls>
+							<AxFormControl xmlns=""
+								i:type="AxFormRealControl">
+								<Name>ATXCut_ATXCutPackQty</Name>
+								<Type>Real</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>ATXCutPackQty</DataField>
+								<DataSource>InventTable</DataSource>
+							</AxFormControl>
+						</Controls>
+						<DataGroup>ATXCut</DataGroup>
+						<DataSource>InventTable</DataSource>
+					</AxFormControl>
+				</Controls>
+				<ColumnsMode>Fill</ColumnsMode>
+				<Caption>@ATXApparelAndTextile_en_US:ATXL00091</Caption>
+			</FormControl>
+			<Parent>TabHeader</Parent>
+			<PositionType>AfterItem</PositionType>
+			<PreviousSibling>TabPageGeneral</PreviousSibling>
+		</AxFormExtensionControl>
+		<AxFormExtensionControl xmlns="">
+			<Name>FormExtensionControlvg1jvpv41</Name>
+			<FormControl xmlns=""
+				i:type="AxFormButtonGroupControl">
+				<Name>ATXPLM</Name>
+				<Type>ButtonGroup</Type>
+				<FormControlExtension
+					i:nil="true" />
+				<Controls>
+					<AxFormControl xmlns=""
+						i:type="AxFormMenuFunctionButtonControl">
+						<Name>ATXProductPreProdTask</Name>
+						<Type>MenuFunctionButton</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<DataSource>InventTable</DataSource>
+						<MenuItemName>ATXProductPreProdTask</MenuItemName>
+					</AxFormControl>
+				</Controls>
+				<Caption>@ATXPLM:NewLabel1</Caption>
+			</FormControl>
+			<Parent>ActionPaneTabDefine</Parent>
+		</AxFormExtensionControl>
+	</Controls>
+	<DataSourceModifications />
+	<DataSourceReferences />
+	<DataSources />
+	<Parts />
+	<PropertyModifications />
+</AxFormExtension>

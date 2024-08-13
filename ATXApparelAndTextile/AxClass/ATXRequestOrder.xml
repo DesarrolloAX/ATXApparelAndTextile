@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXRequestOrder</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+/// <summary>
+/// Base class RequestOrder
+/// </summary>
+class ATXRequestOrder extends RunBase
+{
+    ATXRequestOrderHeader   requestOrderHeader;
+    ATXRequestOrderUpdates  requestOrderUpdates;
+    ATXRequestOrderUpdateId requestOrderUpdateId;
+    Map                     recordMap;
+    MapEnumerator           recordEnumerator;
+    ATXRequestOrderId       requestOrderId;
+    ATXRequestOrderType     requestOrderType;
+    ATXRequestOrderStatus   requestOrderStatus;
+    Dialog                  dialog;
+    boolean                 infoMessages;
+    FreeTxt                 messageTxt;
+
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>dialogPostRun</Name>
+				<Source><![CDATA[
+    public void dialogPostRun(DialogRunbase tmpDialog)
+    {
+        super(tmpdialog);
+        tmpdialog.dialogForm().formRun().controlMethodOverload(true);
+        tmpdialog.dialogForm().formRun().controlMethodOverloadObject(this);
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>initRecordsMap</Name>
+				<Source><![CDATA[
+    void initRecordsMap(Args _args)
+    {
+        ATXRequestOrderHeader   localRequestOrderHeader;
+        FormDataSource          fDS = _args.record().dataSource();
+
+        recordMap = new Map(Types::Int64,Types::Record);
+
+        fDS = _args.record().dataSource();
+
+        for(localRequestOrderHeader = fDS.getFirst(true) ?  fDS.getFirst(true) : fDS.cursor() ;
+        localRequestOrderHeader;
+        localRequestOrderHeader = fDS.getNext())
+        {
+            recordMap.insert(localRequestOrderHeader.RecId,localRequestOrderHeader);
+        }
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmInfoMessages</Name>
+				<Source><![CDATA[
+    public NoYesId parmInfoMessages(NoYesId _infoMessages = infoMessages)
+    {
+        infoMessages = _infoMessages;
+
+        return infoMessages;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmMessageTxt</Name>
+				<Source><![CDATA[
+    public FreeText parmMessageTxt(FreeText _messageTxt = messageTxt)
+    {
+        messageTxt = _messageTxt;
+
+        return messageTxt;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmRequestOrderHeader</Name>
+				<Source><![CDATA[
+    public ATXRequestOrderHeader parmRequestOrderHeader(ATXRequestOrderHeader _requestOrderHeader = requestOrderHeader)
+    {
+        requestOrderHeader = _requestOrderHeader;
+        if (requestOrderHeader)
+        {
+
+            this.parmRequestOrderId(requestOrderHeader.RequestOrderId);
+            this.parmRequestOrderStatus(requestOrderHeader.RequestOrderStatus);
+            this.parmRequestOrderType(requestOrderHeader.RequestOrderType);
+        }
+
+        return requestOrderHeader;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>unpack</Name>
+				<Source><![CDATA[
+    public boolean unpack(container packedClass)
+    {
+        boolean ret;
+
+        ret = true;
+
+        return ret;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmRequestOrderType</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    public ATXRequestOrderType parmRequestOrderType(ATXRequestOrderType _requestOrderType = requestOrderType)
+    {
+        requestOrderType = _requestOrderType;
+
+        return requestOrderType;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmRequestOrderId</Name>
+				<Source><![CDATA[
+    public ATXRequestOrderId parmRequestOrderId(ATXRequestOrderId _requestOrderId = requestOrderId)
+    {
+        requestOrderId = _requestOrderId;
+
+        return requestOrderId;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmRequestOrderStatus</Name>
+				<Source><![CDATA[
+    public ATXRequestOrderStatus parmRequestOrderStatus(ATXRequestOrderStatus _requestOrderStatus = requestOrderStatus)
+    {
+        requestOrderStatus = _requestOrderStatus;
+
+        return requestOrderStatus;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>validateUpdate</Name>
+				<Source><![CDATA[
+    boolean validateUpdate()
+    {
+        boolean ret = true;
+
+        if (this.parmRequestOrderStatus() != ATXRequestOrderStatus::Loaded)
+        {
+            ret = checkFailed("@ATXAT:NewLabel47");
+        }
+
+        return ret;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmRequestOrderUpdateId</Name>
+				<Source><![CDATA[
+    public ATXRequestOrderUpdateId parmRequestOrderUpdateId(ATXRequestOrderUpdateId _requestOrderUpdateId = requestOrderUpdateId)
+    {
+        requestOrderUpdateId = _requestOrderUpdateId;
+
+        return requestOrderUpdateId;
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>

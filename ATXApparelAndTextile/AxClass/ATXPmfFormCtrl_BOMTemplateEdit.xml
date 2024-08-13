@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXPmfFormCtrl_BOMTemplateEdit</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+class ATXPmfFormCtrl_BOMTemplateEdit extends PmfFormCtrl
+{
+    InventDim   inventDim;
+    BOMVersion  bomVersion;
+
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>bomLine</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Get the buffer as a typed BOM record
+    /// </summary>
+    /// <returns>
+    /// The buffer as a BOM record
+    /// </returns>
+    private ATXBOMTemplateLine bomLine()
+    {
+        return buffer;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>canModifyBOM</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Checks if <c>BOM</c> can be modified.
+    /// </summary>
+    /// <returns type="boolean">
+    /// True if record can be modified; otherwise false.
+    /// </returns>
+    private boolean canModifyBOM()
+    {
+        return true;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>dataSourceInitValuePost</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Method to be called after the datasource <c>initValue</c> has been executed
+    /// </summary>
+    /// <param name="_buffer">
+    /// The record buffer associated with the datasource
+    /// </param>
+    public void dataSourceInitValuePost(Common _buffer)
+    {
+        BOM         bom = _buffer as BOM;
+        BOMVersion  bomVersionCalc = bomVersion::findVersionCalculation(bom.BOMId);
+        BOMVersion  bomVersionSeries;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>dataSourceValidateWrite</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Validates that the record can be written to the data source form.
+    /// </summary>
+    /// <returns>
+    /// Result of validation.
+    /// true if record can be written.
+    /// </returns>
+    public boolean dataSourceValidateWrite()
+    {
+        boolean ret;
+
+        ret = super();
+
+        if (!this.canModifyBOM())
+        {
+            ret = checkFailed("@PRO2418");
+        }
+
+        return ret;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>fieldLookup</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Handle the lookup for fields on the BOM record
+    /// </summary>
+    /// <param name="_fieldId">
+    /// The field id of the field to do the lookup for
+    /// </param>
+    /// <param name="_formControl">
+    /// The form control that initiates the form lookup
+    /// </param>
+    /// <param name="_filterStr">
+    /// an additional filter to consider for the lookup
+    /// </param>
+    public void fieldLookup(
+    fieldId         _fieldId,
+    FormControl     _formControl,
+    str             _filterStr)
+    {
+        ATXBOMTemplateLine bomLine = this.bomLine();
+        boolean handled = true;
+
+        switch (_fieldId)
+        {
+            case fieldnum(ATXBOMTemplateLine, ItemId) :
+                // TODO LookupTableEngine_AT::lookupItem(_formControl);
+                handled = true;
+                break;
+            default :
+        }
+
+        if (!handled)
+        {
+            super(_fieldId, _formControl, _filterStr);
+        }
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>initPost</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Method to be called after the form is initialized
+    /// </summary>
+    /// <remarks>
+    /// The method initializes the button manager for several controls on the form
+    /// </remarks>
+    /// <exception cref="Exception::Error">
+    /// Throws an exception, if the form run has not been set for the class
+    /// </exception>
+    public void initPost()
+    {
+        if (!this.parmFormRun())
+        {
+            throw error(Error::wrongUseOfFunction(funcname()));
+        }
+        super();
+
+        this.updateDesign();
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>isFormulaEnabled</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Checks if the version is a formula.
+    /// </summary>
+    /// <returns>
+    /// True if the version is a formula; otherwise false.
+    /// </returns>
+    public boolean isFormulaEnabled()
+    {
+        return true;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmBOMVersion</Name>
+				<Source><![CDATA[
+    public BOMVersion parmBOMVersion(BOMVersion _bomVersion = bomVersion)
+    {
+        if (!prmisdefault(_bomVersion))
+        {
+            bomVersion = _bomVersion;
+        }
+
+        return bomVersion;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmInventDim</Name>
+				<Source><![CDATA[
+    public InventDim parmInventDim(InventDim _inventDim = inventDim)
+    {
+        if (!prmisdefault(_inventDim))
+        {
+            inventDim = _inventDim;
+        }
+
+        return inventDim;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>setDatasources</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Sets the datasources that are to be used in the rule computation process.
+    /// </summary>
+    /// <param name="_datasources1">
+    /// A table buffer (Common) belonging to the 1st datasource instance.
+    /// </param>
+    /// <param name="_datasources2">
+    /// A table buffer (Common) belonging to the 2nd datasource instance.
+    /// </param>
+    /// <param name="_datasources3">
+    /// A table buffer (Common) belonging to the 3rd datasource instance.
+    /// </param>
+    /// <param name="_datasources4">
+    /// A table buffer (Common) belonging to the 4th datasource instance.
+    /// </param>
+    /// <param name="_datasources5">
+    /// A table buffer (Common) belonging to the 5th datasource instance.
+    /// </param>
+    /// <remarks>
+    /// Up to 5 datasources can be passed. If the implementation requires more datasources additional custom methods should be implemented on the rule implementer class.
+    /// The method is called by FormButtonManager on the rule class implementing the ButtonStateProvider interface.
+    /// </remarks>
+    public void setDatasources(
+    Common  _datasources1 = buffer,
+    Common  _datasources2 = null,
+    Common  _datasources3 = null,
+    Common  _datasources4 = null,
+    Common  _datasources5 = null)
+    {
+        if (_datasources1.TableId != tablenum(ATXBOMTemplateLine)
+        || _datasources2.TableId != tablenum(InventDim))
+        {
+            throw error(Error::wrongUseOfFunction(funcname()));
+        }
+
+        this.parmInventDim(_datasources2);
+
+        super(
+        _datasources1,
+        _datasources2,
+        _datasources3,
+        _datasources4,
+        _datasources5);
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>construct</Name>
+				<Source><![CDATA[
+    public static ATXPmfFormCtrl_BOMTemplateEdit construct()
+    {
+        return new ATXPmfFormCtrl_BOMTemplateEdit();
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>newFromForm</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Create a new form control handler from the form element
+    /// </summary>
+    /// <param name="_fr">
+    /// The form element to create the form control handler for
+    /// </param>
+    /// <returns>
+    /// The created form control handler
+    /// </returns>
+    public static ATXPmfFormCtrl_BOMTemplateEdit newFromForm(FormRun _fr)
+    {
+        PmfFormCtrl frmCtrl;
+
+        frmCtrl = ATXPmfFormCtrl_BOMTemplateEdit::construct();
+        frmCtrl.parmFormRun(_fr);
+        return frmCtrl;
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>

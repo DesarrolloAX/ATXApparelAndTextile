@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxEdt xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns=""
+	i:type="AxEdtString">
+	<Name>ATXSampleTypeId</Name>
+	<Label>@ATXApparelAndTextile_en_US:ATXL00027</Label>
+	<ReferenceTable>ATXSampleTypeTable</ReferenceTable>
+	<ArrayElements />
+	<Relations />
+	<TableReferences>
+		<AxEdtTableReference>
+			<RelatedField>SampleTypeId</RelatedField>
+			<Table>ATXSampleTypeTable</Table>
+		</AxEdtTableReference>
+	</TableReferences>
+	<StringSize>20</StringSize>
+</AxEdt>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxLabelFile xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXPLM_pt-BR</Name>
+	<LabelContentFileName>ATXPLM.pt-BR.label.txt</LabelContentFileName>
+	<LabelFileId>ATXPLM</LabelFileId>
+	<Language>pt-BR</Language>
+	<RelativeUriInModelStore>ATXApparelAndTextile\ATXApparelAndTextile\AxLabelFile\LabelResources\pt-BR\ATXPLM.pt-BR.label.txt</RelativeUriInModelStore>
+</AxLabelFile>

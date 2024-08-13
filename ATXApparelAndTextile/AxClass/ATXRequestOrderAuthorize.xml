@@ -1,0 +1,597 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXRequestOrderAuthorize</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+/// <summary>
+/// Authorize request order
+/// Change status of RequestOrderHeader to Authorized
+/// Create a new sales order
+/// Group lines based on # dimensions
+/// Create a new BOM for every group line
+/// TODO Update header with style and qty?
+/// TODO Sample WIP
+/// </summary>
+class ATXRequestOrderAuthorize extends ATXRequestOrder
+{
+    AxSalesTable    axSalesTable;
+    SalesTable      salesTable;
+
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>main</Name>
+				<Source><![CDATA[
+    public static void main(Args _args)
+    {
+        ATXRequestOrderAuthorize   authorize;
+        ATXRequestOrderHeader       requestorderheaderforUpdate;
+        ATXRequestOrderLine         requestOrderLineForUpdate;
+        Qty                         qtyOV;
+        ATXRequestOrderUpdateId     updateId;
+        ATXRequestOrderHeader       requestOrderHeaderQry;
+        Args args;
+
+        if (!_args.record() || _args.dataset() != tableNum(ATXRequestOrderHeader))
+        {
+            throw error("@SYS25516");
+        }
+
+        requestorderheaderforUpdate = _args.record();
+
+        if (requestorderheaderforUpdate.RequestOrderType == ATXRequestOrderType::Sales)
+        {
+            if (!ATXRequestOrderAuthorize::validateRequestLines(_args.record()))
+            {
+                throw Error("@ATXAT:NewLabel37");
+            }
+        }
+
+        authorize = new ATXRequestOrderAuthorize();
+        authorize.initRecordsMap(_args);
+        authorize.run();
+
+        if (_args.caller())
+        {
+            _args.caller().refreshHeaderDSFromCaller();
+        }
+
+        // TODO Set BOM Generation in batch
+        /*
+        requestOrderHeaderQry = _args.record();
+        if (ATXLineOfBusinessBOMBatch::find(requestOrderHeaderQry.LineOfBusinessId))
+        {
+            args = new Args();
+            args.record(requestOrderHeaderQry);
+            ATXRequestBOMGenerateBatch::main(args);
+        }
+        */
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>run</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Create Sales order for selected request
+    /// </summary>
+    public void run()
+    {
+        try
+        {
+            ttsBegin;
+            recordEnumerator = recordMap.getEnumerator();
+            while(recordEnumerator.moveNext())
+            {
+                requestOrderHeader =  recordEnumerator.currentValue();
+                this.parmRequestOrderUpdateId(ATXRequestOrderUpdates::lastVersion(requestOrderHeader.RequestOrderId));
+                this.parmRequestOrderHeader(requestOrderHeader);
+
+                if (requestOrderHeader.RequestOrderStatus == ATXRequestOrderStatus::Authorized)
+                {
+                    throw error(strFmt("@ATXAT:NewLabel97", requestOrderHeader.RequestOrderId));
+                }
+                if (!this.validateAuthorize())
+                {
+                    throw Error("@ATXAT:NewLabel136");
+                }
+
+                switch(requestOrderHeader.RequestOrderType)
+                {
+                    case ATXRequestOrderType::Sales:
+                        if(!requestOrderHeader.SalesId)
+                        {
+                            this.createSalesTable();
+                            this.createSalesLines();
+                        }
+                        else
+                        {
+                            info("@ATXAT:NewLabel107");
+                        }
+                        break;
+
+                    case ATXRequestOrderType::Sample:
+                        this.createWIPRecord();
+                        //info("@ATXApparelAndTextile_AT:ATXL00106");
+                        break;
+                }
+            }
+            ttsCommit;
+        }
+        catch
+        {
+            throw error("@SYS319214");
+        }
+        info("@ATXAT:NewLabel39");
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>validateAuthorize</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Validates if a request can be authorized
+    /// </summary>
+    /// <returns>TRUE if no errors</returns>
+    boolean validateAuthorize()
+    {
+        boolean ret = true;
+        ATXRequestOrderLine requestOrderLineQry;
+
+        if (ret && !this.parmRequestOrderHeader().LineOfBusinessId)
+        {
+            ret = checkFailed("@ATXAT:NewLabel134");
+        }
+
+        select sum(RequestQty) from requestOrderLineQry
+            where requestOrderLineQry.RequestOrderId == this.parmRequestOrderHeader().RequestOrderId
+            && requestOrderLineQry.RequestOrderUpdateId == this.parmRequestOrderUpdateId();
+        if (requestOrderLineQry.RequestQty == 0)
+        {
+            ret = checkFailed("@ATXAT:NewLabel135");
+        }
+            
+        return ret;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>createWIPRecord</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    void createWIPRecord()
+    {
+        /*ATXRequestOrderHeader   requestOrderHeaderUpd;
+        ATXRequestOrderUpdates  requestOrderUpdates_AT;
+        ATXRequestOrderLine     requestOrderLineQry, requestOrderLineSum;
+        ATXSampleWIP            sampleWIP_AT;
+        InventDim               inventDim;
+        InventTable             inventTable;
+        
+        ATXProductDimensionConfigLookup config;
+        ATXProductDimensionColorLookup  color;
+        ATXProductDimensionSizeLookup   size;
+        ;
+
+        select firstonly requestOrderHeaderUpd
+            where requestOrderHeaderUpd.RequestOrderId  == requestOrderHeader.RequestOrderId;
+        if (requestOrderHeaderUpd)
+        {
+            // Update RequestSalesOrder
+            ttsbegin;
+            requestOrderHeaderUpd.selectForUpdate(true);
+            requestOrderHeaderUpd.RequestOrderStatus    = ATXRequestOrderStatus::Authorized;
+            requestOrderHeaderUpd.update();
+            ttscommit;
+
+            select firstonly requestOrderUpdates_AT
+                where requestOrderUpdates_AT.RequestOrderId == requestOrderHeader.RequestOrderId
+                && requestOrderUpdates_AT.RequestOrderUpdateId  == this.parmRequestOrderUpdateId();
+
+            select firstonly requestOrderLineQry
+                where requestOrderLineQry.RequestOrderId        == requestOrderHeader.RequestOrderId
+                && requestOrderLineQry.RequestOrderUpdateId == requestOrderUpdates_AT.RequestOrderUpdateId;
+
+            select sum(QtyOrig), sum(RequestQty) from requestOrderLineSum
+                where requestOrderLineSum.RequestOrderId    == requestOrderHeader.RequestOrderId
+                && requestOrderLineQry.RequestOrderUpdateId == requestOrderUpdates_AT.RequestOrderUpdateId;
+
+
+            inventDim = requestOrderLineQry.inventDim();
+            inventTable = InventTable::find(requestOrderLineQry.ItemId);
+
+            sampleWIP_AT.clear();
+            sampleWIP_AT.DateReceived = requestOrderHeader.RequestOrderCreated;
+            sampleWIP_AT.RequestOrderDate = requestOrderHeader.RequestOrderDate;
+            sampleWIP_AT.RequestOrderId     = requestOrderHeader.RequestOrderId;
+            sampleWIP_AT.CustAccount        = requestOrderHeader.CustAccount;
+            sampleWIP_AT.CustName           = requestOrderHeader.custName();
+            sampleWIP_AT.LineOfBusinessId   = requestOrderHeader.LineOfBusinessId;
+            sampleWIP_AT.CurrencyCode       = requestOrderHeader.CurrencyCode;
+            sampleWIP_AT.ItemId             = requestOrderLineQry.ItemId;
+            sampleWIP_AT.InventColorId      = inventDim.InventColorId;
+            sampleWIP_AT.ProdQty            = requestOrderLineSum.RequestQty;
+            sampleWIP_AT.ShipQty            = requestOrderLineSum.QtyOrig;
+            sampleWIP_AT.SampleTypeId       = requestOrderHeaderUpd.SampleTypeId_AT;
+            sampleWIP_AT.PreviousRequestOrderId_AT  = requestOrderHeader.PreviousRequestOrderId_AT;
+
+            sampleWIP_AT.SeasonId           = requestOrderLineQry.SeasonId;
+            sampleWIP_AT.ItemDivisionId     = requestOrderLineQry.ItemDivisionId;
+
+            select firstonly Description from config
+                where  config.Product == inventTable.Product
+                    && config.Name    == inventDim.configId;
+
+            select firstonly Description from color
+                where  color.Product == inventTable.Product
+                    && color.Name    == inventDim.InventColorId;
+
+            select firstonly Description from size
+                where  size.Product == inventTable.Product
+                    && size.Name    == inventDim.InventSizeId;
+
+            sampleWIP_AT.InventConfigName   = config.Description;
+            sampleWIP_AT.InventSizeName     = size.Description;
+            sampleWIP_AT.InventColorName    = color.Description;
+            sampleWIP_AT.Qty                = sampleWIP_AT.ProdQty;
+            sampleWIP_AT.RequestOrderDate   = requestOrderHeader.RequestOrderDate;
+            sampleWIP_AT.LoadDate           = systemDateGet();
+            sampleWIP_AT.insert();
+        }*/
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>createSalesTable</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Create sales header
+    /// </summary>
+    void createSalesTable()
+    {
+        NumberSeq               numberSeq;
+        CustTable               custtable;
+        ;
+
+        custtable = CustTable::find(requestOrderHeader.CustAccount);
+
+        axSalesTable = AxSalesTable::construct();
+        axSalesTable.parmCustAccount(requestOrderHeader.CustAccount);
+        axSalesTable.parmPurchOrderFormNum(requestOrderHeader.CustPurchaseOrder);
+        axSalesTable.parmCustomerRef(requestOrderHeader.CustRef);
+        axSalesTable.parmSalesType(SalesType::Sales);
+        axSalesTable.parmDlvMode(custtable.DlvMode);
+        if (requestOrderHeader.DlvModeId)
+        {
+            axSalesTable.parmDlvMode(requestOrderHeader.DlvModeId);
+        }
+        axSalesTable.parmDlvTerm(custtable.DlvTerm);
+        if (requestOrderHeader.SalesDlvTermId)
+        {
+            axSalesTable.parmDlvTerm(requestOrderHeader.SalesDlvTermId);
+        }
+        axSalesTable.parmPaymMode(custtable.PaymMode);
+        axSalesTable.parmInventSiteId(requestOrderHeader.InventSiteId);
+        axSalesTable.parmInventLocationId(requestOrderHeader.InventLocationId);
+        axSalesTable.save();
+        salesTable = axSalesTable.salesTable();
+
+        ttsBegin;
+        salesTable.selectForUpdate(true);
+        //salesTable.ATXProdPoolId = requestOrderHeader.ProdPoolId;
+        salesTable.update();
+
+        requestOrderHeader.selectForUpdate(true);
+        requestOrderHeader.InventTransType          = InventTransType::Sales;
+        requestOrderHeader.SalesId                  = salesTable.SalesId;
+        requestOrderHeader.RequestOrderStatus       = ATXRequestOrderStatus::Authorized;
+        requestOrderHeader.update();
+        ttsCommit;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>createSalesLines</Name>
+				<Source><![CDATA[
+    private void createSalesLines()
+    {
+        ATXRequestOrderLine     requestOrderLine, firstRequestOrderLine, requestOrderLineUpd, requestOrderLineValidate;
+        ATXProdParameters       prodParameters = ATXProdParameters::find();
+        ATXBreakDownOrderEngine breackDownOrderEngine;
+        AxSalesLine             axSalesLine;
+        SalesLine               salesLine;
+        InventTable             inventTable;
+        InventDim               inventDimRequest, variantDimension, lineDimension, inventDimReqLineUpd;
+        RouteVersion            routeVersion;
+        Query                   q  = new Query(), qUpdate;
+        QueryBuildDataSource    qDS, qDSInventDim, qDSLinesUpdate, qDSDimUpdate;
+        QueryRun                qR,qRUpdate;
+        ATXProdPoolSetup        prodPoolSetup_AT;
+        boolean                 groupDim;
+        ATXBOMTemplateLine      bomTemplateLine_AT;
+        ATXBOMTypeTable         bomTypeTable_AT;
+
+        qDS = q.addDataSource(tableNum(ATXRequestOrderLine));
+        qDS.addRange(fieldNum(ATXRequestOrderLine,RequestOrderId)).value(requestOrderHeader.RequestOrderId);
+        qDS.addRange(fieldNum(ATXRequestOrderLine,RequestOrderUpdateId)).value(queryValue(this.parmRequestOrderUpdateId()));
+
+        qDSInventDim = qDS.adddataSource(tableNum(InventDim));
+        qDSInventDim.addLink(fieldNum(ATXRequestOrderLine,InventDimId), fieldNum(InventDim,InventDimId));
+
+        select firstOnly firstRequestOrderLine
+            where firstRequestOrderLine.RequestOrderId  == requestOrderHeader.RequestOrderId
+        ;
+        prodPoolSetup_AT    = ATXProdPoolSetup::find(firstRequestOrderLine.inventDim().InventSiteId, requestOrderHeader.ProdPoolId);
+        groupDim            = prodPoolSetup_AT.GroupByconfigId || prodPoolSetup_AT.GroupByInventSizeId || prodPoolSetup_AT.GroupByInventColorId || prodPoolSetup_AT.GroupByInventStyleId;
+        if (groupDim)
+        {
+            qDS.addSelectionField(fieldNum(ATXRequestOrderLine,QtyOrig),SelectionField::Sum);
+            qDS.addSelectionField(fieldNum(ATXRequestOrderLine,RequestQty),SelectionField::Sum);
+            qDS.addSelectionField(fieldNum(ATXRequestOrderLine,RequestOrderCancelDate),SelectionField::Max);
+            qDS.addSelectionField(fieldNum(ATXRequestOrderLine,RequestOrderDate),SelectionField::Max);
+            qDS.addSelectionField(fieldNum(ATXRequestOrderLine,SalesPrice),SelectionField::Max);
+            // Group by season and destination place
+            SysQuery::findOrCreateGroupByField(q,qDS,fieldNum(ATXRequestOrderLine,SeasonId));
+            SysQuery::findOrCreateGroupByField(q,qDS,fieldNum(ATXRequestOrderLine,DestinationPlaceId));
+
+            SysQuery::findOrCreateGroupByField(q,qDS,fieldNum(ATXRequestOrderLine,ItemId));
+
+            if (!prodPoolSetup_AT.GroupByconfigId)
+            {
+                SysQuery::findOrCreateGroupByField(q, qDSInventDim, fieldNum(InventDim, ConfigId));
+            }
+            if (!prodPoolSetup_AT.GroupByInventSizeId)
+            {
+                SysQuery::findOrCreateGroupByField(q, qDSInventDim, fieldNum(InventDim, InventSizeId));
+            }
+            if (!prodPoolSetup_AT.GroupByInventColorId)
+            {
+                SysQuery::findOrCreateGroupByField(q, qDSInventDim,fieldNum(InventDim, InventcolorId));
+            }
+            if (!prodPoolSetup_AT.GroupByInventStyleId)
+            {
+                SysQuery::findOrCreateGroupByField(q, qDSInventDim,fieldNum(InventDim, InventStyleId));
+            }
+        }
+
+        qR = new QueryRun(q);
+        while(qR.next())
+        {
+            requestOrderLine    = qR.get(tableNum(ATXRequestOrderLine));
+            inventTable         = inventTable::find(requestOrderLine.ItemId);
+            inventDimRequest    = qR.get(tableNum(InventDim));
+
+            // <!-- Validate locked color -->
+            /*if (EcoResProductMasterColor::find(requestOrderLine.inventTable().Product, EcoResColor::findByName(requestOrderLine.inventDim().InventColorId).RecId).Locked_AT)
+            throw error(strFmt("@ATL55", requestOrderLine.inventDim().InventColorId, requestOrderLine.ItemId));*/
+
+            // Valitate product master has an active route
+            select firstonly routeVersion
+                where routeVersion.ItemId   == requestOrderLine.ItemId
+                    && routeVersion.Active
+            ;
+            if (!routeVersion)
+            {
+                throw error(strFmt("@SYS4006405", requestOrderLine.ItemId));
+            }
+
+            // Validate price
+            if (ATXSalesParameters::find().ValidatePrice)
+            {
+                select firstonly requestOrderLineValidate
+                    where requestOrderLineValidate.RequestOrderId == firstRequestOrderLine.RequestOrderId
+                    && !requestOrderLineValidate.SalesPrice;
+                if (requestOrderLineValidate)
+                {
+                    throw error(strFmt("@ATXAT:NewLabel41", requestOrderLine.ItemId));
+                }
+            }
+
+            // Validate locked
+            // TODO Validar bloques de L.MAT?
+            if (!requestOrderHeader.SkipBOMValidation)
+            {
+                while select bomTypeTable_AT
+                    where bomTypeTable_AT.ValidateRequest
+                {
+                    select firstonly bomTemplateLine_AT
+                        where bomTemplateLine_AT.ProductMasterItemId == inventTable.ItemId
+                        && bomTemplateLine_AT.BOMTypeId == bomTypeTable_AT.BOMTypeId
+                        && bomTemplateLine_AT.Blocking;
+                    if (!bomTemplateLine_AT)
+                    {
+                        throw Error(strFmt("@ATXApparelAndTextile_AT:NewLabel194", bomTypeTable_AT.BOMTypeId));
+                    }
+                }
+            }
+
+            if (groupDim)
+            {
+                lineDimension.data(ATXBreakdownOrderEngine::getDummyInventDim(
+                    inventTable.ItemId,
+                    prodPoolSetup_AT,
+                    inventDimRequest.configId,
+                    inventDimRequest.InventSizeId,
+                    inventDimRequest.InventColorId,
+                    inventDimRequest.InventStyleId,
+                    requestOrderHeader.InventSiteId,
+                    requestOrderHeader.InventLocationId)
+                );
+            }
+            else
+            {
+                lineDimension.data(requestOrderLine.inventDim());
+            }
+
+            variantDimension.configId       = lineDimension.configId;
+            variantDimension.InventColorId  = lineDimension.InventColorId;
+            variantDimension.InventSizeId   = lineDimension.InventSizeId;
+            variantDimension.InventStyleId  = lineDimension.InventStyleId;
+            variantDimension = InventDim::findOrCreate(variantDimension);
+
+            salesLine.clear();
+            salesLine.initValue();
+            salesLine.initFromSalesTable(salesTable);
+            salesLine.initFromCustTable();
+
+            axSalesLine = AxSalesLine::newSalesLine(salesLine);
+            axSalesLine.parmSalesId(salesTable.SalesId);
+            axSalesLine.parmItemId(requestOrderLine.ItemId);
+            axSalesLine.parmRetailVariantId(InventDimCombination::find(requestOrderLine.ItemId,variantDimension.inventDimId).RetailVariantId);
+            axSalesLine.parmInventDimId(lineDimension.inventDimId);
+            axSalesLine.parmShippingDateRequested(requestOrderLine.RequestOrderDate);
+            axSalesLine.parmReceiptDateRequested(requestOrderLine.RequestOrderCancelDate);
+            axSalesLine.parmSalesUnit(inventTable.salesUnitId());
+            axSalesLine.parmSalesQty(requestOrderLine.RequestQty);
+            axSalesLine.parmSalesPrice(requestOrderLine.SalesPrice);
+            axSalesLine.parmDlvMode(requestOrderHeader.DlvModeId);
+            axSalesLine.parmDlvTerm(requestOrderHeader.SalesDlvTermId);
+            axSalesLine.parmUnderDeliveryPct(SalesParameters::find().SubDelivery ? 100 : 0);
+            axSalesLine.parmOverDeliveryPct(SalesParameters::find().OverDelivery ? 100 : 0);
+
+            axSalesLine.save();
+            salesLine   = axSalesLine.salesLine();
+
+            // Update references
+            ttsBegin;
+            salesLine.selectForUpdate(true);
+            salesLine.ReceiptDateRequested      = requestOrderLine.RequestOrderCancelDate;
+            salesLine.ShippingDateRequested     = requestOrderLine.RequestOrderDate;
+
+            salesLine.ShippingDateConfirmed     = requestOrderLine.RequestOrderDate;
+            salesLine.ReceiptDateConfirmed      = requestOrderLine.RequestOrderCancelDate;
+            salesLine.LineAmount                = salesLine.calcLineAmountForced();
+            // New references in salesLine
+            salesLine.ATXProdPoolId             = requestOrderHeader.ProdPoolId;
+            salesLine.ATXSeasonId               = requestOrderLine.SeasonId;
+            salesLine.ATXDestinationPlaceId     = requestOrderLine.DestinationPlaceId;
+            SalesLine.ATXLineOfBusinessId       = requestOrderHeader.LineOfBusinessId;
+
+            if (!salesTable.ReceiptDateRequested
+            || !salesTable.ShippingDateRequested
+            || !salesTable.ShippingDateConfirmed
+            || !salesTable.ReceiptDateConfirmed )
+            {
+                salesTable.reread();
+                salesTable.selectForUpdate(true);
+
+                salesTable.ShippingDateRequested    = requestOrderLine.RequestOrderDate;
+                salesTable.ShippingDateConfirmed    = requestOrderLine.RequestOrderDate;
+
+                salesTable.ReceiptDateRequested     = requestOrderLine.RequestOrderCancelDate;
+                salesTable.ReceiptDateConfirmed     = requestOrderLine.RequestOrderCancelDate;
+                salesTable.doUpdate();
+            }
+
+            /// This code create BreakdownOrderLine with detail of grouped lines
+            /// Once breakdown is created. A specific BOM is created for every line
+            if (prodParameters.CreateBOMStyles)
+            {
+                breackDownOrderEngine = new ATXBreakdownOrderEngine(salesLine);
+                breackDownOrderEngine.createBreakdownForSalesLineItem(
+                    requestOrderHeader.RequestOrderId,
+                    this.parmRequestOrderUpdateId(),
+                    requestOrderLine.ItemId,
+                    inventDimRequest);
+
+                salesLine.ItemBOMId = breackDownOrderEngine.buildProdBOMFromTemplate();
+
+            /// 
+            /* TODO
+                
+
+                if (ATXLineOfBusinessBOMBatch::find(this.parmRequestOrderHeader().LineOfBusinessId))
+                {
+                    salesLine.ItemBOMId = breackDownOrderEngine.buildProdBOMVersion(requestOrderHeader.RequestOrderId, requestOrderHeader.SalesId);
+                }
+                else
+                {
+                    switch (ATXProductParameters::find().BOMTemplateVersion)
+                    {
+                        case ATXBOMTemplateVersion::V1:
+                            salesLine.ItemBOMId = breackDownOrderEngine.buildProdBOM();
+                            break;
+                        case ATXBOMTemplateVersion::V2:
+                            salesLine.ItemBOMId = breackDownOrderEngine.buildProdBOMFromTemplate();
+                            break;
+                    }
+                }
+                salesLine.ATXItemBOMId = salesLine.ItemBOMId;*/
+            }
+            salesLine.update();
+            /*
+            if (prodParameters.ReqCalcScheduleItem)
+            {
+                ReqCalcScheduleItem::newItemId(salesLine.ItemId,ReqParameters::find().CurrentReqPlanIdSchedStatic).run();
+            }*/
+            ttsCommit;
+        }
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>validateRequestLines</Name>
+				<Source><![CDATA[
+    private static boolean validateRequestLines(ATXRequestOrderHeader _requestOrderHeader)
+    {
+        ATXRequestOrderLine requestOrderLine;
+        boolean             ret = true;
+
+        while select requestOrderLine
+            index ReqIdx
+            where requestOrderLine.RequestOrderId == _requestOrderHeader.RequestOrderId
+        {
+            if (!requestOrderLine.SeasonId)
+            {
+                warning(strFmt("@ATXAT:NewLabel31", requestOrderLine.LineNum));
+                ret = false;
+            }
+
+            if (!requestOrderLine.DestinationPlaceId)
+            {
+                info(strFmt("@ATXAT:NewLabel32", requestOrderLine.LineNum));
+                ret = false;
+            }
+
+            if (!requestOrderLine.RequestQty)
+            {
+                info(strFmt("@ATXAT:NewLabel33", requestOrderLine.LineNum));
+                ret = false;
+            }
+
+            if (requestOrderLine.RequestOrderDate == dateNull())
+            {
+                info(strFmt("@ATXAT:NewLabel34", requestOrderLine.LineNum));
+                ret = false;
+            }
+
+            if (!requestOrderLine.RequestOrderCancelDate)
+            {
+                info(strFmt("@ATXAT:NewLabel35", requestOrderLine.LineNum));
+                ret = false;
+            }
+
+            if (!requestOrderLine.QtyOrig)
+            {
+                info(strFmt("@ATXAT:NewLabel36", requestOrderLine.LineNum));
+                ret = false;
+            }
+        }
+
+        return ret;
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>

@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxTable xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXProductionFloorControl</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+public class ATXProductionFloorControl extends common
+{
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>difference</Name>
+				<Source><![CDATA[
+    display ATXQtyRemain difference()
+    {
+        return this.QtySetUp - (this.Qty + this.QtyPosted + this.ProdReportedError);
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>Percent</Name>
+				<Source><![CDATA[
+    display Percent Percent()
+    {
+
+        return this.QtySetUp != 0  ? ((this.QtyPosted + this.ProdReportedError + this.Qty) * 100) / this.QtySetUp : 0;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>validateField</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name = "_fieldIdToCheck"></param>
+    /// <returns></returns>
+    public boolean validateField(FieldId _fieldIdToCheck)
+    {
+        boolean ret;
+
+        ret = super(_fieldIdToCheck);
+
+        switch(_fieldIdToCheck)
+        {
+            /*case fieldNum(ATXProductionFloorControl, Qty):
+                if(ProdTable::find(this.ProdId).ATXSkipFloorControlValidation == NoYes::No)
+                {
+                    if (ATXProdParameters::find().ValidateQtyOnPreviousOperation
+                        && ATXProductionFloorControl::fisrtOprNum(this.ProdId) > this.OprNum
+                        && this.Qty > this.QtyPreviousOpr)
+                    {
+                        ret = checkFailed("@ATXAT:NewLabel154");
+                    }
+                }
+                
+                if (this.Qty > this.QtySetUp)
+                {
+                    ret = checkFailed("@ATXAT:NewLabel155");
+                }
+                
+                if (ATXProdParameters::find().ValidateGoodErrorQty)
+                {
+                    if (this.Qty + this.QtyPosted + this.ProdReportedError > this.QtySetUp)
+                    {
+                        ret = checkFailed("@ATXAT:NewLabel155");
+                    }
+                }
+                break;*/
+        }
+
+        return ret;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>fisrtOprNum</Name>
+				<Source><![CDATA[
+    static OprNum fisrtOprNum(ProdId _prodId)
+    {
+        return (select minOf(OprNum) from ProdRoute
+            where ProdRoute.ProdId == _prodId).OprNum;
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+	<SubscriberAccessLevel>
+		<Read>Allow</Read>
+	</SubscriberAccessLevel>
+	<TableType>InMemory</TableType>
+	<DeleteActions />
+	<FieldGroups>
+		<AxTableFieldGroup>
+			<Name>AutoReport</Name>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoLookup</Name>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoIdentification</Name>
+			<AutoPopulate>Yes</AutoPopulate>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoSummary</Name>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoBrowse</Name>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>InventSize</Name>
+			<Fields>
+				<AxTableFieldGroupField>
+					<DataField>InventSizeId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>QtySetUp</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>QtyPreviousOpr</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>QtyPosted</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>Qty</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>difference</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>Percent</DataField>
+				</AxTableFieldGroupField>
+			</Fields>
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>InventStyle</Name>
+			<Fields>
+				<AxTableFieldGroupField>
+					<DataField>InventSizeId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>QtySetUp</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>Qty</DataField>
+				</AxTableFieldGroupField>
+			</Fields>
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>ReportAsFinish</Name>
+			<Fields>
+				<AxTableFieldGroupField>
+					<DataField>ConfigId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>InventColorId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>InventSizeId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>ProdQualityId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>InventLocationId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>WMSLocationId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>QtyOrig</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>QtySetUp</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>QtyPreviousOpr</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>QtyPreviousOprError</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>QtyPosted</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>ProdReportedError</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>Qty</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>difference</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>Percent</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>TransDate</DataField>
+				</AxTableFieldGroupField>
+			</Fields>
+		</AxTableFieldGroup>
+	</FieldGroups>
+	<Fields>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>BOMId</Name>
+			<ExtendedDataType>BOMId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>ConfigId</Name>
+			<ExtendedDataType>EcoResConfigurationName</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>InventColorId</Name>
+			<ExtendedDataType>EcoResColorName</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>InventLocationId</Name>
+			<ExtendedDataType>InventLocationId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>InventSizeId</Name>
+			<ExtendedDataType>EcoResSizeName</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>InventSizeIdTransfer</Name>
+			<ExtendedDataType>EcoResSizeName</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>InventStyleId</Name>
+			<ExtendedDataType>EcoResStyleName</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>ItemId</Name>
+			<ExtendedDataType>ItemId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>OprId</Name>
+			<ExtendedDataType>RouteOprId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldInt">
+			<Name>OprNum</Name>
+			<ExtendedDataType>OprNum</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>ProdId</Name>
+			<ExtendedDataType>ProdId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>ProdQualityId</Name>
+			<ExtendedDataType>ATXProdQualityId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldReal">
+			<Name>ProdReportedError</Name>
+			<ExtendedDataType>ProdReportedError</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldInt">
+			<Name>ProdStandarPack</Name>
+			<ExtendedDataType>NumberOf</ExtendedDataType>
+			<Label>@ATXAT:NewLabel145</Label>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldReal">
+			<Name>Qty</Name>
+			<ExtendedDataType>Qty</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldReal">
+			<Name>QtyOrig</Name>
+			<AllowEdit>No</AllowEdit>
+			<AllowEditOnCreate>No</AllowEditOnCreate>
+			<ExtendedDataType>ATXQtyOrig</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldReal">
+			<Name>QtyPosted</Name>
+			<ExtendedDataType>ATXQtyPosted</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldReal">
+			<Name>QtyPreviousOpr</Name>
+			<ExtendedDataType>ATXQtyBase</ExtendedDataType>
+			<Label>@ATXAT:NewLabel148</Label>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldReal">
+			<Name>QtySetUp</Name>
+			<ExtendedDataType>ATXCutQty</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>WMSLocationId</Name>
+			<ExtendedDataType>WMSLocationId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldReal">
+			<Name>QtyPreviousOprError</Name>
+			<ExtendedDataType>ATXQtyBase</ExtendedDataType>
+			<Label>@ATXAT:NewLabel150</Label>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldDate">
+			<Name>TransDate</Name>
+			<ExtendedDataType>TransDate</ExtendedDataType>
+			<Label>@ATXAT:NewLabel151</Label>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldEnum">
+			<Name>ReportedBySize</Name>
+			<ExtendedDataType>NoYesId</ExtendedDataType>
+			<EnumType>NoYes</EnumType>
+		</AxTableField>
+	</Fields>
+	<FullTextIndexes />
+	<Indexes />
+	<Mappings />
+	<Relations />
+	<StateMachines />
+</AxTable>

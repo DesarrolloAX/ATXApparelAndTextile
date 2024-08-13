@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXItemGridEngine</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+/// <summary>
+/// Grid functionality
+/// </summary>
+class ATXItemGridEngine
+{
+    EcoResProductMaster ecoResProductMaster;
+
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>new</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name = "_ecoResProductMasterParm">Product master</param>
+    public void new(EcoResProductMaster _ecoResProductMasterParm)
+    {
+        ecoResProductMaster = _ecoResProductMasterParm;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>copyDimensions</Name>
+				<Source><![CDATA[
+    void copyDimensions(FormDataSource _fDS, ATXDimComboType _dimComboType)
+    {
+        switch (_dimComboType)
+        {
+            case ATXDimComboType::Configuration:
+                this.insertFromConfiguration(_fDS);
+                break;
+
+            case ATXDimComboType::Size:
+                this.insertFromSize(_fDS);
+                break;
+
+            case ATXDimComboType::Color:
+                this.insertFromColor(_fDS);
+                break;
+
+            case ATXDimComboType::Style:
+                this.insertFromStyle(_fDS);
+                break;
+        }
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>insertFromConfiguration</Name>
+				<Source><![CDATA[
+    void insertFromConfiguration(FormDataSource _fDS)
+    {
+        ATXItemGridLines                 itemGidLines;
+        EcoResConfiguration                 ecoresConfiguration;
+        EcoResProductMasterConfiguration    masterConfiguration;
+        RefRecId                            Configuration_ProductDimensionAttribute = EcoResProductDimensionAttribute::inventDimFieldId2DimensionAttributeRecId(fieldNum(InventDim, configId));
+
+        _fDS.filter(fieldNum(ATXItemGridLines, Check),enum2str(NoYes::Yes));
+
+        for(itemGidLines = _fDS.getFirst(); itemGidLines; itemGidLines = _fDS.getNext())
+        {
+            if(!itemGidLines.Check)
+                continue;
+
+            EcoResProductMasterDimTools::insertIfNotExistConfiguration(itemGidLines.ItemGridValue);
+            ecoresConfiguration = EcoResConfiguration::findByName(itemGidLines.ItemGridValue);
+            if(!EcoResProductMasterDimTools::existEcoResProductMasterConfiguration(ecoResProductMaster.RecId, ecoresConfiguration.RecId))
+            {
+                masterConfiguration.clear();
+                masterConfiguration.initValue();
+                masterConfiguration.Configuration                   = ecoresConfiguration.recId;
+                masterConfiguration.ConfigProductMaster             = ecoResProductMaster.RecId;
+                masterConfiguration.ConfigProductDimensionAttribute = Configuration_ProductDimensionAttribute;
+                masterConfiguration.RetailDisplayOrder              = itemGidLines.RetailDisplayOrder;
+                masterConfiguration.doInsert();
+                EcoResProductMasterDimValueTranslation::createOrUpdateTranslation(masterConfiguration.RecId,itemGidLines.Description,itemGidLines.Description);
+                //this.createProductVariants(masterConfiguration.ConfigProductMaster, masterConfiguration.ConfigProductDimensionAttribute, masterConfiguration.Configuration);
+            }
+        }
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>insertFromSize</Name>
+				<Source><![CDATA[
+    void insertFromSize(FormDataSource _fDS)
+    {
+        ATXItemGridLines            itemGidLines;
+        EcoResSize                  ecoresSize;
+        EcoResProductMasterSize     masterSize;
+        RefRecId                    size_ProductDimensionAttribute = EcoResProductDimensionAttribute::inventDimFieldId2DimensionAttributeRecId(fieldNum(InventDim, InventSizeId));
+
+        _fDS.filter(fieldNum(ATXItemGridLines, Check),enum2str(NoYes::Yes));
+
+        for(itemGidLines = _fDS.getFirst();
+        itemGidLines;
+        itemGidLines = _fDS.getNext())
+        {
+            if(!itemGidLines.Check)
+            continue;
+
+            EcoResProductMasterDimTools::insertIfNotExistSize(itemGidLines.ItemGridValue);
+            ecoresSize = EcoResSize::findByName(itemGidLines.ItemGridValue);
+            if(!EcoResProductMasterDimTools::existEcoResProductMasterSize(ecoResProductMaster.RecId, ecoresSize.RecId))
+            {
+                masterSize.clear();
+                masterSize.initValue();
+                masterSize.Size                 = ecoresSize.recId;
+                masterSize.SizeProductMaster    = ecoResProductMaster.RecId;
+                masterSize.SizeProductDimensionAttribute = size_ProductDimensionAttribute;
+                masterSize.RetailDisplayOrder = itemGidLines.RetailDisplayOrder;
+                masterSize.doInsert();
+                EcoResProductMasterDimValueTranslation::createOrUpdateTranslation(masterSize.RecId, itemGidLines.Description, itemGidLines.Description);
+                //this.createProductVariants(masterSize.SizeProductMaster, masterSize.SizeProductDimensionAttribute, masterSize.Size);
+            }
+        }
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>insertFromColor</Name>
+				<Source><![CDATA[
+    void insertFromColor(FormDataSource _fDS)
+    {
+        ATXItemGridLines         itemGidLines;
+        EcoResColor                 ecoresColor;
+        EcoResProductMasterColor    masterColor;
+        RefRecId                    Color_ProductDimensionAttribute = EcoResProductDimensionAttribute::inventDimFieldId2DimensionAttributeRecId(fieldNum(InventDim, InventColorId));
+
+        _fDS.filter(fieldNum(ATXItemGridLines, Check),enum2str(NoYes::Yes));
+
+        for(itemGidLines = _fDS.getFirst();
+        itemGidLines;
+        itemGidLines = _fDS.getNext())
+        {
+            if(!itemGidLines.Check)
+                continue;
+
+            EcoResProductMasterDimTools::insertIfNotExistColor(itemGidLines.ItemGridValue);
+            ecoresColor = EcoResColor::findByName(itemGidLines.ItemGridValue);
+            if(!EcoResProductMasterDimTools::existEcoResProductMasterColor(ecoResProductMaster.RecId, ecoresColor.RecId))
+            {
+                masterColor.clear();
+                masterColor.initValue();
+                masterColor.Color                           = ecoresColor.recId;
+                masterColor.ColorProductMaster              = ecoResProductMaster.RecId;
+                masterColor.ColorProductDimensionAttribute  = Color_ProductDimensionAttribute;
+                masterColor.RetailDisplayOrder              = itemGidLines.RetailDisplayOrder;
+                masterColor.doInsert();
+                EcoResProductMasterDimValueTranslation::createOrUpdateTranslation(masterColor.RecId,itemGidLines.Description,itemGidLines.Description);
+                //this.createProductVariants(masterColor.ColorProductMaster, masterColor.ColorProductDimensionAttribute, masterColor.Color);
+            }
+        }
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>insertFromStyle</Name>
+				<Source><![CDATA[
+    void insertFromStyle(FormDataSource _fDS)
+    {
+        ATXItemGridLines         itemGidLines;
+        EcoResStyle                 ecoresStyle;
+        EcoResProductMasterStyle    masterStyle;
+        RefRecId                    Style_ProductDimensionAttribute = EcoResProductDimensionAttribute::inventDimFieldId2DimensionAttributeRecId(fieldNum(InventDim, InventStyleId));
+
+        _fDS.filter(fieldNum(ATXItemGridLines, Check),enum2str(NoYes::Yes));
+
+        for(itemGidLines = _fDS.getFirst();
+        itemGidLines;
+        itemGidLines = _fDS.getNext())
+        {
+            if(!itemGidLines.Check)
+                continue;
+
+            EcoResProductMasterDimTools::insertIfNotExistStyle(itemGidLines.ItemGridValue);
+            ecoresStyle = EcoResStyle::findByName(itemGidLines.ItemGridValue);
+            if(!EcoResProductMasterDimTools::existEcoResProductMasterStyle(ecoResProductMaster.RecId, ecoresStyle.RecId))
+            {
+                masterStyle.clear();
+                masterStyle.initValue();
+                masterStyle.Style                           = ecoresStyle.recId;
+                masterStyle.StyleProductMaster              = ecoResProductMaster.RecId;
+                masterStyle.StyleProductDimensionAttribute  = Style_ProductDimensionAttribute;
+                masterStyle.RetailDisplayOrder              = itemGidLines.RetailDisplayOrder;
+                masterStyle.doInsert();
+                EcoResProductMasterDimValueTranslation::createOrUpdateTranslation(masterStyle.RecId, itemGidLines.Description, itemGidLines.Description);
+                //this.createProductVariants(masterStyle.StyleProductMaster, masterStyle.StyleProductDimensionAttribute, masterStyle.Style);
+            }
+        }
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>

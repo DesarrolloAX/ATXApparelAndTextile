@@ -1,0 +1,12 @@
+<ExtensionClasses>
+  <ExtensionClass ExtensionClassName="ATXSalesLine_Extension" ExtensionTargetName="SalesLine" ExtensionTargetTypeId="TableTypeId" ExtensionNestedTargetName="" />
+  <ExtensionClass ExtensionClassName="ATXProdJournalCheckPostProd_Extension" ExtensionTargetName="ProdJournalCheckPostProd" ExtensionTargetTypeId="ClassTypeId" ExtensionNestedTargetName="" />
+  <ExtensionClass ExtensionClassName="ATXReqTransPOMarkFirm_Extension" ExtensionTargetName="ReqTransPoMarkFirm" ExtensionTargetTypeId="ClassTypeId" ExtensionNestedTargetName="" />
+  <ExtensionClass ExtensionClassName="BOMCreateDialog_Extension" ExtensionTargetName="BOMCreateDialog" ExtensionTargetTypeId="ClassTypeId" ExtensionNestedTargetName="" />
+  <ExtensionClass ExtensionClassName="SalesTable_Extension" ExtensionTargetName="SalesTable" ExtensionTargetTypeId="TableTypeId" ExtensionNestedTargetName="" />
+  <ExtensionClass ExtensionClassName="ATXBOMVersion_Extension" ExtensionTargetName="BOMVersion" ExtensionTargetTypeId="TableTypeId" ExtensionNestedTargetName="" />
+  <ExtensionClass ExtensionClassName="EcoResProductMasterDimension_Extension" ExtensionTargetName="EcoResProductMasterDimension" ExtensionTargetTypeId="FormTypeId" ExtensionNestedTargetName="" />
+  <ExtensionClass ExtensionClassName="ATXWrkCtrResourceGroupCalendar_Extension" ExtensionTargetName="WrkCtrResourceGroupCalendar" ExtensionTargetTypeId="TableTypeId" ExtensionNestedTargetName="" />
+  <ExtensionClass ExtensionClassName="BOMCreate_Extension" ExtensionTargetName="BOMCreate" ExtensionTargetTypeId="ClassTypeId" ExtensionNestedTargetName="" />
+  <ExtensionClass ExtensionClassName="InventDimParm_Extension" ExtensionTargetName="InventDimParm" ExtensionTargetTypeId="TableTypeId" ExtensionNestedTargetName="" />
+</ExtensionClasses>

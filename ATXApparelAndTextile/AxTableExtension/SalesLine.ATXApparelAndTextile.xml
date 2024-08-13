@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxTableExtension xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>SalesLine.ATXApparelAndTextile</Name>
+	<FieldGroupExtensions />
+	<FieldGroups />
+	<FieldModifications />
+	<Fields>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>ATXInventTransIdOrigin</Name>
+			<ExtendedDataType>InventTransId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>ATXProdPoolId</Name>
+			<ExtendedDataType>ProdPoolId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>ATXSeasonId</Name>
+			<ExtendedDataType>ATXSeasonId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>ATXDestinationPlaceId</Name>
+			<ExtendedDataType>ATXDestinationPlaceId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>ATXLineOfBusinessId</Name>
+			<ExtendedDataType>LineOfBusinessId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>ATXItemBOMId</Name>
+			<ExtendedDataType>ItemBOMId</ExtendedDataType>
+			<Label>L. MAT de producción</Label>
+		</AxTableField>
+	</Fields>
+	<FullTextIndexes />
+	<Indexes />
+	<Mappings />
+	<PropertyModifications />
+	<RelationExtensions />
+	<RelationModifications />
+	<Relations />
+</AxTableExtension>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxEnum xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXRequestOrderStatus</Name>
+	<Label>@ATXAT:NewLabel6</Label>
+	<UseEnumValue>No</UseEnumValue>
+	<EnumValues>
+		<AxEnumValue>
+			<Name>Loaded</Name>
+			<Label>@ATXApparelAndTextile_en_US:ATXL00013</Label>
+		</AxEnumValue>
+		<AxEnumValue>
+			<Name>Authorized</Name>
+			<Label>@ATXApparelAndTextile_en_US:ATXL00014</Label>
+			<Value>1</Value>
+		</AxEnumValue>
+		<AxEnumValue>
+			<Name>Completed</Name>
+			<Label>@ATXApparelAndTextile_en_US:ATXL00015</Label>
+			<Value>2</Value>
+		</AxEnumValue>
+		<AxEnumValue>
+			<Name>Rejected</Name>
+			<Label>@ATXApparelAndTextile_en_US:ATXL00016</Label>
+			<Value>3</Value>
+		</AxEnumValue>
+		<AxEnumValue>
+			<Name>Error</Name>
+			<Label>@ATXApparelAndTextile_en_US:ATXL00017</Label>
+			<Value>4</Value>
+		</AxEnumValue>
+	</EnumValues>
+	<IsExtensible>true</IsExtensible>
+</AxEnum>

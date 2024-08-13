@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXRouteCardContract</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+class ATXRouteCardContract
+{
+    RefRecId recId;
+    RouteOprId routeOprId;
+
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>refRecId</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// PurchOrder record Report
+    /// </summary>
+    /// <param name = "_recId"></param>
+    /// <returns>RecId</returns>
+    [DataMemberAttribute("RecId"),SysOperationControlVisibilityAttribute(false)]
+    public RefRecId refRecId(RefRecId _recId = recId)
+    {
+        recId = _recId;
+
+        return  recId;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmRouteOprId</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name = "_routeOprId"></param>
+    /// <returns></returns>
+    [DataMemberAttribute(extendedTypeStr(RouteOprId))]
+    public RouteOprId parmRouteOprId(RouteOprId _routeOprId = routeOprId)
+    {
+        routeOprId = _routeOprId;
+
+        return routeOprId;
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>

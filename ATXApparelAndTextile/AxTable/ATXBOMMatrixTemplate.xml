@@ -1,0 +1,385 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxTable xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXBOMMatrixTemplate</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+public class ATXBOMMatrixTemplate extends common
+{
+
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>inventTable</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    /// <returns></returns>
+    public InventTable inventTable()
+    {
+        return InventTable::find(this.ItemId);
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>validateWrite</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    /// <returns></returns>
+    public boolean validateWrite()
+    {
+        boolean ret;
+    
+        ret = super();
+        /*if (ret
+        && !this.inventTable().sizeActive()
+        && this.SameStyleSize)
+        {
+            ret = checkFailed('El articulo no utiliza la dimensión tamaño');
+        }
+
+        if (ret
+        && !this.inventTable().ItemSizeGridValue_AT
+        && this.SameStyleSize)
+        {
+            ret = checkFailed('El articulo no tiene configurado un grid de tamaño');
+        }
+
+        if (ret
+        && !this.inventTable().colorActive()
+        && this.SameStyleColor)
+        {
+            ret = checkFailed('El articulo no utiliza la dimensión color');
+        }
+
+        if (ret
+        && !this.inventTable().ItemSizeGridValue_AT
+        && this.SameStyleColor)
+        {
+            ret = checkFailed('El articulo no tiene configurado un grid de color');
+        }
+
+        if (ret
+        && this.inventTable().sizeActive()
+        && this.SameStyleSize
+        && this.InventSizeId)
+        {
+            ret = checkFailed('lbl - Si se activa el uso de tallas del estilo no se puede indicar talla');
+        }
+
+        if (ret
+        && this.inventTable().colorActive()
+        && this.SameStyleColor
+        && this.InventColorId)
+        {
+            ret = checkFailed('lbl - Si se activa el uso de colores del estilo no se puede indicar color');
+        }
+
+        if (ret
+        && this.inventTable().colorActive()
+        && !this.SameStyleColor
+        && !this.InventColorId)
+        {
+            ret = checkFailed('lbl - Se debe indicar color');
+        }*/
+    
+        return ret;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>bomTemplateLine</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    /// <returns></returns>
+    public ATXBOMTemplateLine bomTemplateLine()
+    {
+        return ATXBOMTemplateLine::findRecId(this.BOMTemplateline);
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+	<Label>@ATXAT:NewLabel63</Label>
+	<SubscriberAccessLevel>
+		<Read>Allow</Read>
+	</SubscriberAccessLevel>
+	<TitleField1>ItemId</TitleField1>
+	<ClusteredIndex>BOMTemplateIdx</ClusteredIndex>
+	<DeleteActions />
+	<FieldGroups>
+		<AxTableFieldGroup>
+			<Name>AutoReport</Name>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoLookup</Name>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoIdentification</Name>
+			<AutoPopulate>Yes</AutoPopulate>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoSummary</Name>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoBrowse</Name>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>General</Name>
+			<Label>@SYS35893</Label>
+			<Fields>
+				<AxTableFieldGroupField>
+					<DataField>SeasonId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>DestinationPlaceId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>RequestOrderId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>ProductMasterConfigId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>ProductMasterInventSizeId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>ProductMasterInventColorId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>ProductMasterInventStyleId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>SameProductMasterSize</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>ItemId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>ConfigId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>InventSizeId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>InventColorId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>InventStyleId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>BOMQty</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>BOMQtySerie</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>BOMType</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>RouteOprId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>VendAccount</DataField>
+				</AxTableFieldGroupField>
+			</Fields>
+		</AxTableFieldGroup>
+	</FieldGroups>
+	<Fields>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldReal">
+			<Name>BOMQty</Name>
+			<ExtendedDataType>BOMQty</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldReal">
+			<Name>BOMQtySerie</Name>
+			<ExtendedDataType>BOMQtySerie</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldInt64">
+			<Name>BOMTemplateLine</Name>
+			<ExtendedDataType>RefRecId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldEnum">
+			<Name>BOMType</Name>
+			<EnumType>BOMType</EnumType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>ItemId</Name>
+			<ExtendedDataType>ItemId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>RouteOprId</Name>
+			<ExtendedDataType>RouteOprId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>VendAccount</Name>
+			<ExtendedDataType>VendAccount</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>ConfigId</Name>
+			<ExtendedDataType>EcoResConfigurationName</ExtendedDataType>
+			<Label>@ATXAT:NewLabel277</Label>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>InventSizeId</Name>
+			<ExtendedDataType>EcoResSizeName</ExtendedDataType>
+			<Label>@ATXAT:NewLabel278</Label>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>InventColorId</Name>
+			<ExtendedDataType>EcoResColorName</ExtendedDataType>
+			<Label>@ATXAT:NewLabel279</Label>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>InventStyleId</Name>
+			<ExtendedDataType>EcoResStyleName</ExtendedDataType>
+			<Label>@ATXAT:NewLabel280</Label>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>ProductMasterConfigId</Name>
+			<ExtendedDataType>EcoResConfigurationName</ExtendedDataType>
+			<Label>@ATXAT:NewLabel55</Label>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>ProductMasterInventSizeId</Name>
+			<ExtendedDataType>EcoResSizeName</ExtendedDataType>
+			<Label>@ATXAT:NewLabel56</Label>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>ProductMasterInventColorId</Name>
+			<ExtendedDataType>EcoResColorName</ExtendedDataType>
+			<Label>@ATXAT:NewLabel57</Label>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>ProductMasterInventStyleId</Name>
+			<ExtendedDataType>EcoResStyleName</ExtendedDataType>
+			<Label>@ATXAT:NewLabel58</Label>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>DestinationPlaceId</Name>
+			<ExtendedDataType>ATXDestinationPlaceId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>SeasonId</Name>
+			<ExtendedDataType>ATXSeasonId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>RequestOrderId</Name>
+			<ExtendedDataType>ATXRequestOrderId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldEnum">
+			<Name>SameProductMasterColor</Name>
+			<ExtendedDataType>NoYesId</ExtendedDataType>
+			<Label>@ATXAT:NewLabel62</Label>
+			<EnumType>NoYes</EnumType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldEnum">
+			<Name>SameProductMasterSize</Name>
+			<ExtendedDataType>NoYesId</ExtendedDataType>
+			<Label>@ATXAT:NewLabel61</Label>
+			<EnumType>NoYes</EnumType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>ProductMasterItemId</Name>
+			<ExtendedDataType>ItemId</ExtendedDataType>
+			<Label>@ATXAT:NewLabel276</Label>
+		</AxTableField>
+	</Fields>
+	<FullTextIndexes />
+	<Indexes>
+		<AxTableIndex>
+			<Name>BOMTemplateIdx</Name>
+			<AllowDuplicates>Yes</AllowDuplicates>
+			<Fields>
+				<AxTableIndexField>
+					<DataField>BOMTemplateLine</DataField>
+				</AxTableIndexField>
+			</Fields>
+		</AxTableIndex>
+	</Indexes>
+	<Mappings />
+	<Relations>
+		<AxTableRelation>
+			<Name>ATXBOMTemplateLine</Name>
+			<RelatedTable>ATXBOMTemplateLine</RelatedTable>
+			<Constraints>
+				<AxTableRelationConstraint xmlns=""
+					i:type="AxTableRelationConstraintField">
+					<Name>BOMTemplateLine</Name>
+					<Field>BOMTemplateLine</Field>
+					<RelatedField>RecId</RelatedField>
+				</AxTableRelationConstraint>
+			</Constraints>
+		</AxTableRelation>
+		<AxTableRelation>
+			<Name>ATXSeasonTable</Name>
+			<RelatedTable>ATXSeasonTable</RelatedTable>
+			<Constraints>
+				<AxTableRelationConstraint xmlns=""
+					i:type="AxTableRelationConstraintField">
+					<Name>SeasonId</Name>
+					<Field>SeasonId</Field>
+					<RelatedField>SeasonId</RelatedField>
+				</AxTableRelationConstraint>
+			</Constraints>
+		</AxTableRelation>
+		<AxTableRelation>
+			<Name>ATXDestinationPlace</Name>
+			<RelatedTable>ATXDestinationPlace</RelatedTable>
+			<Constraints>
+				<AxTableRelationConstraint xmlns=""
+					i:type="AxTableRelationConstraintField">
+					<Name>DestinationPlaceId</Name>
+					<Field>DestinationPlaceId</Field>
+					<RelatedField>DestinationPlaceId</RelatedField>
+				</AxTableRelationConstraint>
+			</Constraints>
+		</AxTableRelation>
+		<AxTableRelation>
+			<Name>ATXRequestOrderHeader</Name>
+			<RelatedTable>ATXRequestOrderHeader</RelatedTable>
+			<Constraints>
+				<AxTableRelationConstraint xmlns=""
+					i:type="AxTableRelationConstraintField">
+					<Name>RequestOrderId</Name>
+					<Field>RequestOrderId</Field>
+					<RelatedField>RequestOrderId</RelatedField>
+				</AxTableRelationConstraint>
+			</Constraints>
+		</AxTableRelation>
+	</Relations>
+	<StateMachines />
+</AxTable>

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxFormExtension xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="Microsoft.Dynamics.AX.Metadata.V6">
+	<Name>EcoResProductMasterDimension.ATXApparelAndTextile</Name>
+	<ControlModifications />
+	<Controls>
+		<AxFormExtensionControl xmlns="">
+			<Name>FormExtensionControlr4habzt31</Name>
+			<FormControl xmlns=""
+				i:type="AxFormButtonGroupControl">
+				<Name>ATXButtonGroupSizeGrid</Name>
+				<Type>ButtonGroup</Type>
+				<FormControlExtension
+					i:nil="true" />
+				<Controls>
+					<AxFormControl xmlns=""
+						i:type="AxFormButtonControl">
+						<Name>ATXButtonGridSize</Name>
+						<Type>Button</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<Text>@ATXAT:NewLabel112</Text>
+					</AxFormControl>
+				</Controls>
+				<Caption>@ATXAT:NewLabel21</Caption>
+			</FormControl>
+			<Parent>ActionPaneTabSizes</Parent>
+		</AxFormExtensionControl>
+		<AxFormExtensionControl xmlns="">
+			<Name>Copyhvlu3w5l1</Name>
+			<FormControl xmlns=""
+				i:type="AxFormButtonGroupControl">
+				<Name>ATXButtonGroupConfig</Name>
+				<Type>ButtonGroup</Type>
+				<FormControlExtension
+					i:nil="true" />
+				<Controls>
+					<AxFormControl xmlns=""
+						i:type="AxFormButtonControl">
+						<Name>ATXButtonGridConfig</Name>
+						<Type>Button</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<Text>@ATXAT:NewLabel111</Text>
+					</AxFormControl>
+				</Controls>
+				<Caption>@ATXAT:NewLabel21</Caption>
+			</FormControl>
+			<Parent>ActionPaneTabConfigurations</Parent>
+		</AxFormExtensionControl>
+		<AxFormExtensionControl xmlns="">
+			<Name>Copy14onnskw1</Name>
+			<FormControl xmlns=""
+				i:type="AxFormButtonGroupControl">
+				<Name>ATXButtonGroupColor</Name>
+				<Type>ButtonGroup</Type>
+				<FormControlExtension
+					i:nil="true" />
+				<Controls>
+					<AxFormControl xmlns=""
+						i:type="AxFormButtonControl">
+						<Name>ATXButtonGridColor</Name>
+						<Type>Button</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<Text>@ATXAT:NewLabel113</Text>
+					</AxFormControl>
+				</Controls>
+				<Caption>@ATXAT:NewLabel21</Caption>
+			</FormControl>
+			<Parent>ActionPaneTabColors</Parent>
+		</AxFormExtensionControl>
+		<AxFormExtensionControl xmlns="">
+			<Name>Copy32cwnjgv1</Name>
+			<FormControl xmlns=""
+				i:type="AxFormButtonGroupControl">
+				<Name>ATXButtonGroupStyle</Name>
+				<Type>ButtonGroup</Type>
+				<FormControlExtension
+					i:nil="true" />
+				<Controls>
+					<AxFormControl xmlns=""
+						i:type="AxFormButtonControl">
+						<Name>ATXButtonGridStyle</Name>
+						<Type>Button</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<Text>@ATXAT:NewLabel114</Text>
+					</AxFormControl>
+				</Controls>
+				<Caption>@ATXAT:NewLabel21</Caption>
+			</FormControl>
+			<Parent>ActionPaneTabStyles</Parent>
+		</AxFormExtensionControl>
+	</Controls>
+	<DataSourceModifications />
+	<DataSourceReferences />
+	<DataSources />
+	<Parts />
+	<PropertyModifications />
+</AxFormExtension>

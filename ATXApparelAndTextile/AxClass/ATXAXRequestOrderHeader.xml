@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXAXRequestOrderHeader</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+class ATXAXRequestOrderHeader extends AxInternalBase
+{
+    ATXRequestOrderHeader   requestOrderHeader;
+
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>currentRecord</Name>
+				<Source><![CDATA[
+    public Common currentRecord(Common _requestOrderHeader = requestOrderHeader)
+    {
+        if (!prmisDefault(_requestOrderHeader))
+        {
+            super(_requestOrderHeader);
+            requestOrderHeader = _requestOrderHeader as ATXRequestOrderHeader;
+        }
+        else
+        {
+            super();
+        }
+
+        return requestOrderHeader;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmProdPoolId</Name>
+				<Source><![CDATA[
+    public ProdPoolId parmProdPoolId(ProdPoolId _prodPoolId = '')
+    {
+        if (!prmisDefault(_prodPoolId))
+        {
+            this.setField(fieldNum(ATXRequestOrderHeader, ProdPoolId), _prodPoolId);
+        }
+
+        return requestOrderHeader.ProdPoolId;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmRequestOrderCancelDate_AT</Name>
+				<Source><![CDATA[
+    public ATXRequestOrderCancelDate parmRequestOrderCancelDate_AT(ATXRequestOrderCancelDate _requestOrderCancelDate = DateTimeUtil::getSystemDate(DateTimeUtil::getUserPreferredTimeZone()))
+    {
+        if (!prmisDefault(_requestOrderCancelDate))
+        {
+            this.setField(fieldNum(ATXRequestOrderHeader, RequestOrderCancelDate), _requestOrderCancelDate);
+        }
+
+        return requestOrderHeader.RequestOrderCancelDate;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>emptyRecord</Name>
+				<Source><![CDATA[
+    protected Common emptyRecord()
+    {
+        ATXRequestOrderHeader localRequestOrderHeader;
+        return requestOrderHeader;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>new</Name>
+				<Source><![CDATA[
+    public void new()
+    {
+        ;
+        super();
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmCurrencyCode</Name>
+				<Source><![CDATA[
+    public CurrencyCode parmCurrencyCode(CurrencyCode _currencyCode = '')
+    {
+        if (!prmisDefault(_currencyCode))
+        {
+            this.setField(fieldNum(ATXRequestOrderHeader, CurrencyCode), _currencyCode);
+        }
+
+        return requestOrderHeader.CurrencyCode;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmCustAccount</Name>
+				<Source><![CDATA[
+    public CustAccount parmCustAccount(CustAccount _custAccount = '')
+    {
+        if (!prmisDefault(_custAccount))
+        {
+            this.setField(fieldNum(ATXRequestOrderHeader, CustAccount), _custAccount);
+        }
+
+        return requestOrderHeader.CustAccount;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmCustPurchaseOrder</Name>
+				<Source><![CDATA[
+    public CustPurchaseOrder parmCustPurchaseOrder(CustPurchaseOrder _custPurchaseOrder = '')
+    {
+        if (!prmisDefault(_custPurchaseOrder))
+        {
+            this.setField(fieldNum(ATXRequestOrderHeader, CustPurchaseOrder), _custPurchaseOrder);
+        }
+
+        return requestOrderHeader.CustPurchaseOrder;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmCustRef</Name>
+				<Source><![CDATA[
+    public CustRef parmCustRef(CustRef _custRef = '')
+    {
+        if (!prmisDefault(_custRef))
+        {
+            this.setField(fieldNum(ATXRequestOrderHeader, CustRef), _custRef);
+        }
+
+        return requestOrderHeader.CustRef;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmInventLocationId</Name>
+				<Source><![CDATA[
+    public InventLocationId parmInventLocationId(InventLocationId _inventLocationId = '')
+    {
+        if (!prmisDefault(_inventLocationId))
+        {
+            this.setField(fieldNum(ATXRequestOrderHeader, InventLocationId), _inventLocationId);
+        }
+
+        return requestOrderHeader.InventLocationId;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmInventSiteId</Name>
+				<Source><![CDATA[
+    public InventSiteId parmInventSiteId(InventSiteId _inventSiteId = '')
+    {
+        if (!prmisDefault(_inventSiteId))
+        {
+            this.setField(fieldNum(ATXRequestOrderHeader, InventSiteId), _inventSiteId);
+        }
+
+        return requestOrderHeader.InventSiteId;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmInventTransType</Name>
+				<Source><![CDATA[
+    public InventTransType parmInventTransType(InventTransType _inventTransType = InventTransType::Production)
+    {
+        if (!prmisDefault(_inventTransType))
+        {
+            this.setField(fieldNum(ATXRequestOrderHeader, InventTransType), _inventTransType);
+        }
+
+        return requestOrderHeader.InventTransType;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>construct</Name>
+				<Source><![CDATA[
+    static ATXAXRequestOrderHeader construct()
+    {
+        return new ATXAXRequestOrderHeader();
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmRequestOrderId_AT</Name>
+				<Source><![CDATA[
+    public ATXRequestOrderId parmRequestOrderId_AT(ATXRequestOrderId _requestOrderId = '')
+    {
+        if (!prmisDefault(_requestOrderId))
+        {
+            this.setField(fieldNum(ATXRequestOrderHeader, RequestOrderId), _requestOrderId);
+        }
+
+        return requestOrderHeader.RequestOrderId;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmRequestOrderStatus_AT</Name>
+				<Source><![CDATA[
+    public ATXRequestOrderStatus parmRequestOrderStatus_AT(ATXRequestOrderStatus _requestOrderStatus = ATXRequestOrderStatus::Loaded)
+    {
+        if (!prmisDefault(_requestOrderStatus))
+        {
+            this.setField(fieldNum(ATXRequestOrderHeader, RequestOrderStatus), _requestOrderStatus);
+        }
+
+        return requestOrderHeader.RequestOrderStatus;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmRequestOrderGroupId_AT</Name>
+				<Source><![CDATA[
+    public ATXRequestOrderGroupId parmRequestOrderGroupId_AT(ATXRequestOrderGroupId _RequestOrderGroupId_AT = '')
+    {
+        if (!prmisDefault(_RequestOrderGroupId_AT))
+        {
+            this.setField(fieldNum(ATXRequestOrderHeader, RequestOrderGroupId), _RequestOrderGroupId_AT);
+        }
+
+        return requestOrderHeader.RequestOrderGroupId;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmRequestOrderCreated_AT</Name>
+				<Source><![CDATA[
+    public ATXRequestOrderCreated parmRequestOrderCreated_AT(ATXRequestOrderCreated _requestOrderCreated = dateNull())
+    {
+        if (!prmisDefault(_requestOrderCreated))
+        {
+            this.setField(fieldNum(ATXRequestOrderHeader, RequestOrderCreated), _requestOrderCreated);
+        }
+
+        return requestOrderHeader.RequestOrderCreated;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmRequestOrderDate</Name>
+				<Source><![CDATA[
+    public ATXRequestOrderDate parmRequestOrderDate(ATXRequestOrderDate _requestOrderDate = DateTimeUtil::getSystemDate(DateTimeUtil::getUserPreferredTimeZone()))
+    {
+        if (!prmisDefault(_requestOrderDate))
+        {
+            this.setField(fieldNum(ATXRequestOrderHeader, RequestOrderDate), _requestOrderDate);
+        }
+
+        return requestOrderHeader.RequestOrderDate;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmRequestOrderType_AT</Name>
+				<Source><![CDATA[
+    public ATXRequestOrderType parmRequestOrderType_AT(ATXRequestOrderType _requestOrderType = ATXRequestOrderType::Sales)
+    {
+        if (!prmisDefault(_requestOrderType))
+        {
+            this.setField(fieldNum(ATXRequestOrderHeader, RequestOrderType), _requestOrderType);
+        }
+
+        return requestOrderHeader.RequestOrderType;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>requestOrderHeader</Name>
+				<Source><![CDATA[
+    public ATXRequestOrderHeader requestOrderHeader(ATXRequestOrderHeader _requestOrderHeader = requestOrderHeader)
+    {
+        // TODO if (!prmIsDefault(requestOrderHeader))
+        //{
+        this.setCurrentRecordFromExternal(requestOrderHeader);
+        //}
+
+        return this.currentRecord();
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>

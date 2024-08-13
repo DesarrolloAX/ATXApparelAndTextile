@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxView xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXProductDimensionSizeLookup</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+public class ATXProductDimensionSizeLookup extends common
+{
+}
+]]></Declaration>
+		<Methods />
+	</SourceCode>
+	<SubscriberAccessLevel>
+		<Read>Allow</Read>
+	</SubscriberAccessLevel>
+	<FieldGroups>
+		<AxTableFieldGroup>
+			<Name>AutoReport</Name>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoLookup</Name>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoIdentification</Name>
+			<AutoPopulate>Yes</AutoPopulate>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoSummary</Name>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoBrowse</Name>
+			<Fields />
+		</AxTableFieldGroup>
+	</FieldGroups>
+	<Fields>
+		<AxViewField xmlns=""
+			i:type="AxViewFieldBound">
+			<Name>ItemId</Name>
+			<DataField>ItemId</DataField>
+			<DataSource>InventTable</DataSource>
+		</AxViewField>
+		<AxViewField xmlns=""
+			i:type="AxViewFieldBound">
+			<Name>Product</Name>
+			<DataField>Product</DataField>
+			<DataSource>InventTable</DataSource>
+		</AxViewField>
+		<AxViewField xmlns=""
+			i:type="AxViewFieldBound">
+			<Name>Name</Name>
+			<DataField>Name</DataField>
+			<DataSource>EcoResSize</DataSource>
+		</AxViewField>
+		<AxViewField xmlns=""
+			i:type="AxViewFieldBound">
+			<Name>Description</Name>
+			<DataField>Description</DataField>
+			<DataSource>EcoResProductMasterDimValueTranslation</DataSource>
+		</AxViewField>
+	</Fields>
+	<Indexes />
+	<Mappings />
+	<Relations />
+	<StateMachines />
+	<ViewMetadata>
+		<Name>Metadata</Name>
+		<SourceCode>
+			<Methods />
+		</SourceCode>
+		<DataSources>
+			<AxQuerySimpleRootDataSource>
+				<Name>InventTable</Name>
+				<DynamicFields>Yes</DynamicFields>
+				<Table>InventTable</Table>
+				<DataSources>
+					<AxQuerySimpleEmbeddedDataSource>
+						<Name>EcoResProduct</Name>
+						<DynamicFields>Yes</DynamicFields>
+						<Table>EcoResProduct</Table>
+						<DataSources>
+							<AxQuerySimpleEmbeddedDataSource>
+								<Name>EcoResProductMasterSize</Name>
+								<DynamicFields>Yes</DynamicFields>
+								<Table>EcoResProductMasterSize</Table>
+								<DataSources>
+									<AxQuerySimpleEmbeddedDataSource>
+										<Name>EcoResSize</Name>
+										<DynamicFields>Yes</DynamicFields>
+										<Table>EcoResSize</Table>
+										<DataSources>
+											<AxQuerySimpleEmbeddedDataSource>
+												<Name>EcoResProductMasterDimensionValue</Name>
+												<DynamicFields>Yes</DynamicFields>
+												<Table>EcoResProductMasterDimensionValue</Table>
+												<DataSources>
+													<AxQuerySimpleEmbeddedDataSource>
+														<Name>EcoResProductMasterDimValueTranslation</Name>
+														<DynamicFields>Yes</DynamicFields>
+														<Table>EcoResProductMasterDimValueTranslation</Table>
+														<DataSources>
+															<AxQuerySimpleEmbeddedDataSource>
+																<Name>EcoResProductDimensionAttribute</Name>
+																<DynamicFields>Yes</DynamicFields>
+																<Table>EcoResProductDimensionAttribute</Table>
+																<DataSources />
+																<DerivedDataSources />
+																<Fields />
+																<Ranges />
+																<Relations>
+																	<AxQuerySimpleDataSourceRelation>
+																		<Name>QueryDataSourceRelation1</Name>
+																		<Field>TableId</Field>
+																		<JoinDataSource>EcoResSize</JoinDataSource>
+																		<RelatedField>DimensionTableId</RelatedField>
+																	</AxQuerySimpleDataSourceRelation>
+																</Relations>
+															</AxQuerySimpleEmbeddedDataSource>
+														</DataSources>
+														<DerivedDataSources />
+														<Fields />
+														<Ranges />
+														<Relations>
+															<AxQuerySimpleDataSourceRelation>
+																<Name>QueryDataSourceRelation1</Name>
+																<Field>RecId</Field>
+																<JoinDataSource>EcoResProductMasterDimensionValue</JoinDataSource>
+																<RelatedField>ProductMasterDimensionValue</RelatedField>
+															</AxQuerySimpleDataSourceRelation>
+														</Relations>
+													</AxQuerySimpleEmbeddedDataSource>
+												</DataSources>
+												<DerivedDataSources />
+												<Fields />
+												<Ranges />
+												<Relations>
+													<AxQuerySimpleDataSourceRelation>
+														<Name>QueryDataSourceRelation1</Name>
+														<Field>RecId</Field>
+														<JoinDataSource>EcoResProductMasterSize</JoinDataSource>
+														<RelatedField>RecId</RelatedField>
+													</AxQuerySimpleDataSourceRelation>
+												</Relations>
+											</AxQuerySimpleEmbeddedDataSource>
+										</DataSources>
+										<DerivedDataSources />
+										<Fields />
+										<Ranges />
+										<Relations>
+											<AxQuerySimpleDataSourceRelation>
+												<Name>QueryDataSourceRelation1</Name>
+												<Field>Size</Field>
+												<JoinDataSource>EcoResProductMasterSize</JoinDataSource>
+												<RelatedField>RecId</RelatedField>
+											</AxQuerySimpleDataSourceRelation>
+										</Relations>
+									</AxQuerySimpleEmbeddedDataSource>
+								</DataSources>
+								<DerivedDataSources />
+								<Fields />
+								<Ranges />
+								<Relations>
+									<AxQuerySimpleDataSourceRelation>
+										<Name>QueryDataSourceRelation1</Name>
+										<Field>RecId</Field>
+										<JoinDataSource>EcoResProduct</JoinDataSource>
+										<RelatedField>SizeProductMaster</RelatedField>
+									</AxQuerySimpleDataSourceRelation>
+								</Relations>
+							</AxQuerySimpleEmbeddedDataSource>
+						</DataSources>
+						<DerivedDataSources />
+						<Fields />
+						<Ranges />
+						<Relations>
+							<AxQuerySimpleDataSourceRelation>
+								<Name>QueryDataSourceRelation1</Name>
+								<Field>Product</Field>
+								<JoinDataSource>InventTable</JoinDataSource>
+								<RelatedField>RecId</RelatedField>
+							</AxQuerySimpleDataSourceRelation>
+						</Relations>
+					</AxQuerySimpleEmbeddedDataSource>
+				</DataSources>
+				<DerivedDataSources />
+				<Fields />
+				<Ranges />
+				<GroupBy />
+				<Having />
+				<OrderBy />
+			</AxQuerySimpleRootDataSource>
+		</DataSources>
+	</ViewMetadata>
+</AxView>

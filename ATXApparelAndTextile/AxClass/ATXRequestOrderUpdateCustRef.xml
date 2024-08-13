@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXRequestOrderUpdateCustRef</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+class ATXRequestOrderUpdateCustRef
+{
+    ATXRequestOrderHeader requestOrderHeaderParm;
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>main</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name = "_args"></param>
+    public static void main(Args _args)
+    {
+        ATXRequestOrderUpdateCustRef instance = new ATXRequestOrderUpdateCustRef();
+        FormRun fr;
+
+        instance.parmRequestOrderHeader_AT(_args.record());
+        if (instance.parmRequestOrderHeader_AT())
+        {
+            instance.run();
+        }
+
+        if (_args && _args.dataset() == tableNum(ATXRequestOrderHeader) && _args.caller())
+        {
+            fr = _args.caller();
+                
+            fr.doResearch();
+            fr.doRefresh();
+            fr.reload();
+        }
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>run</Name>
+				<Source><![CDATA[
+    public void run()
+    {
+        //ATXEventWarningMailList eventWarningMailList;
+        ATXRequestOrderHeader   requestOrderHeader = this.parmRequestOrderHeader_AT();
+        ATXRequestOrderLine     requesLine, requestOrderLineForUpdate;
+        CustPurchaseOrder       customerPO;
+        /*
+        ATXEmailWarnings        emailWarnings;
+        str                     message;*/
+        SalesTable              salesTable;
+        SalesLine               salesLine, salesLineForUpdate;
+        Dialog                  dialog = new Dialog();
+        DialogField             dialogCustPO, dialogCustPOOld, dlgCustRef, dlgCustRefOld,
+                                dlgRequestOrderDate, dlgRequestORderDateOld,
+                                dlgRequestOrderCancelDate, dlgRequestOrderCancelDateOld;
+
+        utcDateTime             dateTime;
+        date                    dateInUserTimeZone;
+        TimeOfDay               timeInUserTimeZone;
+        CustRef                 customerRef;
+        InventDim               InventDimLine;
+        ProdTable               prodTable;
+        //ATXProdCutHeader        prodCutHeader;
+        ATXRequestOrderDate     requestOrderDate;
+        TransDate               requestOrderCancelDate;
+        boolean                 updateDate = false, updatePO = false;
+        //ATXProdCutSection       prodCutSection;
+
+        dateTime = DateTimeUtil::utcNow();
+        dateInUserTimeZone = DateTimeUtil::date(DateTimeUtil::applyTimeZoneOffset(dateTime, DateTimeUtil::getUserPreferredTimeZone()));
+        timeInUserTimeZone = DateTimeUtil::time(DateTimeUtil::applyTimeZoneOffset(dateTime, DateTimeUtil::getUserPreferredTimeZone()));
+        dateTime = DateTimeUtil::newDateTime(dateInUserTimeZone, timeInUserTimeZone, DateTimeUtil::getUserPreferredTimeZone());
+            
+        dialogCustPOOld = dialog.addField(extendedTypeStr(CustPurchaseOrder));
+        dialogCustPOOld.value(requestOrderHeader.CustPurchaseOrder);
+        dialogCustPOOld.enabled(false);
+        dialogCustPO = dialog.addField(extendedTypeStr(CustPurchaseOrder));
+        dialogCustPO.value(requestOrderHeader.CustPurchaseOrder);
+            
+        dlgCustRefOld = dialog.addField(extendedTypeStr(CustRef));
+        dlgCustRefOld.value(requestOrderHeader.CustRef);
+        dlgCustRefOld.enabled(false);
+        dlgCustRef = dialog.addField(extendedTypeStr(CustRef));
+        dlgCustRef.value(requestOrderHeader.CustRef);
+
+        dlgRequestORderDateOld = Dialog.addField(extendedTypeStr(ATXRequestOrderDate));
+        dlgRequestORderDateOld.value(requestOrderHeader.RequestOrderDate);
+        dlgRequestORderDateOld.enabled(false);
+        dlgRequestOrderDate = Dialog.addField(extendedTypeStr(ATXRequestOrderDate));
+        dlgRequestOrderDate.value(requestOrderHeader.RequestOrderDate);
+
+        dlgRequestOrderCancelDateOld = Dialog.addField(extendedTypeStr(ATXRequestOrderCancelDate));
+        dlgRequestOrderCancelDateOld.value(requestOrderHeader.RequestOrderCancelDate);
+        dlgRequestOrderCancelDateOld.enabled(false);
+        dlgRequestOrderCancelDate = Dialog.addField(extendedTypeStr(ATXRequestOrderCancelDate));
+        dlgRequestOrderCancelDate.value(requestOrderHeader.RequestOrderCancelDate);
+        dialog.run();
+
+        if (dialog.closedOk())
+        {
+            customerPO = dialogCustPO.value();
+            customerRef = dlgCustRef.value();
+            requestOrderDate = dlgRequestOrderDate.value();
+            requestOrderCancelDate = dlgRequestOrderCancelDate.value();
+            
+            // Check changes
+            // PO modified
+            if (dialogCustPO.value() != dialogCustPOOld.value() || dlgCustRef.value() != dlgCustRefOld.value())
+            {
+                updatePO = true;
+            }
+            // Date modified
+            if (dlgRequestORderDateOld.value() != dlgRequestOrderDate.value() || dlgRequestOrderCancelDateOld.value() != dlgRequestOrderCancelDate.value())
+            {
+                updateDate = true;
+            }
+            
+            salesTable = SalesTable::find(requestOrderHeader.SalesId, true);
+
+            // Validate no prodCutPlan exists
+            /*
+            select firstonly salesLineForUpdate
+                where salesLineForUpdate.SalesId == salesTable.SalesId
+                join prodTable
+                where prodTable.ATXInventRefTransId == salesLineForUpdate.InventTransId
+                join prodCutSection
+                where prodCutSection.ProdId == prodTable.ProdId
+            ;
+            if (prodCutSection && updatePO)
+            {
+                throw error("@ATXApparelAndTextile_AT:NewLabel309");
+            }
+            */
+            ttsbegin;
+            if (salesTable)
+            {
+                if (updatePO)
+                {
+                    // Update SalesTable
+                    salesTable.selectForUpdate(true);
+                    salesTable.PurchOrderFormNum = customerPO;
+                    salesTable.CustomerRef = customerRef;
+                    salesTable.update();
+                }
+                while select forupdate salesLineForUpdate
+                    where salesLineForUpdate.SalesId == salesTable.SalesId
+                    join inventDimLine
+                    where inventDimLine.inventDimId == salesLineForUpdate.InventDimId
+                    && inventDimLine.InventSizeId == ATXProductParameters::find().DummyValue
+                {
+                    if (updateDate)
+                    {
+                        salesLineForUpdate.ShippingDateRequested = requestOrderDate;
+                        salesLineForUpdate.ShippingDateConfirmed = requestOrderDate;
+                        salesLineForUpdate.ReceiptDateRequested = requestOrderCancelDate;
+                        salesLineForUpdate.ReceiptDateConfirmed = requestOrderCancelDate;
+                        salesLineForUpdate.update();
+                    }
+                    // Update prod
+                    /*
+                    while select forupdate prodTable
+                        where prodTable.ATXInventRefTransId == salesLineForUpdate.InventTransId
+                    {
+                        if (updatePO)
+                        {
+                            prodTable.ATXCustPurchaseOrder = customerPO;
+                            prodTable.ATXCustRef = customerRef;
+                        }
+                        if (updateDate)
+                        {
+                            prodTable.DlvDate = requestOrderDate;
+                        }
+                        if (updatePO || updateDate)
+                        {
+                            prodTable.update();
+                        }
+                        prodCutHeader = ATXProdCutHeader::find(prodTable.ProdId, true);
+                        if (prodCutHeader)
+                        {
+                            if (updatePO)
+                            {
+                                prodCutHeader.CustRef = customerRef;
+                                prodCutHeader.CustPurchaseOrder = customerPO;
+                            }
+                            if (updateDate)
+                            {
+                                prodCutHeader.RequestedDate = requestOrderDate;
+                            }
+                            if (updatePO || updateDate)
+                            {
+                                prodCutHeader.update();
+                            }
+                        }
+                    }*/
+                }
+            }
+            if (requestOrderHeader)
+            {
+                requestOrderHeader.selectForUpdate(true);
+                if (updatePO)
+                {
+                    requestOrderHeader.CustRefOld = requestOrderHeader.CustPurchaseOrder;
+                    requestOrderHeader.CustPurchaseOrder = customerPO;
+                    requestOrderHeader.CustRef           = customerRef;
+                }
+                if (updateDate)
+                {
+                    requestOrderHeader.RequestOrderDate  = requestOrderDate;
+                    requestOrderHeader.RequestOrderCancelDate = requestOrderCancelDate;
+                }
+                if (updatePO || updateDate)
+                {
+                    requestOrderHeader.update();
+                }
+                if (updateDate)
+                {
+                    while select forupdate requestOrderLineForUpdate
+                        where requestOrderLineForUpdate.RequestOrderId == requestOrderHeader.RequestOrderId
+                    {
+                        requestOrderLineForUpdate.RequestOrderDate       = requestOrderDate;
+                        requestOrderLineForUpdate.RequestOrderCancelDate = requestOrderCancelDate;
+                        requestOrderLineForUpdate.update();
+                    }
+                }
+            }
+            ttscommit;
+            /*
+            if (updatePO)
+            {
+                this.POModified(requestOrderHeader, dateTime);
+            }
+            if (updateDate)
+            {
+                this.DateModified(requestOrderHeader, dateTime, dlgRequestORderDateOld, dlgRequestOrderDate, dlgRequestOrderCancelDateOld, dlgRequestOrderCancelDate);
+            }
+            */
+        }
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmRequestOrderHeader_AT</Name>
+				<Source><![CDATA[
+    /*
+    //Modified PO
+    private void POModified(RequestOrderHeader_AT _requestOrderHeader, utcDateTime _dateTime)
+    {
+        RequestOrderLine_AT     requesLine;
+        EventWarningMailList_AT eventWarningMailList;
+        EmailWarnings_AT        emailWarnings;
+        str                     message;
+        
+        select sum(QtyOrig),sum(RequestQty),maxOf(AuthDate),maxof(RequestOrderCancelDate),maxof(RequestOrderDate), maxof(InventDimId) from requesLine
+            group by ItemId
+                where requesLine.RequestOrderId == _requestOrderHeader.RequestOrderId
+                    && requesLine.RequestOrderUpdateId == RequestOrderUpdates_AT::lastVersion(_requestOrderHeader.RequestOrderId);
+
+        message = '<table cellspacing="2" border="1">';
+        message += strFmt('<tr><td>Orden del cliente (original)</td><td>%1</td></tr>', _requestOrderHeader.CustRefOld);
+        message += strFmt('<tr><td>Orden del cliente (nueva)</td><td><b>%1</b></td></tr>', _requestOrderHeader.CustPurchaseOrder);
+        message += strFmt('<tr><td>Referencia del cliente</td><td>%1</td></tr>', _requestOrderHeader.CustRef);
+        message += strFmt('<tr><td>Cliente</td><td>%1</td></tr>', CustTable::find(_requestOrderHeader.CustAccount).LineOfBusinessId);
+        message += strFmt('<tr><td>Conjunto de producción</td><td>%1</td></tr>', _requestOrderHeader.ProdPoolId);
+        message += strFmt('<tr><td>Estilo</td><td>%1</td></tr>', requesLine.ItemId);
+        message += strFmt('<tr><td>Cantidad cliente</td><td>%1</td></tr>', num2Str(requesLine.QtyOrig, 0,0,0,0));
+        message += strFmt('<tr><td>Cantidad + corte extra</td><td>%1</td></tr>', num2Str(requesLine.RequestQty, 0,0,0,0));
+        message += strFmt('<tr><td>Fecha de Solicitud</td><td>%1</td></tr>', requesLine.AuthDate);
+        message += strFmt('<tr><td>Fecha de entrega</td><td>%1</td></tr>', requesLine.RequestOrderDate);
+        message += strFmt('<tr><td>Req</td><td>%1</td></tr>', _requestOrderHeader.RequestOrderId);
+        message += strFmt('<tr><td>Config</td><td>%1</td></tr>', ProductTools_AT::itemConfigurationName(requesLine.ItemId, requesLine.inventDim().configId));
+        message += strFmt('<tr><td>Color</td><td>%1</td></tr>', ProductTools_AT::itemColorName(requesLine.ItemId, requesLine.inventDim().InventColorId));
+        message += strFmt('</table>');
+
+        select firstonly eventWarningMailList
+                        where eventWarningMailList.WarningGroupId == EventWarningParameters_AT::find().CustRefRequestOrderChanged;
+        emailWarnings.clear();
+        emailWarnings.Recipients = eventWarningMailList.MailList;
+        emailWarnings.Subject    = "PO del Cliente modificada";
+        emailWarnings.Message    = message;
+        emailWarnings.RefTableId = _requestOrderHeader.TableId;
+        emailWarnings.RefRecId   = _requestOrderHeader.RecId;
+        emailWarnings.DatePosted = systemDateGet();
+        emailWarnings.Reference  = strFmt("D:%1 POMOD:%2", _dateTime, _requestOrderHeader.RequestOrderId);
+        emailWarnings.insert();
+    }
+
+    //Modified Date
+    private void DateModified(RequestOrderHeader_AT _requestOrderHeader, utcDateTime _dateTime, DialogField _dlgRequestOrderDateOld, DialogField _dlgRequestOrderDate, DialogField _dlgRequestOrderCancelDateOld, DialogField _dlgRequestOrderCancelDate)
+    {
+        RequestOrderLine_AT     requesLine;
+        EventWarningMailList_AT eventWarningMailList;
+        EmailWarnings_AT        emailWarnings;
+        str                     message;
+
+        if (_dlgRequestOrderDateOld.value() == _dlgRequestOrderDate.value())
+            return;
+
+        select sum(QtyOrig),sum(RequestQty),maxOf(AuthDate),maxof(RequestOrderCancelDate),maxof(RequestOrderDate), maxof(InventDimId) from requesLine
+                    group by ItemId
+                    where requesLine.RequestOrderId == _requestOrderHeader.RequestOrderId
+                    && requesLine.RequestOrderUpdateId == RequestOrderUpdates_AT::lastVersion(_requestOrderHeader.RequestOrderId);
+
+        message = '<table cellspacing="2" border="1">';
+        message += strFmt('<tr><td>Orden del cliente </td><td><b>%1</b></td></tr>', _requestOrderHeader.CustPurchaseOrder);
+        message += strFmt('<tr><td>Referencia del cliente</td><td>%1</td></tr>', _requestOrderHeader.CustRef);
+        message += strFmt('<tr><td>Cliente</td><td>%1</td></tr>', CustTable::find(_requestOrderHeader.CustAccount).LineOfBusinessId);
+        message += strFmt('<tr><td>Conjunto de producción</td><td>%1</td></tr>', _requestOrderHeader.ProdPoolId);
+        message += strFmt('<tr><td>Estilo</td><td>%1</td></tr>', requesLine.ItemId);
+        message += strFmt('<tr><td>Fecha de entrega (anterior) </td><td>%1</td></tr>', _dlgRequestOrderDateOld.value());
+        message += strFmt('<tr><td>Fecha de entrega (nueva)</td><td><b>%1</b></td></tr>', _dlgRequestOrderDate.value());
+        message += strFmt('<tr><td>Req</td><td>%1</td></tr>', _requestOrderHeader.RequestOrderId);
+        message += strFmt('<tr><td>Config</td><td>%1</td></tr>', ProductTools_AT::itemConfigurationName(requesLine.ItemId, requesLine.inventDim().configId));
+        message += strFmt('<tr><td>Color</td><td>%1</td></tr>', ProductTools_AT::itemColorName(requesLine.ItemId, requesLine.inventDim().InventColorId));
+        message += strFmt('</table>');
+
+        select firstonly eventWarningMailList
+                        where eventWarningMailList.WarningGroupId == EventWarningParameters_AT::find().CustRefRequestOrderChanged;
+        emailWarnings.clear();
+        emailWarnings.Recipients = eventWarningMailList.MailList;
+        emailWarnings.Subject    = "PO Fecha modificada";
+        emailWarnings.Message    = message;
+        emailWarnings.RefTableId = _requestOrderHeader.TableId;
+        emailWarnings.RefRecId   = _requestOrderHeader.RecId;
+        emailWarnings.DatePosted = systemDateGet();
+        emailWarnings.Reference  = strFmt("D:%1 FMOD:%2", _dateTime, _requestOrderHeader.RequestOrderId);
+        emailWarnings.insert();
+    }
+
+    */
+
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name = "_requestOrderHeader_AT"></param>
+    /// <returns></returns>
+    public ATXRequestOrderHeader parmRequestOrderHeader_AT(ATXRequestOrderHeader _requestOrderHeader_AT = requestOrderHeaderParm)
+    {
+        requestOrderHeaderParm = _requestOrderHeader_AT;
+
+        return requestOrderHeaderParm;
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>

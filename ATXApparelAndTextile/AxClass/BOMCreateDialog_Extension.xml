@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>BOMCreateDialog_Extension</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+/// <summary>
+/// Add a new field to enable Template type
+/// </summary>
+[ExtensionOf(classStr(BOMCreateDialog))]
+final class BOMCreateDialog_Extension
+{
+    public NoYes        atxTemplateActive;
+    public DialogField  atxFieldTemplateActive;
+
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>promptCreateBOMDialog</Name>
+				<Source><![CDATA[
+    public container promptCreateBOMDialog(boolean _manual, boolean _pmfIsFormula)
+    {
+        Dialog          innerDialog;
+        container       con;
+        int             len;
+
+        atxFieldTemplateActive = dialog.addField(extendedtypestr(NoYesId), "@SYS53423","@SYS86916");
+        atxFieldTemplateActive.value(true);
+
+        con = next promptCreateBOMDialog(_manual,_pmfIsFormula);
+
+        atxTemplateActive = atxFieldTemplateActive.value();
+
+        return con;
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>

@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxTable xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXProdCutPatternBreakdown</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+public class ATXProdCutPatternBreakdown extends common
+{
+    /*/// <summary>
+    ///
+    /// </summary>
+    /// <param name = "breakDown"></param>
+    public void initFromBreakdownOrderLine(BreakdownOrderLine_AT breakDown)
+    {
+        ProdCutPattern_AT pattern;
+
+        if (breakDown)
+        {
+            select firstonly pattern
+                where pattern.RecId == this.ProdCutPatternRecId;
+            if (pattern)
+            {
+                this.InventSizeId = breakDown.InventSizeId;
+                this.QtyOrig      = breakDown.Qty;
+                this.CanvasQty    = this.BagQty * pattern.BagQty * pattern.CanvasQty;
+            }
+        }
+    }
+
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name = "_fieldId"></param>
+    public void modifiedField(FieldId _fieldId)
+    {
+        super(_fieldId);
+
+        switch (_fieldId)
+        {
+            case fieldNum(ProdCutPatternBreakdown_AT, BagQty):
+                this.calcQty();
+                break;
+        }
+    }
+
+    /// <summary>
+    /// Update totals
+    /// </summary>
+    public void calcQty()
+    {
+        ProdCutPattern_AT prodCutPattern;
+
+        prodCutPattern = ProdCutPattern_AT::find(this.ProdCutPatternRecId);
+        this.CanvasQty = this.BagQty * prodCutPattern.CanvasQty * prodCutPattern.BagQty;
+        this.CanvasSubtotalQty = ProdCutPatternBreakdown_AT::getCanvasSubtotalQty(this.ProdCutPatternRecId, this.InventSizeId);
+        this.RemainCanvas = this.QtyOrig - this.CanvasSubtotalQty;
+    }
+
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name = "_recId"></param>
+    /// <returns></returns>
+    public static Qty getCanvasSubtotalQty(RefRecId _recIdPattern, EcoResSizeName _size)
+    {
+        ProdCutPatternBreakdown_AT  prodCutPatternBreakdown;
+        ProdCutPattern_AT           prodCutPattern, prodCutPatternOff;
+        ProdCutSection_AT           prodCutSection;
+
+        
+        select sum(CanvasQty) from prodCutPatternBreakdown
+            where prodCutPatternBreakdown.InventSizeId    == _size
+            join prodCutPattern
+            where prodCutPattern.recId               == prodCutPatternBreakdown.ProdCutPatternRecId
+            join prodCutSection
+            where prodCutSection.RecId == prodCutPattern.ProdCutSectionRecId
+            && prodCutSection.ProdCutHeaderRecId == ProdCutSection_AT::find(ProdCutPattern_AT::find(_recIdPattern).ProdCutSectionRecId).ProdCutHeaderRecId;
+
+        return prodCutPatternBreakdown.CanvasQty;
+    }
+
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name = "_recId"></param>
+    /// <returns></returns>
+    public static Qty getBagTotalQty(RefRecId _recId)
+    {
+        ProdCutPatternBreakdown_AT prodCutPatternBreakdown;
+
+        select sum(bagQty) from prodCutPatternBreakdown
+            where prodCutPatternBreakdown.ProdCutPatternRecId == _recId;
+
+        return prodCutPatternBreakdown.bagQty;
+    }
+
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name = "_recId"></param>
+    /// <returns></returns>
+    public static Qty getCanvasQty(RefRecId _recId)
+    {
+        ProdCutPatternBreakdown_AT prodCutPatternBreakdown;
+
+        select sum(CanvasQty) from prodCutPatternBreakdown
+            where prodCutPatternBreakdown.ProdCutPatternRecId == _recId;
+
+        return prodCutPatternBreakdown.CanvasQty;
+    }
+
+    /// <summary>
+    ///
+    /// </summary>
+    public void update()
+    {
+        super();
+        
+        this.CanvasSubtotalQty = ProdCutPatternBreakdown_AT::getCanvasSubtotalQty(this.ProdCutPatternRecId,this.InventSizeId);
+        this.RemainCanvas = this.QtyOrig - this.CanvasSubtotalQty;
+    }
+
+    /// <summary>
+    /// Get Total for all sections
+    /// </summary>
+    /// <param name = "_recId"></param>
+    /// <returns></returns>
+    public static Qty getCanvasQtySection(RefRecId _recId)
+    {
+        ProdCutPatternBreakdown_AT prodCutPatternBreakdown;
+        ProdCutPattern_AT prodCutPattern_AT;
+
+        select sum(CanvasQty) from prodCutPatternBreakdown
+            join prodCutPattern_AT
+            where prodCutPattern_AT.RecId == prodCutPatternBreakdown.ProdCutPatternRecId
+                && prodCutPattern_AT.ProdCutSectionRecId == _recId
+        ;
+
+        return prodCutPatternBreakdown.CanvasQty;
+    }
+
+    /// <summary>
+    /// Get Marker qty from all sections
+    /// </summary>
+    /// <param name = "_recIdSection"></param>
+    /// <returns></returns>
+    public static Qty getCanvasQtyCutHeader(RefRecId _recIdSection)
+    {
+        ProdCutSection_AT prodCutSection_ATQry, prodCutSection_AT = ProdCutSection_AT::find(_recIdSection);
+        ProdCutPatternBreakdown_AT prodCutPatternBreakdown;
+        ProdCutPattern_AT prodCutPattern_AT;
+
+        select sum(CanvasQty) from prodCutPatternBreakdown
+            join prodCutPattern_AT
+            where prodCutPattern_AT.RecId == prodCutPatternBreakdown.ProdCutPatternRecId
+            join prodCutSection_ATQry
+            where prodCutSection_ATQry.RecId == prodCutPattern_AT.ProdCutSectionRecId
+                && prodCutSection_ATQry.ProdCutHeaderRecId == prodCutSection_AT.ProdCutHeaderRecId;
+
+        return prodCutPatternBreakdown.CanvasQty;
+    }
+
+    /// <summary>
+    ///
+    /// </summary>
+    public void insert()
+    {
+        this.RetailDisplayOrder = SizeDisplayOrder_AT::find(this.InventSizeId).RetailDisplayOrder;
+        super();
+    }*/
+
+}
+]]></Declaration>
+		<Methods />
+	</SourceCode>
+	<Label>@ATXAT:NewLabel288</Label>
+	<SubscriberAccessLevel>
+		<Read>Allow</Read>
+	</SubscriberAccessLevel>
+	<TitleField1>ProdCutPatternRecId</TitleField1>
+	<TitleField2>InventSizeId</TitleField2>
+	<DeleteActions />
+	<FieldGroups>
+		<AxTableFieldGroup>
+			<Name>AutoReport</Name>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoLookup</Name>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoIdentification</Name>
+			<AutoPopulate>Yes</AutoPopulate>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoSummary</Name>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoBrowse</Name>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>General</Name>
+			<Label>@SYS35893</Label>
+			<Fields>
+				<AxTableFieldGroupField>
+					<DataField>InventSizeId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>CutQty</DataField>
+				</AxTableFieldGroupField>
+			</Fields>
+		</AxTableFieldGroup>
+	</FieldGroups>
+	<Fields>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldInt64">
+			<Name>ProdCutPatternRecId</Name>
+			<ExtendedDataType>RefRecId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>InventSizeId</Name>
+			<AllowEdit>No</AllowEdit>
+			<AllowEditOnCreate>No</AllowEditOnCreate>
+			<ExtendedDataType>EcoResSizeName</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldReal">
+			<Name>CutQty</Name>
+			<ExtendedDataType>ATXCutQty</ExtendedDataType>
+		</AxTableField>
+	</Fields>
+	<FullTextIndexes />
+	<Indexes>
+		<AxTableIndex>
+			<Name>ProdCutPatterndx</Name>
+			<AllowDuplicates>Yes</AllowDuplicates>
+			<Fields>
+				<AxTableIndexField>
+					<DataField>ProdCutPatternRecId</DataField>
+				</AxTableIndexField>
+			</Fields>
+		</AxTableIndex>
+	</Indexes>
+	<Mappings />
+	<Relations>
+		<AxTableRelation>
+			<Name>ATXProdCutPattern</Name>
+			<Cardinality>ZeroMore</Cardinality>
+			<RelatedTable>ATXProdCutPattern</RelatedTable>
+			<Constraints>
+				<AxTableRelationConstraint xmlns=""
+					i:type="AxTableRelationConstraintField">
+					<Name>ProdCutPatternRecId</Name>
+					<Field>ProdCutPatternRecId</Field>
+					<RelatedField>RecId</RelatedField>
+				</AxTableRelationConstraint>
+			</Constraints>
+		</AxTableRelation>
+	</Relations>
+	<StateMachines />
+</AxTable>

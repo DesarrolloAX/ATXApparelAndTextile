@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXRequestOrderCancel</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+class ATXRequestOrderCancel extends RunBase
+{
+    Args args;
+
+    DialogField dfRequestOrderId, dialogCustPurchaseOrder;
+    ATXRequestOrderId requestOrderId;
+    CustPurchaseOrder custPurchaseOrder;
+
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>run</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    public void run()
+    {
+        Dialog dialog = new Dialog();
+        DialogField dfCommets;
+        String255 commets;
+        ATXRequestOrderHeader requestOrderHeader;
+
+        if (args)
+        {
+            if (args.record())
+            {
+                if (args.record().TableId == tableNum(ATXRequestOrderHeader))
+                {
+                    dialog.caption("@ATXAT:NewLabel74");
+                    dialog.addGroup("@ATXAT:NewLabel74");
+                    dfCommets = dialog.addField(extendedTypeStr(String255),"@ATXAT:NewLabel75");
+                    dfCommets.mandatory_RU(true);
+
+                    dialog.run();
+
+                    if (dialog.closedOk())
+                    {
+                        commets = dfCommets.value();
+                        ttsbegin;
+                        requestOrderHeader = args.record();
+                        requestOrderHeader.selectForUpdate(true);
+                        requestOrderHeader.RequestOrderStatus = ATXRequestOrderStatus::Rejected;
+                        requestOrderHeader.Comments = commets;
+                        requestOrderHeader.update();
+                        ttscommit;
+                    }
+                }
+            }
+        }
+        //super();
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmArgs</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name = "_args"></param>
+    /// <returns></returns>
+    public Args parmArgs(Args _args = args)
+    {
+        args = _args;
+
+        return args;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>main</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name = "_args"></param>
+    public static void main(Args _args)
+    {
+        ATXRequestOrderCancel cancel = new ATXRequestOrderCancel();
+
+        cancel.parmArgs(_args);
+
+        if (cancel.prompt())
+        {
+            cancel.run();
+        }
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>unpack</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name = "packedClass"></param>
+    /// <returns></returns>
+    public boolean unpack(container packedClass)
+    {
+        return false;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>getFromDialog</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    /// <returns></returns>
+    public boolean getFromDialog()
+    {
+        boolean ret;
+
+        ret = super();
+
+        if (ret)
+        {
+            requestOrderId = dfRequestOrderId.value();
+        }
+
+        return ret;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>dialog</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    /// <returns></returns>
+    public Object dialog()
+    {
+        ATXRequestOrderHeader requestOrderHeader;
+        Dialog dialog = super();
+
+        requestOrderHeader = args.record();
+
+        dfRequestOrderId = dialog.addFieldValue(extendedTypeStr(ATXRequestOrderId),requestOrderHeader.requestOrderId);
+        dfRequestOrderId.allowEdit(false);
+
+        dialogCustPurchaseOrder = dialog.addFieldValue(extendedTypeStr(CustPurchaseOrder), requestOrderHeader.CustPurchaseOrder);
+        dialogCustPurchaseOrder.allowEdit(false);
+        return dialog;
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>

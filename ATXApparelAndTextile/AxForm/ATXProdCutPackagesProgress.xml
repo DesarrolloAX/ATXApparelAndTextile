@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxForm xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="Microsoft.Dynamics.AX.Metadata.V6">
+	<Name>ATXProdCutPackagesProgress</Name>
+	<SourceCode>
+		<Methods xmlns="">
+			<Method>
+				<Name>classDeclaration</Name>
+				<Source><![CDATA[
+[Form]
+public class ATXProdCutPackagesProgress extends FormRun
+{
+    RouteOprId oprId;
+    WrkCtrId wrkCtrId;
+    ATXTurnId turnId;
+
+}
+]]></Source>
+			</Method>
+			<Method>
+				<Name>barcodeModified</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    void barcodeModified()
+    {
+        ATXProdCutPackageId packageId;
+        ATXProdCutPackages prodCutPackages;
+        ATXProdCutPackagesPost prodCutPackagesPost;
+        ;
+
+        packageId = barCodeId.text();
+        oprId = OprIdEdit.text();
+        wrkCtrId = WrkCtIdEdit.text();
+        turnId = TurnIdEdit.text();
+
+        if (!oprId)
+        {
+            throw Error("@ATXAT:NewLabel299");
+        }
+
+        if (!wrkCtrId)
+        {
+            throw Error("@ATXAT:NewLabel300");
+        }
+
+        if (!turnId)
+        {
+            throw Error("@ATXAT:NewLabel301");
+        }
+
+        
+        select firstonly prodCutPackages
+            where prodCutPackages.ProdCutPackageId == packageId;
+
+        if (prodCutPackages)
+        {
+            barCodeId.text("");
+
+            prodCutPackagesPost = ATXProdCutPackagesPost::find(packageId, oprId);
+            if (prodCutPackagesPost)
+            {
+                warning(strFmt("@ATXAT:NewLabel298", packageId));
+            }
+            else
+            {
+                prodCutPackagesPost.clear();
+                prodCutPackagesPost.ProdCutPackageId = prodCutPackages.ProdCutPackageId;
+                prodCutPackagesPost.ProdId = prodCutPackages.ProdId;
+                prodCutPackagesPost.InventSizeId = prodCutPackages.InventSizeId;
+                prodCutPackagesPost.CutQty = prodCutPackages.CutQty;
+                prodCutPackagesPost.RouteOprId = oprId;
+                prodCutPackagesPost.WrkCtrId = wrkCtrId;
+                prodCutPackagesPost.TurnId = turnId;
+                prodCutPackagesPost.TransDate = systemDateGet();
+                prodCutPackagesPost.insert();
+                info(strFmt("@ATXAT:NewLabel297", prodCutPackages.CutQty, packageId));
+            }
+        }
+        else
+        {
+            throw Error(strFmt("@ATXAT:NewLabel302", packageId));
+        }
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+		<DataSources xmlns="" />
+		<DataControls xmlns="">
+			<Control>
+				<Name>barCodeId</Name>
+				<Type>String</Type>
+				<Methods>
+					<Method>
+						<Name>modified</Name>
+						<Source><![CDATA[
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns></returns>
+        public boolean modified()
+        {
+            boolean ret;
+    
+            ret = super();
+
+            element.barcodeModified();
+    
+            return ret;
+        }
+
+]]></Source>
+					</Method>
+				</Methods>
+			</Control>
+		</DataControls>
+		<Members xmlns="" />
+	</SourceCode>
+	<DataSources />
+	<Design>
+		<Pattern xmlns="">Custom</Pattern>
+		<Controls xmlns="">
+			<AxFormControl xmlns=""
+				i:type="AxFormGroupControl">
+				<Name>FormGroupControl</Name>
+				<Type>Group</Type>
+				<FormControlExtension
+					i:nil="true" />
+				<Controls>
+					<AxFormControl xmlns=""
+						i:type="AxFormGroupControl">
+						<Name>ProductionGroup</Name>
+						<Type>Group</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<Controls>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>OprIdEdit</Name>
+								<AutoDeclaration>Yes</AutoDeclaration>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<ExtendedDataType>RouteOprId</ExtendedDataType>
+								<LabelPosition>Above</LabelPosition>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>WrkCtIdEdit</Name>
+								<AutoDeclaration>Yes</AutoDeclaration>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<ExtendedDataType>WrkCtrIdBase</ExtendedDataType>
+								<Mandatory>Yes</Mandatory>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>TurnIdEdit</Name>
+								<AutoDeclaration>Yes</AutoDeclaration>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<ExtendedDataType>ATXTurnId</ExtendedDataType>
+								<Mandatory>Yes</Mandatory>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>barCodeId</Name>
+								<AutoDeclaration>Yes</AutoDeclaration>
+								<Skip>Yes</Skip>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<Label>@ATXAT:NewLabel208</Label>
+							</AxFormControl>
+						</Controls>
+						<Columns>8</Columns>
+					</AxFormControl>
+				</Controls>
+			</AxFormControl>
+		</Controls>
+	</Design>
+	<Parts />
+</AxForm>

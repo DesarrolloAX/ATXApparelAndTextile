@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<z:anyType xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns=""
+	i:type="AxCompilerMetadata" xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/">
+	<IsPublic>true</IsPublic>
+	<Members>
+		<AxClassMemberVariable>
+			<Type>Record</Type>
+			<TypeName>ProdTable</TypeName>
+			<Name>prodTable</Name>
+			<Attributes />
+		</AxClassMemberVariable>
+	</Members>
+	<Methods>
+		<Method>
+			<Name>createFromProdTable</Name>
+			<Visibility>Public</Visibility>
+			<Parameters>
+				<AxMethodParameter>
+					<Type>Record</Type>
+					<TypeName>ProdTable</TypeName>
+					<Name>_prodTable</Name>
+				</AxMethodParameter>
+			</Parameters>
+			<ReturnType>
+				<TypeName></TypeName>
+			</ReturnType>
+		</Method>
+		<Method>
+			<Name>new</Name>
+			<Visibility>Public</Visibility>
+			<Parameters>
+				<AxMethodParameter>
+					<Type>Record</Type>
+					<TypeName>ProdTable</TypeName>
+					<Name>_prodTable</Name>
+				</AxMethodParameter>
+			</Parameters>
+			<ReturnType>
+				<TypeName></TypeName>
+			</ReturnType>
+		</Method>
+		<Method>
+			<Name>run</Name>
+			<Visibility>Public</Visibility>
+			<ReturnType>
+				<TypeName></TypeName>
+			</ReturnType>
+		</Method>
+	</Methods>
+</z:anyType>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxMacroDictionary xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXBOMTableExistsJoinTemplate</Name>
+	<Source>/* %1 bomTable           */&#xD;
+/* %2 %2     */&#xD;
+&#xD;
+exists join %1&#xD;
+where %1.BOMId == %2.BOMId&#xD;
+&amp;&amp; %1.ATXBOMType == ATXBOMType::Template&#xD;
+;&#xD;
+/* */</Source>
+	<Macros />
+</AxMacroDictionary>

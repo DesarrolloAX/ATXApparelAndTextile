@@ -1,0 +1,238 @@
+Private class __Persister__
+extends SysDataEntityPersister
+{
+    // Data source ID macros
+    #define.WorkCalendarTable_ID(1)
+    
+    // Data source buffers
+    WorkCalendarTable m_WorkCalendarTable;
+    
+    protected void mapEntityToDataSources(DataEntityRuntimeContext _entityCtx)
+    {
+        this.validateFieldFailed = false;
+        this.mapEntityToDataSource(_entityCtx, _entityCtx.getRuntimeContextByName('WorkCalendarTable'));
+        this.mapEntityToDataSourcesExtensions(_entityCtx);
+        if(this.validateFieldFailed)
+        {
+            throw Exception::ViewDataSourceValidation;
+        }
+    }
+    protected boolean saveDataSources(DataEntityRuntimeContext _entityCtx)
+    {
+        boolean rtrn = true;
+        DataEntityDataSourceRuntimeContext _dataSourceCtx = null;
+        // save data sources in topological order.
+        {
+            // handle datasources which are part of extensions and need to be saved before [WorkCalendarTable]
+            if(!this.preSaveDataSource(_entityCtx, 'WorkCalendarTable'))
+            {
+                return false;
+            }
+            _dataSourceCtx = _entityCtx.getRuntimeContextByName('WorkCalendarTable');
+            // propagates foreign key values from referenced data sources which are part of extensions.
+            this.foreignKeyPropagationExtensions(_entityCtx, _dataSourceCtx);
+            // inserts/updates data source [WorkCalendarTable].
+            if(!this.saveDataSource(_entityCtx, _dataSourceCtx))
+            {
+                // returns from here if the root data source fails to be saved.
+                return false;
+            }
+            this.postSaveDataSource();
+        }
+        // handle datasources which are part of extensions and need to be saved in last 
+        this.preSaveDataSource(_entityCtx, '');
+        return rtrn;
+    }
+    protected boolean deleteDataSources(DataEntityRuntimeContext _entityCtx)
+    {
+        boolean rtrn = true;
+        DataEntityDataSourceRuntimeContext _dataSourceCtx = null;
+        // delete data sources in reverse topological order.
+        {
+            // handle datasources which are part of extensions and need to be saved before [WorkCalendarTable]
+            if(!this.preSaveDataSource(_entityCtx, 'WorkCalendarTable'))
+            {
+                return false;
+            }
+            _dataSourceCtx = _entityCtx.getRuntimeContextByName('WorkCalendarTable');
+            // deletes data source [WorkCalendarTable].
+            if(!this.saveDataSource(_entityCtx, _dataSourceCtx))
+            {
+                // returns from here if the root data source fails to be saved.
+                return false;
+            }
+            this.postSaveDataSource();
+        }
+        // handle datasources which are part of extensions and need to be saved in last 
+        this.preSaveDataSource(_entityCtx, '');
+        return rtrn;
+    }
+    private void mapToDataSource_DS1(DataEntityRuntimeContext _entityCtx, DataEntityDataSourceRuntimeContext _dataSourceCtx, WorkCalendarTable _workCalendarTable, ATXWorkCalendarDataEntity _aTXWorkCalendarDataEntity)
+    {
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXWorkCalendarDataEntity, fieldnum(ATXWorkCalendarDataEntity, BasicCalendarId), _workCalendarTable, fieldnum(WorkCalendarTable, BasicCalendarId), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXWorkCalendarDataEntity, fieldnum(ATXWorkCalendarDataEntity, CalendarId), _workCalendarTable, fieldnum(WorkCalendarTable, CalendarId), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXWorkCalendarDataEntity, fieldnum(ATXWorkCalendarDataEntity, Name), _workCalendarTable, fieldnum(WorkCalendarTable, Name), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXWorkCalendarDataEntity, fieldnum(ATXWorkCalendarDataEntity, StandardWorkDayHours), _workCalendarTable, fieldnum(WorkCalendarTable, StandardWorkDayHours), 1);
+        
+        this.mapToDataSourceExtensions(_dataSourceCtx, _workCalendarTable, _aTXWorkCalendarDataEntity);
+        _workCalendarTable.trackFieldExternallySet(false);
+    }
+    protected void doMapEntityToDataSource(DataEntityRuntimeContext _entityCtx, DataEntityDataSourceRuntimeContext _dataSourceCtx)
+    {
+        switch(_dataSourceCtx.id())
+        {
+            case #WorkCalendarTable_ID:
+                this.mapToDataSource_DS1(_entityCtx, _dataSourceCtx, _dataSourceCtx.getBuffer(), _entityCtx.getEntityRecord());
+                break;
+            default :
+                this.doMapEntityToDataSourceExtensions(_entityCtx, _dataSourceCtx);
+                break;
+        }
+    }
+    private void mapFromDataSource_DS1(DataEntityDataSourceRuntimeContext _dataSourceCtx, WorkCalendarTable _workCalendarTable, ATXWorkCalendarDataEntity _aTXWorkCalendarDataEntity)
+    {
+        this.mapDataSourceFieldToEntityField(_workCalendarTable, fieldnum(WorkCalendarTable, BasicCalendarId), _aTXWorkCalendarDataEntity, fieldnum(ATXWorkCalendarDataEntity, BasicCalendarId), false);
+        this.mapDataSourceFieldToEntityField(_workCalendarTable, fieldnum(WorkCalendarTable, CalendarId), _aTXWorkCalendarDataEntity, fieldnum(ATXWorkCalendarDataEntity, CalendarId), false);
+        this.mapDataSourceFieldToEntityField(_workCalendarTable, fieldnum(WorkCalendarTable, Name), _aTXWorkCalendarDataEntity, fieldnum(ATXWorkCalendarDataEntity, Name), false);
+        this.mapDataSourceFieldToEntityField(_workCalendarTable, fieldnum(WorkCalendarTable, StandardWorkDayHours), _aTXWorkCalendarDataEntity, fieldnum(ATXWorkCalendarDataEntity, StandardWorkDayHours), false);
+        this.mapFromDataSourceExtensions(_dataSourceCtx, _workCalendarTable, _aTXWorkCalendarDataEntity);
+        // map system fields (e.g. recid and recversion) from data source buffer to view record.
+        _aTXWorkCalendarDataEntity.fromViewDataSource(_dataSourceCtx.id(), _workCalendarTable);
+    }
+    protected void doMapDataSourceToEntity(DataEntityRuntimeContext _entityCtx, DataEntityDataSourceRuntimeContext _dataSourceCtx)
+    {
+        switch(_dataSourceCtx.id())
+        {
+            case #WorkCalendarTable_ID:
+                this.mapFromDataSource_DS1(_dataSourceCtx, _dataSourceCtx.getBuffer(), _entityCtx.getEntityRecord());
+                break;
+            default :
+                this.doMapDataSourceToEntityExtensions(_entityCtx, _dataSourceCtx);
+                break;
+        }
+    }
+    protected Common doFindDataSource(DataEntityRuntimeContext _entityCtx, DataEntityDataSourceRuntimeContext _dataSourceCtx)
+    {
+        Common rtrn = null;
+        switch(_dataSourceCtx.id())
+        {
+            case #WorkCalendarTable_ID:
+                rtrn = this.LookForUniqueKeyMatch_DS1(_entityCtx.getEntityRecord(), _dataSourceCtx.getBuffer());
+                break;
+            default :
+                rtrn = this.doFindDataSourceExtensions(_entityCtx, _dataSourceCtx);
+                break;
+        }
+        return rtrn;
+    }
+    protected boolean isAnyMappedDataSourceFieldSet_DS1(ATXWorkCalendarDataEntity _aTXWorkCalendarDataEntity, str disabledConfigKey = null)
+    {
+        boolean rtrn = false;
+        if(_aTXWorkCalendarDataEntity.isFieldSet(fieldnum(ATXWorkCalendarDataEntity, BasicCalendarId)))
+        {
+            return true;
+        }
+        if(_aTXWorkCalendarDataEntity.isFieldSet(fieldnum(ATXWorkCalendarDataEntity, CalendarId)))
+        {
+            return true;
+        }
+        if(_aTXWorkCalendarDataEntity.isFieldSet(fieldnum(ATXWorkCalendarDataEntity, Name)))
+        {
+            return true;
+        }
+        if(_aTXWorkCalendarDataEntity.isFieldSet(fieldnum(ATXWorkCalendarDataEntity, StandardWorkDayHours)))
+        {
+            return true;
+        }
+        rtrn = this.isAnyMappedDataSourceExtensionFieldSet(_aTXWorkCalendarDataEntity, 'WorkCalendarTable', disabledConfigKey);
+        return rtrn;
+    }
+    protected boolean isAnyMappedDataSourceFieldSet(DataEntityRuntimeContext _entityCtx, DataEntityDataSourceRuntimeContext _dataSourceCtx)
+    {
+        boolean rtrn = false;
+        switch(_dataSourceCtx.id())
+        {
+            case #WorkCalendarTable_ID:
+                rtrn = this.isAnyMappedDataSourceFieldSet_DS1(_entityCtx.getEntityRecord());
+                break;
+            default :
+                rtrn = this.isAnyMappedDataSourceFieldSet_DSExtensions(_entityCtx, _dataSourceCtx);
+                break;
+        }
+        return rtrn;
+    }
+    private boolean validateDataSource_DS1(DataEntityRuntimeContext _entityCtx, ATXWorkCalendarDataEntity _aTXWorkCalendarDataEntity, DataEntityDataSourceRuntimeContext _dataSourceCtx, WorkCalendarTable _workCalendarTable)
+    {
+        boolean rtrn = true;
+        rtrn = this.validateMappedDataSourceField(_entityCtx, _dataSourceCtx, '', '', conNull(), _aTXWorkCalendarDataEntity, fieldnum(ATXWorkCalendarDataEntity, BasicCalendarId), 'ATXWorkCalendarDataEntity.BasicCalendarId', _workCalendarTable, fieldnum(WorkCalendarTable, BasicCalendarId), false/*disallowEditOnCreate*/, false/*disallowEdit*/, true/*callValidateField*/, 1) ? rtrn : false;
+        rtrn = this.validateMappedDataSourceField(_entityCtx, _dataSourceCtx, '', '', conNull(), _aTXWorkCalendarDataEntity, fieldnum(ATXWorkCalendarDataEntity, CalendarId), 'ATXWorkCalendarDataEntity.CalendarId', _workCalendarTable, fieldnum(WorkCalendarTable, CalendarId), false/*disallowEditOnCreate*/, true/*disallowEdit*/, true/*callValidateField*/, 1) ? rtrn : false;
+        rtrn = this.validateMappedDataSourceField(_entityCtx, _dataSourceCtx, '', '', conNull(), _aTXWorkCalendarDataEntity, fieldnum(ATXWorkCalendarDataEntity, Name), 'ATXWorkCalendarDataEntity.Name', _workCalendarTable, fieldnum(WorkCalendarTable, Name), false/*disallowEditOnCreate*/, false/*disallowEdit*/, true/*callValidateField*/, 1) ? rtrn : false;
+        rtrn = this.validateMappedDataSourceField(_entityCtx, _dataSourceCtx, '', '', conNull(), _aTXWorkCalendarDataEntity, fieldnum(ATXWorkCalendarDataEntity, StandardWorkDayHours), 'ATXWorkCalendarDataEntity.StandardWorkDayHours', _workCalendarTable, fieldnum(WorkCalendarTable, StandardWorkDayHours), false/*disallowEditOnCreate*/, false/*disallowEdit*/, true/*callValidateField*/, 1) ? rtrn : false;
+        rtrn = this.validateDataSourceExtensions(_entityCtx, _aTXWorkCalendarDataEntity, _dataSourceCtx, _workCalendarTable) ? rtrn : false;
+        return rtrn;
+    }
+    protected boolean validateDataSource(DataEntityRuntimeContext _entityCtx, DataEntityDataSourceRuntimeContext _dataSourceCtx)
+    {
+        boolean rtrn = true;
+        switch(_dataSourceCtx.id())
+        {
+            case #WorkCalendarTable_ID:
+                rtrn = this.validateDataSource_DS1(_entityCtx,_entityCtx.getEntityRecord(),_dataSourceCtx,_dataSourceCtx.getBuffer());
+                break;
+            default :
+                rtrn = this.validateDataSourceExtensions_DSExtensions(_entityCtx, _dataSourceCtx);
+                break;
+        }
+        return rtrn;
+    }
+    private void mapToMatchingRecord_DS1(DataEntityDataSourceRuntimeContext _dataSourceCtx, WorkCalendarTable _workCalendarTable, WorkCalendarTable _matchingRecord)
+    {
+        // map data changes in bound fields.
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _workCalendarTable, fieldnum(WorkCalendarTable, BasicCalendarId), _matchingRecord, fieldnum(WorkCalendarTable, BasicCalendarId), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _workCalendarTable, fieldnum(WorkCalendarTable, CalendarId), _matchingRecord, fieldnum(WorkCalendarTable, CalendarId), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _workCalendarTable, fieldnum(WorkCalendarTable, Name), _matchingRecord, fieldnum(WorkCalendarTable, Name), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _workCalendarTable, fieldnum(WorkCalendarTable, StandardWorkDayHours), _matchingRecord, fieldnum(WorkCalendarTable, StandardWorkDayHours), 1);
+        this.mapToMatchingRecordExtensions(_dataSourceCtx, tablestr(ATXWorkCalendarDataEntity), _workCalendarTable, _matchingRecord);
+    }
+    protected void mapDataSourceToMatchingRecord(DataEntityDataSourceRuntimeContext _dataSourceCtx, Common _matchingRecord)
+    {
+        switch(_dataSourceCtx.id())
+        {
+            case #WorkCalendarTable_ID:
+                this.mapToMatchingRecord_DS1(_dataSourceCtx, _dataSourceCtx.getBuffer(), _matchingRecord);
+                break;
+            default :
+                this.mapDataSourceToMatchingRecordExtensions(_dataSourceCtx, _matchingRecord);
+                break;
+        }
+    }
+    protected void validateConfigurationKeys(DataEntityRuntimeContext _entityCtx)
+    {
+    }
+    protected void initializeDataSources(DataEntityRuntimeContext _entityCtx)
+    {
+        this.initializeDataSource(_entityCtx, 'WorkCalendarTable', m_WorkCalendarTable, this.getDataSourceId('WorkCalendarTable'), this.getDataSourceRuntimeId('WorkCalendarTable'), false/* optional */, false/* readonly */, false/* oneToMany */, false/* dateEffective */, false/* applyDateFilter */);
+        this.initializeDataSourcesExtensions(_entityCtx);
+    }
+    private WorkCalendarTable LookForUniqueKeyMatch_DS1(ATXWorkCalendarDataEntity _aTXWorkCalendarDataEntity, WorkCalendarTable _workCalendarTable)
+    {
+        WorkCalendarTable workCalendarTable_ = null;
+        
+        select
+            forUpdate
+            firstOnly
+                workCalendarTable_
+        where
+            workCalendarTable_.CalendarId == _workCalendarTable.CalendarId
+        ;
+        
+        if (workCalendarTable_)
+        {
+            return workCalendarTable_;
+        }
+        
+        return workCalendarTable_;
+    }
+
+}
+

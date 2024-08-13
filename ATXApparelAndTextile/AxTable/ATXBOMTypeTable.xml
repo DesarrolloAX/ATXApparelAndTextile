@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxTable xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXBOMTypeTable</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+public class ATXBOMTypeTable extends common
+{
+}
+]]></Declaration>
+		<Methods />
+	</SourceCode>
+	<FormRef>ATXBOMTypeTable</FormRef>
+	<Label>@ATXAT:NewLabel53</Label>
+	<SubscriberAccessLevel>
+		<Read>Allow</Read>
+	</SubscriberAccessLevel>
+	<TitleField1>BOMTypeId</TitleField1>
+	<TitleField2>Description</TitleField2>
+	<ClusteredIndex>BOMTypeIdx</ClusteredIndex>
+	<PrimaryIndex>BOMTypeIdx</PrimaryIndex>
+	<DeleteActions />
+	<FieldGroups>
+		<AxTableFieldGroup>
+			<Name>AutoReport</Name>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoLookup</Name>
+			<Fields>
+				<AxTableFieldGroupField>
+					<DataField>BOMTypeId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>Description</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>ValidateRequest</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>GenerateProdBOM</DataField>
+				</AxTableFieldGroupField>
+			</Fields>
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoIdentification</Name>
+			<AutoPopulate>Yes</AutoPopulate>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoSummary</Name>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoBrowse</Name>
+			<Fields />
+		</AxTableFieldGroup>
+	</FieldGroups>
+	<Fields>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>BOMTypeId</Name>
+			<ExtendedDataType>ATXBOMTypeId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>Description</Name>
+			<ExtendedDataType>Description</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldEnum">
+			<Name>ValidateRequest</Name>
+			<ExtendedDataType>NoYesId</ExtendedDataType>
+			<EnumType>NoYes</EnumType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldEnum">
+			<Name>GenerateProdBOM</Name>
+			<ExtendedDataType>NoYesId</ExtendedDataType>
+			<Label>@ATXApparelAndTextile_en_US:ATXL00050</Label>
+			<EnumType>NoYes</EnumType>
+		</AxTableField>
+	</Fields>
+	<FullTextIndexes />
+	<Indexes>
+		<AxTableIndex>
+			<Name>BOMTypeIdx</Name>
+			<AlternateKey>Yes</AlternateKey>
+			<Fields>
+				<AxTableIndexField>
+					<DataField>BOMTypeId</DataField>
+				</AxTableIndexField>
+			</Fields>
+		</AxTableIndex>
+	</Indexes>
+	<Mappings />
+	<Relations />
+	<StateMachines />
+</AxTable>

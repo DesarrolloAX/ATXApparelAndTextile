@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxTable xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXSampleTypeTable</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+public class ATXSampleTypeTable extends common
+{
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>find</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Select given parameter record
+    /// </summary>
+    /// <param name = "_sampleType">Sample type Id</param>
+    /// <param name = "_forUpdate">Only if need to update</param>
+    /// <returns>Table instance</returns>
+    public static ATXSampleTypeTable find(ATXSampleTypeId _sampleType,boolean _forUpdate = false)
+    {
+        ATXSampleTypeTable sampleType;
+
+        sampleType.selectForUpdate(_forUpdate);
+
+        select firstonly sampleType
+            index SampleTypeIdx
+            where sampleType.SampleTypeId == _sampleType;
+
+        return sampleType;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>exist</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// True if record is found
+    /// </summary>
+    /// <param name = "_sampleType">Sample type Id</param>
+    /// <returns>boolean value</returns>
+    public static boolean exist(ATXSampleTypeId _sampleType)
+    {
+        ATXSampleTypeTable sampleType;
+
+        select firstonly sampleType
+            index SampleTypeIdx
+            where sampleType.SampleTypeId == _sampleType;
+
+        return sampleType.RecId != 0;
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+	<ConfigurationKey>ATXPLM</ConfigurationKey>
+	<FormRef>ATXSampleTypeFormDisplay</FormRef>
+	<Label>@ATXApparelAndTextile_en_US:ATXL00027</Label>
+	<SubscriberAccessLevel>
+		<Read>Allow</Read>
+	</SubscriberAccessLevel>
+	<TitleField1>SampleTypeId</TitleField1>
+	<TitleField2>Description</TitleField2>
+	<ClusteredIndex>SampleTypeIdx</ClusteredIndex>
+	<CreateRecIdIndex>No</CreateRecIdIndex>
+	<CreatedBy>Yes</CreatedBy>
+	<CreatedDateTime>Yes</CreatedDateTime>
+	<ModifiedBy>Yes</ModifiedBy>
+	<ModifiedDateTime>Yes</ModifiedDateTime>
+	<PrimaryIndex>SampleTypeIdx</PrimaryIndex>
+	<DeleteActions />
+	<FieldGroups>
+		<AxTableFieldGroup>
+			<Name>AutoReport</Name>
+			<Fields>
+				<AxTableFieldGroupField>
+					<DataField>SampleTypeId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>Description</DataField>
+				</AxTableFieldGroupField>
+			</Fields>
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoLookup</Name>
+			<Fields>
+				<AxTableFieldGroupField>
+					<DataField>SampleTypeId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>Description</DataField>
+				</AxTableFieldGroupField>
+			</Fields>
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoIdentification</Name>
+			<AutoPopulate>Yes</AutoPopulate>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoSummary</Name>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoBrowse</Name>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>Overview</Name>
+			<Label>@ATXApparelAndTextile_en_US:ATXL00009</Label>
+			<Fields>
+				<AxTableFieldGroupField>
+					<DataField>SampleTypeId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>Description</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>SamplingPhaseId</DataField>
+				</AxTableFieldGroupField>
+			</Fields>
+		</AxTableFieldGroup>
+	</FieldGroups>
+	<Fields>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>SampleTypeId</Name>
+			<ExtendedDataType>ATXSampleTypeId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>Description</Name>
+			<ExtendedDataType>Description</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>SamplingPhaseId</Name>
+			<ExtendedDataType>ATXSamplingPhaseId</ExtendedDataType>
+		</AxTableField>
+	</Fields>
+	<FullTextIndexes />
+	<Indexes>
+		<AxTableIndex>
+			<Name>SampleTypeIdx</Name>
+			<AlternateKey>Yes</AlternateKey>
+			<Fields>
+				<AxTableIndexField>
+					<DataField>SampleTypeId</DataField>
+				</AxTableIndexField>
+			</Fields>
+		</AxTableIndex>
+	</Indexes>
+	<Mappings />
+	<Relations>
+		<AxTableRelation>
+			<Name>ATXSamplingPhase</Name>
+			<RelatedTable>ATXSamplingPhase</RelatedTable>
+			<Constraints>
+				<AxTableRelationConstraint xmlns=""
+					i:type="AxTableRelationConstraintField">
+					<Name>SamplingPhaseId</Name>
+					<Field>SamplingPhaseId</Field>
+					<RelatedField>SamplingPhaseId</RelatedField>
+				</AxTableRelationConstraint>
+			</Constraints>
+		</AxTableRelation>
+	</Relations>
+	<StateMachines />
+</AxTable>

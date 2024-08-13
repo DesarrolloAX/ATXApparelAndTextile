@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxTable xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXRequestOrderRelease</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+public class ATXRequestOrderRelease extends common
+{
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>find</Name>
+				<Source><![CDATA[
+    public static ATXRequestOrderRelease find(ATXRequestOrderId _requestOrderId_AT, boolean _forUpdate = false)
+    {
+        ATXRequestOrderRelease table;
+
+        table.selectForUpdate(_forUpdate);
+        select firstonly table
+            index RequestOrderIdx
+            where table.RequestOrderId == _requestOrderId_AT;
+        return table;
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+	<Label>@ATXAT:NewLabel69</Label>
+	<SubscriberAccessLevel>
+		<Read>Allow</Read>
+	</SubscriberAccessLevel>
+	<TitleField1>RequestOrderId</TitleField1>
+	<ClusteredIndex>RequestOrderIdx</ClusteredIndex>
+	<PrimaryIndex>RequestOrderIdx</PrimaryIndex>
+	<DeleteActions />
+	<FieldGroups>
+		<AxTableFieldGroup>
+			<Name>AutoReport</Name>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoLookup</Name>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoIdentification</Name>
+			<AutoPopulate>Yes</AutoPopulate>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoSummary</Name>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoBrowse</Name>
+			<Fields />
+		</AxTableFieldGroup>
+	</FieldGroups>
+	<Fields>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>RequestOrderId</Name>
+			<ExtendedDataType>ATXRequestOrderId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldEnum">
+			<Name>GenerateRequestBOMBatch</Name>
+			<ExtendedDataType>NoYesId</ExtendedDataType>
+			<Visible>No</Visible>
+			<EnumType>NoYes</EnumType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>SalesId</Name>
+			<ExtendedDataType>SalesId</ExtendedDataType>
+		</AxTableField>
+	</Fields>
+	<FullTextIndexes />
+	<Indexes>
+		<AxTableIndex>
+			<Name>RequestOrderIdx</Name>
+			<AlternateKey>Yes</AlternateKey>
+			<Fields>
+				<AxTableIndexField>
+					<DataField>RequestOrderId</DataField>
+				</AxTableIndexField>
+			</Fields>
+		</AxTableIndex>
+	</Indexes>
+	<Mappings />
+	<Relations />
+	<StateMachines />
+</AxTable>

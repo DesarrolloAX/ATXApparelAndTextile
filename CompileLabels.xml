@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Diagnostics
+  GenerationTime="2024-08-13T17:57:27.182646+00:00">
+  <Items>
+    <Diagnostic>
+      <DiagnosticType>VisualStudioIntegration</DiagnosticType>
+      <Severity>Informational</Severity>
+      <Path>K:\AosService\PackagesLocalDirectory\bin\labelc.exe</Path>
+      <Moniker>K:\AosService\PackagesLocalDirectory\bin\labelc.exe -metadata="K:\AosService\PackagesLocalDirectory" -output="K:\AosService\PackagesLocalDirectory\ATXApparelAndTextile\Resources" -modelmodule="ATXApparelAndTextile" </Moniker>
+      <Message>K:\AosService\PackagesLocalDirectory\bin\labelc.exe -metadata="K:\AosService\PackagesLocalDirectory" -output="K:\AosService\PackagesLocalDirectory\ATXApparelAndTextile\Resources" -modelmodule="ATXApparelAndTextile" </Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>Unspecified</DiagnosticType>
+      <Severity>Informational</Severity>
+      <Path>labelc.exe</Path>
+      <Moniker>Starting label compilation...</Moniker>
+      <Message>Starting label compilation...</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>Unspecified</DiagnosticType>
+      <Severity>Informational</Severity>
+      <Path>labelc.exe</Path>
+      <Moniker>- Module name    </Moniker>
+      <Message>ATXApparelAndTextile</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>Unspecified</DiagnosticType>
+      <Severity>Informational</Severity>
+      <Path>labelc.exe</Path>
+      <Moniker>- Metadata path  </Moniker>
+      <Message>K:\AosService\PackagesLocalDirectory\</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>Unspecified</DiagnosticType>
+      <Severity>Informational</Severity>
+      <Path>labelc.exe</Path>
+      <Moniker>- Output path    </Moniker>
+      <Message>K:\AosService\PackagesLocalDirectory\ATXApparelAndTextile\Resources\</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>Unspecified</DiagnosticType>
+      <Severity>Informational</Severity>
+      <Path>labelc.exe</Path>
+      <Moniker>- Maximum DoP    </Moniker>
+      <Message>0 (Logical Processors: 8)</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>Unspecified</DiagnosticType>
+      <Severity>Informational</Severity>
+      <Path>labelc.exe</Path>
+      <Moniker>Compiling Primary Resource file for ATXApparelAndTextile_en_US</Moniker>
+      <Message>Compiling Primary Resource file for ATXApparelAndTextile_en_US</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>Unspecified</DiagnosticType>
+      <Severity>Informational</Severity>
+      <Path>labelc.exe</Path>
+      <Moniker>Compiling Primary Resource file for ATXAT</Moniker>
+      <Message>Compiling Primary Resource file for ATXAT</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>Unspecified</DiagnosticType>
+      <Severity>Informational</Severity>
+      <Path>labelc.exe</Path>
+      <Moniker>Compiling Primary Resource file for ATXPLM</Moniker>
+      <Message>Compiling Primary Resource file for ATXPLM</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>Unspecified</DiagnosticType>
+      <Severity>Informational</Severity>
+      <Path>labelc.exe</Path>
+      <Moniker>Generating Primary resource assembly for ATXApparelAndTextile_en_US</Moniker>
+      <Message>Generating Primary resource assembly for ATXApparelAndTextile_en_US</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>Unspecified</DiagnosticType>
+      <Severity>Informational</Severity>
+      <Path>labelc.exe</Path>
+      <Moniker>Generating Primary resource assembly for ATXAT</Moniker>
+      <Message>Generating Primary resource assembly for ATXAT</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>Unspecified</DiagnosticType>
+      <Severity>Informational</Severity>
+      <Path>labelc.exe</Path>
+      <Moniker>Generating Primary resource assembly for ATXPLM</Moniker>
+      <Message>Generating Primary resource assembly for ATXPLM</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>Unspecified</DiagnosticType>
+      <Severity>Informational</Severity>
+      <Path>labelc.exe</Path>
+      <Moniker>Compiling label file ATXApparelAndTextile_en_US for language en-US</Moniker>
+      <Message>Compiling label file ATXApparelAndTextile_en_US for language en-US</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>Unspecified</DiagnosticType>
+      <Severity>Informational</Severity>
+      <Path>labelc.exe</Path>
+      <Moniker>Compiling label file ATXApparelAndTextile_en_US for language es-MX</Moniker>
+      <Message>Compiling label file ATXApparelAndTextile_en_US for language es-MX</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>Unspecified</DiagnosticType>
+      <Severity>Informational</Severity>
+      <Path>labelc.exe</Path>
+      <Moniker>Compiling label file ATXAT for language en-US</Moniker>
+      <Message>Compiling label file ATXAT for language en-US</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>Unspecified</DiagnosticType>
+      <Severity>Informational</Severity>
+      <Path>labelc.exe</Path>
+      <Moniker>Compiling label file ATXAT for language es-MX</Moniker>
+      <Message>Compiling label file ATXAT for language es-MX</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>Unspecified</DiagnosticType>
+      <Severity>Informational</Severity>
+      <Path>labelc.exe</Path>
+      <Moniker>Compiling label file ATXPLM for language en-US</Moniker>
+      <Message>Compiling label file ATXPLM for language en-US</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>Unspecified</DiagnosticType>
+      <Severity>Informational</Severity>
+      <Path>labelc.exe</Path>
+      <Moniker>Compiling label file ATXPLM for language es-MX</Moniker>
+      <Message>Compiling label file ATXPLM for language es-MX</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>Unspecified</DiagnosticType>
+      <Severity>Informational</Severity>
+      <Path>labelc.exe</Path>
+      <Moniker>Compiling label file ATXPLM for language pt-BR</Moniker>
+      <Message>Compiling label file ATXPLM for language pt-BR</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>Unspecified</DiagnosticType>
+      <Severity>Informational</Severity>
+      <Path>labelc.exe</Path>
+      <Moniker>Generating satellite resource assembly for label file ATXApparelAndTextile_en_US, language en-US</Moniker>
+      <Message>Generating satellite resource assembly for label file ATXApparelAndTextile_en_US, language en-US</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>Unspecified</DiagnosticType>
+      <Severity>Informational</Severity>
+      <Path>labelc.exe</Path>
+      <Moniker>Generating satellite resource assembly for label file ATXApparelAndTextile_en_US, language es-MX</Moniker>
+      <Message>Generating satellite resource assembly for label file ATXApparelAndTextile_en_US, language es-MX</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>Unspecified</DiagnosticType>
+      <Severity>Informational</Severity>
+      <Path>labelc.exe</Path>
+      <Moniker>Generating satellite resource assembly for label file ATXAT, language en-US</Moniker>
+      <Message>Generating satellite resource assembly for label file ATXAT, language en-US</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>Unspecified</DiagnosticType>
+      <Severity>Informational</Severity>
+      <Path>labelc.exe</Path>
+      <Moniker>Generating satellite resource assembly for label file ATXAT, language es-MX</Moniker>
+      <Message>Generating satellite resource assembly for label file ATXAT, language es-MX</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>Unspecified</DiagnosticType>
+      <Severity>Informational</Severity>
+      <Path>labelc.exe</Path>
+      <Moniker>Generating satellite resource assembly for label file ATXPLM, language en-US</Moniker>
+      <Message>Generating satellite resource assembly for label file ATXPLM, language en-US</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>Unspecified</DiagnosticType>
+      <Severity>Informational</Severity>
+      <Path>labelc.exe</Path>
+      <Moniker>Generating satellite resource assembly for label file ATXPLM, language es-MX</Moniker>
+      <Message>Generating satellite resource assembly for label file ATXPLM, language es-MX</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>Unspecified</DiagnosticType>
+      <Severity>Informational</Severity>
+      <Path>labelc.exe</Path>
+      <Moniker>Generating satellite resource assembly for label file ATXPLM, language pt-BR</Moniker>
+      <Message>Generating satellite resource assembly for label file ATXPLM, language pt-BR</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>Unspecified</DiagnosticType>
+      <Severity>Informational</Severity>
+      <Path>labelc.exe</Path>
+      <Moniker>Done compiling 7 label files!</Moniker>
+      <Message>Done compiling 7 label files!</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>Unspecified</DiagnosticType>
+      <Severity>Informational</Severity>
+      <Path>labelc.exe</Path>
+      <Moniker>Completed label compilation in 1 seconds with exit code 0.</Moniker>
+      <Message>Completed label compilation in 1 seconds with exit code 0.</Message>
+    </Diagnostic>
+  </Items>
+  <Aliases />
+</Diagnostics>

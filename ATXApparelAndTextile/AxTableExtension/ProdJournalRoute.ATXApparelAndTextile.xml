@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxTableExtension xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ProdJournalRoute.ATXApparelAndTextile</Name>
+	<FieldGroupExtensions />
+	<FieldGroups />
+	<FieldModifications />
+	<Fields>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>ATXCutId</Name>
+			<ExtendedDataType>ATXCutId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>ATXBOMId</Name>
+			<ExtendedDataType>BOMId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>ATXTurnId</Name>
+			<ExtendedDataType>ATXTurnId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>ATXPersonnelNumber</Name>
+			<ExtendedDataType>HcmPersonnelNumberId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>ATXRejectionCodeId</Name>
+			<ExtendedDataType>ATXRejectionCodeId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>ATXProdRefComment</Name>
+			<ExtendedDataType>ATXProdRefComment</ExtendedDataType>
+		</AxTableField>
+	</Fields>
+	<FullTextIndexes />
+	<Indexes />
+	<Mappings />
+	<PropertyModifications />
+	<RelationExtensions />
+	<RelationModifications />
+	<Relations />
+</AxTableExtension>

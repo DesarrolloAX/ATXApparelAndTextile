@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXFormCanvasLog</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+class ATXFormCanvasLog
+{
+    ATXTmpInfologError  tmpLog;
+    FormDataSource      tmplogDS;
+    str                 logMessage;
+    int                 messageCounter;
+    boolean             skipTmpInfologUpdate;
+
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>clearInfologOrigin</Name>
+				<Source><![CDATA[
+    void clearInfologOrigin()
+    {
+        logMessage = '';
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>dropTmpInfolog</Name>
+				<Source><![CDATA[
+    public void dropTmpInfolog()
+    {
+        ;
+
+        tmpLog          = null;
+        messageCounter  = 0;
+        this.updateInfologView();
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmTempLogDS</Name>
+				<Source><![CDATA[
+    FormDataSource parmTempLogDS(FormDataSource _tmpLogDS = tmpLogDS)
+    {
+        ;
+
+        tmpLogDS = _tmpLogDS;
+        return tmpLogDS;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>playAlarm</Name>
+				<Source><![CDATA[
+    protected void playAlarm()
+    {
+        int i;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>updateInfologView</Name>
+				<Source><![CDATA[
+    void updateInfologView(boolean _forceNotAlarm = false)
+    {
+        int                         i;
+        container                   recordCon;
+        container                   infologData;
+        Exception                   exception;
+        boolean                     playAlarm = false;
+        str                         message;
+        SysInfologMessageStruct     iStruct;
+
+        ;
+
+        if (!tmpLogDS)
+        return;
+
+
+        if (skipTmpInfologUpdate)
+        {
+            skipTmpInfologUpdate = false;
+            return;
+        }
+
+        infologData = infolog.infologData();
+
+        for (i = 2; i <= conlen(infologData); ++i)
+        {
+            recordCon = conpeek(infologData, i);
+            exception = conpeek(recordCon, 1);
+            message = conpeek(recordCon, 2);
+
+            iStruct = new SysInfologMessageStruct(message);
+
+            tmpLog.clear();
+            tmpLog.Exception    = exception;
+            tmpLog.Error        = iStruct.message();
+
+            if (logMessage)
+            {
+                tmpLog.Error    = strfmt('%1: %2', logMessage, tmpLog.Error);
+            }
+
+            messageCounter++;
+            tmpLog.counter    = messageCounter;
+            tmpLog.insert();
+
+            if (tmpLog.Exception == Exception::Error
+            || tmpLog.Exception == Exception::Warning)
+            {
+                playAlarm = true;
+            }
+        }
+
+        this.clearInfologOrigin();
+
+        if (!_forceNotAlarm && playAlarm)
+        this.playAlarm();
+
+        tmpLogDS.cursor().setTmpData(tmpLog);
+        tmpLogDS.research();
+
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>

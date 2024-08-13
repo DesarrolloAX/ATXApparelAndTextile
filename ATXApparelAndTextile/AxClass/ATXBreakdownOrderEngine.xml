@@ -1,0 +1,632 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXBreakdownOrderEngine</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+class ATXBreakdownOrderEngine
+{
+    SalesLine salesLine;
+
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>getDummyInventDim</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Create a new inventDimId based on # group dimensions
+    /// </summary>
+    /// <param name = "_itemId">Product master</param>
+    /// <param name = "_prodPoolSetup_AT">Prod pool</param>
+    /// <param name = "_configId">Configuration</param>
+    /// <param name = "_inventSizeId">Size</param>
+    /// <param name = "_inventColorId">Color</param>
+    /// <param name = "_inventStyleId">Style</param>
+    /// <param name = "_inventSiteId">Site</param>
+    /// <param name = "_inventLocationId">Warehouse</param>
+    /// <returns></returns>
+    public static InventDim getDummyInventDim(
+        ItemId                  _itemId,
+        ATXProdPoolSetup        _prodPoolSetup_AT,
+        EcoresConfigurationName _configId,
+        EcoresSizeName          _inventSizeId,
+        EcoresColorName         _inventColorId,
+        EcoResStyleName         _inventStyleId,
+        InventSiteId            _inventSiteId,
+        InventLocationId        _inventLocationId
+    )
+    {
+        InventTable             inventTable = InventTable::find(_itemId);
+        ATXProductParameters    productParameters   = ATXProductParameters::find();
+        InventDim               inventDim, inventDimWhithInventLocation;
+
+        if (inventTable.configActive())
+        {
+            inventDim.configId = !_prodPoolSetup_AT.GroupByconfigId ? _configId : productParameters.DummyValue;
+        }
+        if(inventTable.sizeActive())
+        {
+            inventDim.InventSizeId = !_prodPoolSetup_AT.GroupByInventSizeId ? _inventSizeId : productParameters.DummyValue;
+        }
+        if (inventTable.colorActive())
+        {
+            inventDim.InventColorId = !_prodPoolSetup_AT.GroupByInventColorId ? _inventColorId : productParameters.DummyValue;
+        }
+        if (inventTable.styleActive())
+        {
+            inventDim.InventStyleId = !_prodPoolSetup_AT.GroupByInventStyleId ? _inventStyleId : productParameters.DummyValue;
+        }
+        inventDim.InventSiteId      = _inventSiteId;
+        inventDim.InventLocationId  = _inventLocationId;
+
+        return InventDim::findOrCreate(inventDim);
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>createBreakdownForSalesLineItem</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// For every # line, create multiple lines for breakdown with dimension detail
+    /// </summary>
+    /// <param name = "_requestOrderId">Request order</param>
+    /// <param name = "_requestOrderUpdateId">Update</param>
+    /// <param name = "_itemId">Product master</param>
+    /// <param name = "_inventDim">Product dimensions</param>
+    void createBreakdownForSalesLineItem(
+        ATXRequestOrderId       _requestOrderId,
+        ATXRequestOrderUpdateId _requestOrderUpdateId,
+        ItemId                  _itemId,
+        InventDim               _inventDim)
+    {
+        ATXBreakdownOrderLine breakdownOrderLine;
+        ATXRequestOrderLine requestOrderLine;
+        InventDim inventDim;
+        BOMId bomVariantId;
+        boolean configIdFlag    = _inventDim.configId ? NoYes::Yes : NoYes::No,
+            inventSizeIdFlag    = _inventDim.InventSizeId ? NoYes::Yes : NoYes::No,
+            inventColorIdFlag   = _inventDim.InventColorId ? NoYes::Yes : NoYes::No,
+            inventStyleIdFlag   = _inventDim.InventStyleId ? NoYes::Yes : NoYes::No;
+
+        while select requestOrderLine
+            where requestOrderLine.RequestOrderId       == _requestOrderId
+            && requestOrderLine.RequestOrderUpdateId    == _requestOrderUpdateId
+            && requestOrderLine.ItemId                  == _itemId
+            join inventDim
+            where inventDim.inventDimId == requestOrderLine.InventDimId
+            && (inventDim.ConfigId      == _inventDim.ConfigId || !configIdFlag)
+            && (inventDim.InventSizeId  == _inventDim.InventSizeId || !inventSizeIdFlag)
+            && (inventDim.InventColorId == _inventDim.InventColorId || !inventColorIdFlag)
+            && (inventDim.InventStyleId == _inventDim.InventStyleId || !inventStyleIdFlag)
+        {
+            bomVariantId  = ATXBOMVersionEngine::findVariantVersion(
+                requestOrderLine.ItemId,
+                inventDim.ConfigId,
+                inventDim.InventColorId,
+                inventDim.InventSizeId,
+                inventDim.InventStyleId).BOMId;
+            if (!bomVariantId)
+            {
+                throw error(strfmt("@ATXAT:NewLabel17",
+                    requestOrderLine.itemid,
+                    inventDim.ConfigId,
+                    inventDim.InventSizeId,
+                    inventDim.InventColorId,
+                    inventDim.InventStyleId));
+            }
+
+            breakdownOrderLine = ATXBreakdownOrderLine::findBySalesTransBOMId(salesLine.SalesId, salesLine.InventTransId, bomVariantId, true);
+            if (breakdownOrderLine.RecId)
+            {
+                ttsBegin;
+                breakdownOrderLine.selectForUpdate(true);
+                breakdownOrderLine.QtyOrig  = requestOrderLine.RequestQty;
+                breakdownOrderLine.Qty      = requestOrderLine.RequestQty;
+                if (breakdownOrderLine.validateWrite())
+                {
+                    breakdownOrderLine.update();
+                }
+                ttsCommit;
+            }
+            else
+            {
+                breakdownOrderLine.clear();
+                breakdownOrderLine.SalesId          = salesLine.SalesId;
+                breakdownOrderLine.InventTransId    = salesLine.InventTransId;
+                breakdownOrderLine.ItemId           = salesLine.ItemId;
+                breakdownOrderLine.BOMId            = bomVariantId;
+                breakdownOrderLine.modifiedField(fieldnum(ATXBreakdownOrderLine, BOMId));
+                breakdownOrderLine.QtyOrig          = requestOrderLine.QtyOrig;
+                breakdownOrderLine.Qty              = requestOrderLine.RequestQty;
+                breakdownOrderLine.SalesPrice       = requestOrderLine.SalesPrice;
+                if (breakdownOrderLine.validateWrite())
+                {
+                    breakdownOrderLine.insert();
+                }
+            }
+        }
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>getInventDimFromVersion</Name>
+				<Source><![CDATA[
+    private InventDim getInventDimFromVersion()
+    {
+        InventDim   inventDim,
+                inventDimBOMVersion;
+
+        inventDim = salesLine.inventDim();
+
+        inventDimBOMVersion.clear();
+        inventDimBOMVersion.configId        = inventDim.configId;
+        inventDimBOMVersion.InventSizeId    = inventDim.InventSizeId;
+        inventDimBOMVersion.InventColorId   = inventDim.InventColorId;
+        inventDimBOMVersion.InventStyleId   = inventDim.InventStyleId;
+        inventDimBOMVersion.InventSiteId    = inventDim.InventSiteId;
+
+        return InventDim::findOrCreate(inventDimBOMVersion);
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>insertLine</Name>
+				<Source><![CDATA[
+    private boolean insertLine(BOM _bom)
+    {
+        boolean ret = true;
+        RouteVersion    routeVersion;
+        RouteOpr        routeOpr;
+        ;
+
+        // Revisar maquilas
+        if (_bom.BOMType    == BOMType::Vendor)
+        {
+            if (salesLine.ItemRouteId)
+            {
+                select firstOnly routeVersion
+                where routeVersion.ItemId   == salesLine.ItemId
+                    && routeVersion.RouteId == salesLine.ItemRouteId
+            ;
+                if (routeVersion)
+                {
+                    select firstOnly routeOpr
+                    where routeOpr.RouteRelation    == routeVersion.RouteId
+                        && routeOpr.ItemRelation    == routeVersion.ItemId
+                        //&& routeOpr.OprId           == _bom.RouteOprId_AT
+                ;
+
+                    if (routeOpr)
+                    ret = true;
+                    else
+                    ret = false;
+                }
+            }
+            // Revisar ruta estandar
+            else
+            {
+                select firstOnly routeVersion
+                    where routeVersion.ItemId   == salesLine.ItemId
+                        && routeVersion.Active
+                ;
+                if (routeVersion)
+                {
+                    select firstOnly routeOpr
+                    where routeOpr.RouteRelation    == routeVersion.RouteId
+                        && routeOpr.ItemRelation    == routeVersion.ItemId
+                        //&& routeOpr.OprId           == _bom.RouteOprId_AT
+                ;
+
+                    if (routeOpr)
+                        ret = true;
+                    else
+                        ret = false;
+                }
+                // Validar destino, temporada
+            }
+        }
+        else
+        {
+            ret = true;
+        }
+
+        return ret;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>new</Name>
+				<Source><![CDATA[
+    public void new(Common _common)
+    {
+        switch(_common.TableId)
+        {
+            case tableNum(SalesLine):
+                salesLine = _common;
+                break;
+            case tableNum(ProdTable):
+                break;
+        }
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>validateBuildBOM</Name>
+				<Source><![CDATA[
+    private boolean validateBuildBOM()
+    {
+        ATXBreakdownOrderLine   breakdownOrderLine;
+        boolean                 ret = true;
+
+        select sum (Qty) from breakdownOrderLine
+            index InventTransIdx
+            where breakdownOrderLine.InventTransId == salesLine.InventTransId
+            && breakdownOrderLine.SalesId == salesLine.SalesId;
+
+        if (breakdownOrderLine.Qty != salesLine.SalesQty)
+        {
+            ret = checkFailed(strfmt("@ATXAT:NewLabel14"));
+        }
+
+        if (!salesLine.RecId)
+        {
+            ret = checkFailed("@ATXAT:NewLabel15");
+        }
+
+        return ret;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>getDummiInventdim</Name>
+				<Source><![CDATA[
+    public static InventDim getDummiInventdim(
+        ItemId                  _itemId,
+        EcoresConfigurationName _configId,
+        EcoresSizeName          _inventSizeId,
+        EcoresColorName         _inventColorId,
+        EcoResStyleName         _inventStyleId,
+        InventSiteId            _inventSiteId,
+        InventLocationId        _inventLocationId
+    )
+    {
+        InventTable inventTable = InventTable::find(_itemId);
+        ATXProductParameters productParameters = ATXProductParameters::find();
+        ATXProdParameters prodParameters = ATXProdParameters::find();
+        InventDim inventDim, inventDimWhithInventLocation;
+
+        /*if (inventTable.configActive())
+            inventDim.configId = prodParameters.GroupByconfigId ? _configId : productParameters.DummyValue;
+
+        if(inventTable.sizeActive())
+            inventDim.InventSizeId = prodParameters.GroupByInventSizeId ? _inventSizeId : productParameters.DummyValue;
+
+        if(inventTable.colorActive())
+            inventDim.InventColorId = prodParameters.GroupByInventColorId ? _inventColorId : productParameters.DummyValue;
+
+        if(inventTable.styleActive())
+            inventDim.InventStyleId = prodParameters.GroupByInventStyleId ? _inventStyleId : productParameters.DummyValue;*/
+
+        inventDim.InventSiteId      = _inventSiteId;
+        inventDim.InventLocationId  = _inventLocationId;
+
+        return InventDim::findOrCreate(inventDim);
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>buildProdBOMFromTemplate</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    /// <returns></returns>
+    BOMId buildProdBOMFromTemplate()
+    {
+        BOMId                   prodBOMId;
+        ATXBreakdownOrderLine   breakdownOrderLine;
+        ATXBOMTemplateLine      bomTemplateLine;
+        BOMVersion              prodBOMVersion;
+        BOM                     prodBOM, templateBOM;
+        InventDim               inventDim, inventDimBOMVersion;
+        BOMQty                  bomQty;
+        RouteOpr                routeOpr;
+        Route                   route;
+        boolean                 insertDueSeason, insertDueDestination, insertRuleSeason, insertRuleDestination;
+        BOMTable                bomTable;
+        #ATXBOM
+
+        if (!this.validateBuildBOM())
+        {
+            throw error(strFmt("@ATXAT:NewLabel16", salesline.SalesId, salesLine.ItemId));
+        }
+        
+        ttsbegin;
+        prodBOMId = salesLine.ItemBOMId ? salesLine.ItemBOMId : SalesLine.ATXItemBOMId;
+        if (!prodBOMId || !ATXBOMVersionEngine::findByItemBOMId(saleSLine.ItemId, prodBOMId).RecId)
+        {
+
+            prodBOMId = ATXBOMVersionEngine::createBOMTable(
+                salesLine.ItemId
+                , salesLine.salesTable().PurchOrderFormNum + ' - ' + salesline.SalesId + ' - ' + salesline.InventTransId
+                , ATXBomType::ProdBOM
+                , ""
+                , salesline.inventDim().InventSiteId
+            );
+
+            prodBOMVersion.clear();
+            prodBOMVersion.BOMId        = prodBOMId;
+            prodBOMVersion.InventDimId  = this.getInventDimFromVersion().inventDimId;
+            prodBOMVersion.ItemId       = salesLine.ItemId;
+            if (salesLine.salesTable().PurchOrderFormNum)
+            {
+                prodBOMVersion.Name = strFmt("%1 %2", salesLine.salesTable().PurchOrderFormNum, ATXBOMVersionVariants::getBOMNameFromSalesLine(salesLine));
+            }
+            else
+            {
+                prodBOMVersion.Name = ATXBOMVersionVariants::getBOMNameFromSalesLine(salesLine);
+            }
+            prodBOMVersion.ATXBOMType   = ATXBOMType::ProdBOM;
+            prodBOMVersion.insert();
+        }
+        else
+        {
+            //prodBOMId = itemBOMId;
+            prodBOM.skipDataMethods(true);
+            prodBOM.skipDeleteActions(true);
+            delete_from prodBOM
+                where   prodBOM.BOMId == prodBOMId;
+        }
+        // Look for BOMVersion
+        select firstonly prodBOMVersion
+            index ItemIdx
+            where prodBOMVersion.ItemId == SalesLine.ItemId
+            #ATXBOMTableExistsJoinTemplate(bomTable, prodBOMVersion)
+            
+        if (!prodBOMVersion)
+        {
+            throw Error('@ATXAT:NewLabel117');
+        }
+        // Create bom for all breakdown
+        while select breakdownOrderLine
+            index InventTransIdx
+            where breakdownOrderLine.InventTransId == salesLine.InventTransId
+            && breakdownOrderLine.SalesId == salesLine.SalesId
+            join templateBOM
+            index NumIdx
+            where templateBOM.BOMId == prodBOMVersion.BOMId
+            //exists join bomTemplateLine
+            //where bomTemplateLine.RecId == templateBOM.ATXBOMTemplateLine
+            //&& bomTemplateLine.Blocking
+        {
+            
+            inventDim = templateBOM.inventDim();
+
+            prodBOM = ATXBreakdownOrderEngine::findBOMLineVariant(//ATXBOMVersionEngine::findForReleaseBOM(
+                prodBOMId,
+                templateBOM.ItemId,
+                inventDim.inventDimId,
+                templateBOM.OprNum,
+                templateBOM.ATXRouteOprId,
+                //templateBOM.ATXAltText,
+                true);
+            bomQty = 0;
+            if (!prodBOM)
+            {
+                prodBOM.clear();
+                prodBOM.ATXBOMTemplateLine  = templateBOM.ATXBOMTemplateLine;
+                prodBOM.BOMId       = prodBOMId;
+                prodBOM.LineNum     = bom::lastLineNum(prodBOM.BOMId) + 1;
+                prodBOM.UnitId      = templateBOM.UnitId;
+                prodBOM.ItemId      = templateBOM.ItemId;
+                prodBOM.BOMQtySerie = templateBOM.BOMQtySerie;
+                prodBOM.BOMType     = templateBOM.BOMType;
+                    
+                //prodBOM.ATXBOMQtyOrig           = templateBOM.BOMQty;
+                prodBOM.BOMConsump              = bomConsumpType::Constant;
+                prodBOM.BOMQtySerie = 1;
+                // Calc BOMQty based on scrap setup
+                if (ATXProductParameters::find().AddScrapToSalesBOMQty)
+                {
+                    switch (templateBOM.BOMConsump)
+                    {
+                        case BOMConsumpType::Variable:
+                            bomQty = templateBOM.BOMQtySerie ? (templateBOM.BOMQty / templateBOM.BOMQtySerie) * breakdownOrderLine.Qty : 0;;
+                            //prodBOM.ATXBOMQtyNoScrap = bomQty;
+                            bomQty += templateBOM.ScrapVar ? (bomQty * templateBOM.ScrapVar / 100) : 0;
+                            prodBOM.BOMQty = round(bomQty, 0.01);
+                            break;
+                        case BOMConsumpType::Constant:
+                            prodBOM.BOMQty = templateBOM.BOMQty;
+                            //prodBOM.ATXBOMQtyNoScrap = templateBOM.BOMQty;
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (templateBOM.BOMConsump)
+                    {
+                        case BOMConsumpType::Variable:
+                            prodBOM.BOMQty      = templateBOM.BOMQtySerie ? (templateBOM.BOMQty / templateBOM.BOMQtySerie) * breakdownOrderLine.Qty : 0;
+                            break;
+                        case BOMConsumpType::Constant:
+                            prodBOM.BOMQty      = templateBOM.BOMQty;
+                            break;
+                    }
+                    prodBOM.ScrapConst              = templateBOM.ScrapConst;
+                    prodBOM.ScrapVar                = templateBOM.ScrapVar;
+                }
+                prodBOM.InventDimId             = templateBOM.inventDimId;
+                prodBOM.OprNum                  = templateBOM.OprNum;
+                //prodBOM.OprNum_AT               = templateBOM.OprNum_AT;
+                prodBOM.ATXRouteOprId           = templateBOM.ATXRouteOprId;
+                //prodBOM.ATXAltText              = templateBOM.ATXAltText;
+                prodBOM.Calculation             = true;
+
+                // Validate Size for item
+                if (ProdBOM.inventTable().sizeActive())
+                {
+                    if (!prodBOM.inventDim().InventSizeId)
+                    {
+                        throw error(strFmt("@ATXAT:NewLabel307", prodBOM.ItemId));
+                    }
+                }
+
+                if (prodBOM.BOMType == BOMType::Vendor)
+                {
+                    select firstOnly routeOpr
+                        index OprRelIdx
+                        where routeOpr.OprId == prodBOM.ATXRouteOprId
+                        && routeOpr.ItemRelation == salesLine.ItemId
+                        && routeOpr.RouteRelation == salesLine.ItemRouteId
+                        join route
+                        where route.RouteId == routeOpr.RouteRelation
+                        && route.OprId == routeOpr.OprId;
+                    if (routeOpr)
+                    {
+                        prodBOM.OprNum  = route.OprNum;
+                    }
+                }
+                if (this.insertLineFromTemplate(breakdownOrderLine, templateBOM, salesline))
+                {
+                    prodBOM.insert();
+                }
+            }
+            else
+            {
+                if (ATXProductParameters::find().AddScrapToSalesBOMQty)
+                {
+                    if (this.insertLineFromTemplate(breakdownOrderLine, templateBOM, salesline)
+                        && templateBOM.BOMConsump == BOMConsumpType::Variable)
+                    {
+                        bomQty = (templateBOM.BOMQty / templateBOM.BOMQtySerie) * breakdownOrderLine.Qty;
+                        //prodBOM.ATXBOMQtyNoScrap += bomQty;
+                        bomQty += templateBOM.ScrapVar ? (bomQty * templateBOM.ScrapVar / 100) : 0;
+                        prodBOM.BOMQty += round(bomQty, 0.01);
+                        prodBOM.update();
+                    }
+                }
+                else
+                {
+                    prodBOM.BOMQty +=  (templateBOM.BOMQty / templateBOM.BOMQtySerie) * breakdownOrderLine.Qty;
+                    if (this.insertLineFromTemplate(breakdownOrderLine, templateBOM, salesline)
+                        && templateBOM.BOMConsump == BOMConsumpType::Variable)
+                    {
+                        prodBOM.update();
+                    }
+                }
+            }
+        }
+        ATXBOMVersionVariants::approveBOMVersion(ATXBOMVersionEngine::findByItemBOMId(salesLine.ItemId, prodBOMId));
+        ttscommit;
+
+        return prodBOMId;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>insertLineFromTemplate</Name>
+				<Source><![CDATA[
+    boolean insertLineFromTemplate(ATXBreakdownOrderLine _breakOrderLine, BOM _templateBOM, SalesLine _salesLine)
+    {
+        boolean ret = true;
+        ;
+
+        // Validate item by PO
+        if (_templateBOM.ATXRequestOrderId
+            && _templateBOM.ATXRequestOrderId != ATXRequestOrderHeader::findBySalesId(_salesLine.SalesId).RequestOrderId)
+        {
+            return false;
+        }
+
+        if (_templateBOM.ATXConfigId
+            && _templateBOM.ATXConfigId != _breakOrderLine.ConfigId)
+        {
+            return false;
+        }
+        if (_templateBOM.ATXInventSizeId
+            && _templateBOM.ATXInventSizeId != _breakOrderLine.InventSizeId)
+        {
+            return false;
+        }
+        if (_templateBOM.ATXInventColorId
+            && _templateBOM.ATXInventColorId != _breakOrderLine.InventColorId)
+        {
+            return false;
+        }
+        if (_templateBOM.ATXInventStyleId
+            && _templateBOM.ATXInventStyleId != _breakOrderLine.InventStyleId)
+        {
+            return false;
+        }
+        // New fields
+        if (_templateBOM.ATXSeasonId
+            && _templateBOM.ATXSeasonId != _salesline.ATXSeasonId)
+        {
+            return false;
+        }
+        if (_templateBOM.ATXDestinationPlaceId
+            && _templateBOM.ATXDestinationPlaceId != _salesline.ATXDestinationPlaceId)
+        {
+            return false;
+        }
+
+        return ret;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>findBOMLineVariant</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name = "_bomId"></param>
+    /// <param name = "_itemId"></param>
+    /// <param name = "_inventDimId"></param>
+    /// <param name = "_oprNum"></param>
+    /// <param name = "_oprId"></param>
+    /// <param name = "_altTextId"></param>
+    /// <param name = "_forupdate"></param>
+    /// <returns></returns>
+    static BOM findBOMLineVariant(
+        BOMId           _bomId,
+        ItemId          _itemId,
+        InventDimId     _inventDimId,
+        OprNum          _oprNum,
+        RouteOprId      _oprId,
+        //BOMAltTextId_AT _altTextId,
+        boolean         _forupdate = false
+        )
+    {
+        BOM bom;
+
+        select firstOnly bom
+            index ItemIdx//NumIdx
+            where bom.ItemId == _itemId
+            && bom.BOMId == _bomid
+            && bom.InventDimId == _inventDimId
+            && bom.OprNum ==_oprNum
+            && BOM.ATXRouteOprId == _oprId
+            //&& BOM.AltText_AT == _altTextId
+            ;
+
+        bom.selectForUpdate(_forupdate);
+
+        return bom;
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>

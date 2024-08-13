@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxFormExtension xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="Microsoft.Dynamics.AX.Metadata.V6">
+	<Name>BOMTable.ATXApparelAndTextile</Name>
+	<ControlModifications />
+	<Controls>
+		<AxFormExtensionControl xmlns="">
+			<Name>FormExtensionControlbrbxg1db1</Name>
+			<FormControl xmlns=""
+				i:type="AxFormGroupControl">
+				<Name>ATXBOMOptions</Name>
+				<Type>Group</Type>
+				<FormControlExtension
+					i:nil="true" />
+				<Controls>
+					<AxFormControl xmlns=""
+						i:type="AxFormComboBoxControl">
+						<Name>ATXBOMOptions_ATXBOMType</Name>
+						<Type>ComboBox</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<DataField>ATXBOMType</DataField>
+						<DataSource>BOMTable</DataSource>
+						<Items />
+					</AxFormControl>
+				</Controls>
+				<DataGroup>ATXBOMOptions</DataGroup>
+				<DataSource>BOMTable</DataSource>
+			</FormControl>
+			<Parent>LineViewHeaderDetails</Parent>
+		</AxFormExtensionControl>
+	</Controls>
+	<DataSourceModifications />
+	<DataSourceReferences />
+	<DataSources />
+	<Parts />
+	<PropertyModifications />
+</AxFormExtension>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXApproveTasks</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+class ATXApproveTasks
+{
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>main</Name>
+				<Source><![CDATA[
+    public static void main(Args _args)
+    {
+        ATXProductPreProdTask    productPreProdTask;
+        
+        ATXApproveTasks engine = new ATXApproveTasks();
+        
+        if(_args.record())
+        {
+            productPreProdTask = _args.record();
+            engine.run(productPreProdTask.dataSource());
+        }
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>run</Name>
+				<Source><![CDATA[
+    public void run(FormDataSource _productMasterSizeDS)
+    {
+        ATXProductPreProdTask    productPreProdTask;
+        HcmWorker                hcmWorker;
+        DirPersonUser            personUser;
+        int                      counter;
+        
+        ttsbegin;
+        productPreProdTask = _productMasterSizeDS.getFirst(1, false);
+
+        while(productPreProdTask)
+        {
+
+            select firstonly personUser
+                where personUser.PersonParty == HcmWorker::find(productPreProdTask.AssignedTo).Person;
+
+            /*if(personUser.User != "" && curUserId() != personUser.User)
+            {
+                throw error("@ATXAT:NewLabel309");
+            }*/
+
+            productPreProdTask.selectForUpdate(true);
+            productPreProdTask.TransDate = systemDateGet();
+            productPreProdTask.Approver  = HcmWorker::userId2Worker(curUserId());
+            productPreProdTask.Approved  = NoYes::Yes;
+            //productPreProdTask.DueDays   = 0;
+            productPreProdTask.update();
+
+            counter++;
+
+            productPreProdTask = _productMasterSizeDS.getNext();
+        }
+        ttscommit;
+
+        info(strFmt("@ATXAT:NewLabel308", counter));
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>

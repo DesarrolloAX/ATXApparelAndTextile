@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxTable xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXProdQualityTable</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+public class ATXProdQualityTable extends common
+{
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>checkFixReference</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///    Checks and fixes records in the <c>EcoResProductDimensionGroupFldSetup</c> table.
+    /// </summary>
+    /// <remarks>
+    ///    If a record for a dimension does not exist in the <c>EcoResProductDimensionGroupFldSetup</c> table,
+    ///    it is created. If a record exists, its line number is checked and fixed if it does not match the
+    ///    position of a corresponding field in the <c>InventoryDimensions</c> field group of the
+    ///    <c>InventDim</c> table.
+    /// </remarks>
+    public void checkFixReference()
+    {
+        ATXProdQualityDimFieldSetUp         prodqualityDimFieldSetUp;
+        ListEnumerator                      enumerator  = InventDim::dimProductDimensionEnabledFieldList().getEnumerator();
+        FieldId                             dimFieldId;
+        int                                 fieldNo;
+
+        ttsbegin;
+
+        while (enumerator.moveNext())
+        {
+            fieldNo++;
+            dimFieldId = enumerator.current();
+            prodqualityDimFieldSetUp = ATXProdQualityDimFieldSetUp::findByDimensionGroupFieldId(this.RecId, dimFieldId);
+
+            if (prodqualityDimFieldSetUp.RecId)
+            {
+                if (prodqualityDimFieldSetUp.LineNumber != fieldNo)
+                {
+                    update_recordset prodqualityDimFieldSetUp
+                    setting LineNumber = fieldNo
+                    where prodqualityDimFieldSetUp.ProdQuality == this.RecId
+                       && prodqualityDimFieldSetUp.DimensionFieldId      == dimFieldId;
+                }
+            }
+            else
+            {
+                prodqualityDimFieldSetUp.clear();
+                prodqualityDimFieldSetUp.initFromProductDimensionGroup(this);
+                prodqualityDimFieldSetUp.DimensionFieldId    = dimFieldId;
+                prodqualityDimFieldSetUp.initValue();
+                prodqualityDimFieldSetUp.LineNumber          = fieldNo;
+                prodqualityDimFieldSetUp.insert();
+            }
+        }
+
+        ttscommit;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>insert</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    public void insert()
+    {
+        super();
+        this.checkFixReference();
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>exist</Name>
+				<Source><![CDATA[
+    static boolean exist(ATXProdQualityId _quality)
+    {
+        return _quality && (select firstOnly  ATXProdQualityTable
+                            where ATXProdQualityTable.ProdQualityId == _quality).RecId !=0;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>find</Name>
+				<Source><![CDATA[
+    static ATXProdQualityTable find(ATXProdQualityId _quality, boolean update = false)
+    {
+        ATXProdQualityTable qualityTable;
+
+        if(_quality)
+        {
+            qualityTable.selectForUpdate(update);
+
+            select firstOnly  qualityTable
+            where qualityTable.ProdQualityId == _quality;
+        }
+
+        return qualityTable;
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+	<FormRef>ATXProdQualityTable</FormRef>
+	<SubscriberAccessLevel>
+		<Read>Allow</Read>
+	</SubscriberAccessLevel>
+	<PrimaryIndex>ProdQualityIdx</PrimaryIndex>
+	<DeleteActions />
+	<FieldGroups>
+		<AxTableFieldGroup>
+			<Name>AutoReport</Name>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoLookup</Name>
+			<Fields>
+				<AxTableFieldGroupField>
+					<DataField>ProdQualityId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>Description</DataField>
+				</AxTableFieldGroupField>
+			</Fields>
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoIdentification</Name>
+			<AutoPopulate>Yes</AutoPopulate>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoSummary</Name>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoBrowse</Name>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>Overview</Name>
+			<Fields>
+				<AxTableFieldGroupField>
+					<DataField>ProdQualityId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>Description</DataField>
+				</AxTableFieldGroupField>
+			</Fields>
+		</AxTableFieldGroup>
+	</FieldGroups>
+	<Fields>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>ProdQualityId</Name>
+			<ExtendedDataType>ATXProdQualityId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>Description</Name>
+			<ExtendedDataType>Description</ExtendedDataType>
+		</AxTableField>
+	</Fields>
+	<FullTextIndexes />
+	<Indexes>
+		<AxTableIndex>
+			<Name>ProdQualityIdx</Name>
+			<AlternateKey>Yes</AlternateKey>
+			<Fields>
+				<AxTableIndexField>
+					<DataField>ProdQualityId</DataField>
+				</AxTableIndexField>
+			</Fields>
+		</AxTableIndex>
+	</Indexes>
+	<Mappings />
+	<Relations />
+	<StateMachines />
+</AxTable>

@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxFormExtension xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="Microsoft.Dynamics.AX.Metadata.V6">
+	<Name>BOMConsistOf.ATXApparelAndTextile</Name>
+	<ControlModifications />
+	<Controls>
+		<AxFormExtensionControl xmlns="">
+			<Name>FormExtensionControljurvpe241</Name>
+			<FormControl xmlns=""
+				i:type="AxFormButtonGroupControl">
+				<Name>ATXBOM</Name>
+				<Type>ButtonGroup</Type>
+				<FormControlExtension
+					i:nil="true" />
+				<Controls>
+					<AxFormControl xmlns=""
+						i:type="AxFormMenuFunctionButtonControl">
+						<Name>ATXBOMTemplateLine</Name>
+						<Type>MenuFunctionButton</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<DataSource>BOMVersion</DataSource>
+						<MenuItemName>ATXBOMTemplateLine</MenuItemName>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormMenuFunctionButtonControl">
+						<Name>ATXReleaseBOMVersionStyles</Name>
+						<Type>MenuFunctionButton</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<DataSource>BOMVersion</DataSource>
+						<MenuItemName>ATXReleaseBOMVersionStyles</MenuItemName>
+						<MenuItemType>Action</MenuItemType>
+					</AxFormControl>
+				</Controls>
+				<Caption>@ATXAT:NewLabel21</Caption>
+			</FormControl>
+			<Parent>VersionActionPaneTab</Parent>
+		</AxFormExtensionControl>
+		<AxFormExtensionControl xmlns="">
+			<Name>FormExtensionControltonwh1dj1</Name>
+			<FormControl xmlns=""
+				i:type="AxFormGroupControl">
+				<Name>ATXBOMTemplateOptionsGroup</Name>
+				<Type>Group</Type>
+				<FormControlExtension
+					i:nil="true" />
+				<Controls>
+					<AxFormControl xmlns=""
+						i:type="AxFormStringControl">
+						<Name>ATXBOMTemplateOptionsGroup_ATXInventStyleId</Name>
+						<Type>String</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<DataField>ATXInventStyleId</DataField>
+						<DataSource>BOMVersion</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormComboBoxControl">
+						<Name>ATXBOMTemplateOptionsGroup_ATXBOMType</Name>
+						<Type>ComboBox</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<DataField>ATXBOMType</DataField>
+						<DataSource>BOMVersion</DataSource>
+						<Items />
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormStringControl">
+						<Name>ATXBOMTemplateOptionsGroup_ATXConfigId</Name>
+						<Type>String</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<DataField>ATXConfigId</DataField>
+						<DataSource>BOMVersion</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormStringControl">
+						<Name>ATXBOMTemplateOptionsGroup_ATXInventSizeId</Name>
+						<Type>String</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<DataField>ATXInventSizeId</DataField>
+						<DataSource>BOMVersion</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormStringControl">
+						<Name>ATXBOMTemplateOptionsGroup_ATXInventColorId</Name>
+						<Type>String</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<DataField>ATXInventColorId</DataField>
+						<DataSource>BOMVersion</DataSource>
+					</AxFormControl>
+				</Controls>
+				<DataGroup>ATXBOMTemplateOptions</DataGroup>
+				<DataSource>BOMVersion</DataSource>
+			</FormControl>
+			<Parent>GeneralTab</Parent>
+			<PositionType>AfterItem</PositionType>
+			<PreviousSibling>IdentificationGroup</PreviousSibling>
+		</AxFormExtensionControl>
+		<AxFormExtensionControl xmlns="">
+			<Name>FormExtensionControluyb0a5hn1</Name>
+			<FormControl xmlns=""
+				i:type="AxFormGroupControl">
+				<Name>ATXBOMReference</Name>
+				<Type>Group</Type>
+				<FormControlExtension
+					i:nil="true" />
+				<Controls>
+					<AxFormControl xmlns=""
+						i:type="AxFormStringControl">
+						<Name>ATXBOMReference_ATXSeasonId</Name>
+						<Type>String</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<DataField>ATXSeasonId</DataField>
+						<DataSource>BOM</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormStringControl">
+						<Name>ATXBOMReference_ATXDestinationPlaceId</Name>
+						<Type>String</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<DataField>ATXDestinationPlaceId</DataField>
+						<DataSource>BOM</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormStringControl">
+						<Name>ATXBOMReference_ATXRequestOrderId</Name>
+						<Type>String</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<DataField>ATXRequestOrderId</DataField>
+						<DataSource>BOM</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormStringControl">
+						<Name>ATXBOMReference_ATXConfigId</Name>
+						<Type>String</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<DataField>ATXConfigId</DataField>
+						<DataSource>BOM</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormStringControl">
+						<Name>ATXBOMReference_ATXInventSizeId</Name>
+						<Type>String</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<DataField>ATXInventSizeId</DataField>
+						<DataSource>BOM</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormStringControl">
+						<Name>ATXBOMReference_ATXInventColorId</Name>
+						<Type>String</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<DataField>ATXInventColorId</DataField>
+						<DataSource>BOM</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormStringControl">
+						<Name>ATXBOMReference_ATXInventStyleId</Name>
+						<Type>String</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<DataField>ATXInventStyleId</DataField>
+						<DataSource>BOM</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormStringControl">
+						<Name>ATXBOMReference_ATXRouteOprId</Name>
+						<Type>String</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<DataField>ATXRouteOprId</DataField>
+						<DataSource>BOM</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormIntegerControl">
+						<Name>ATXBOMReference_ATXOprNum</Name>
+						<Type>Integer</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<DataField>ATXOprNum</DataField>
+						<DataSource>BOM</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormInt64Control">
+						<Name>ATXBOMReference_ATXBOMTemplateLine</Name>
+						<Type>Int64</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<DataField>ATXBOMTemplateLine</DataField>
+						<DataSource>BOM</DataSource>
+					</AxFormControl>
+				</Controls>
+				<DataGroup>ATXReference</DataGroup>
+				<DataSource>BOM</DataSource>
+			</FormControl>
+			<Parent>GridBOM</Parent>
+		</AxFormExtensionControl>
+	</Controls>
+	<DataSourceModifications />
+	<DataSourceReferences />
+	<DataSources />
+	<Parts />
+	<PropertyModifications />
+</AxFormExtension>

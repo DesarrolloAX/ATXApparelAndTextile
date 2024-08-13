@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXWrkCtrResourceGroupCalendar_Extension</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+[ExtensionOf(tableStr(WrkCtrResourceGroupCalendar))]
+final class ATXWrkCtrResourceGroupCalendar_Extension
+{
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>findActiveForResourceGroup</Name>
+				<Source><![CDATA[
+    /// <param name="_date">
+    /// The active date to search for; optional.
+    /// </param>
+    /// <param name="_forUpdate">
+    /// A Boolean value that specifies whether the found record should be selected for update.
+    /// </param>
+    /// <returns>
+    /// The active calendar assignment for a resource group.
+    /// </returns>
+    public static WrkCtrResourceGroupCalendar findActiveForResourceGroup(RefRecId _resourceGroup, date _date, boolean _forUpdate = false)
+    {
+        WrkCtrResourceGroupCalendar wrkCtrResourceGroupCalendar;
+
+        if (!_date)
+        {
+            _date = systemDateGet();
+        }
+
+        if (_resourceGroup)
+        {
+            wrkCtrResourceGroupCalendar.selectForUpdate(_forUpdate);
+
+            select firstonly validTimeState(_date) wrkCtrResourceGroupCalendar
+            where wrkCtrResourceGroupCalendar.ResourceGroup == _resourceGroup;
+        }
+
+        return wrkCtrResourceGroupCalendar;
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>

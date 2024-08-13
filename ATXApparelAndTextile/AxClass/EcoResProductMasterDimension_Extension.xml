@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>EcoResProductMasterDimension_Extension</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+[ExtensionOf(formStr(EcoResProductMasterDimension))]
+final class EcoResProductMasterDimension_Extension
+{
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>ATXButtonGridSize_OnClicked</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    [FormControlEventHandler(formControlStr(EcoResProductMasterDimension, ATXButtonGridSize), FormControlEventType::Clicked)]
+    public static void ATXButtonGridSize_OnClicked(FormControl sender, FormControlEventArgs e)
+    {
+        EcoResProductMaster productMasterCaller;
+        EcoResProductDimPerCompanyFormHelper formHelper = EcoResProductDimPerCompanyFormHelper::construct();
+        Args args = new Args();
+        MenuFunction mf;
+
+        productMasterCaller = formHelper.getProductMasterRec(sender.formRun().args());
+        args.record(productMasterCaller);
+        mf = new MenuFunction(menuItemDisplayStr(ATXItemGridLinesSize), MenuItemType::Display);
+        mf.run(args);
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>ATXButtonGridColor_OnClicked</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    [FormControlEventHandler(formControlStr(EcoResProductMasterDimension, ATXButtonGridColor), FormControlEventType::Clicked)]
+    public static void ATXButtonGridColor_OnClicked(FormControl sender, FormControlEventArgs e)
+    {
+        EcoResProductMaster productMasterCaller;
+        EcoResProductDimPerCompanyFormHelper formHelper = EcoResProductDimPerCompanyFormHelper::construct();
+        Args args = new Args();
+        MenuFunction mf;
+
+        productMasterCaller = formHelper.getProductMasterRec(sender.formRun().args());
+        args.record(productMasterCaller);
+        mf = new MenuFunction(menuItemDisplayStr(ATXItemGridLinesColor), MenuItemType::Display);
+        mf.run(args);
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>

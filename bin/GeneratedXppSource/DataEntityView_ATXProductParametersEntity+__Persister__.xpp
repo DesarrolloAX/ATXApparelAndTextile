@@ -1,0 +1,238 @@
+Private class __Persister__
+extends SysDataEntityPersister
+{
+    // Data source ID macros
+    #define.ATXProductParameters_ID(1)
+    
+    // Data source buffers
+    ATXProductParameters m_ATXProductParameters;
+    
+    protected void mapEntityToDataSources(DataEntityRuntimeContext _entityCtx)
+    {
+        this.validateFieldFailed = false;
+        this.mapEntityToDataSource(_entityCtx, _entityCtx.getRuntimeContextByName('ATXProductParameters'));
+        this.mapEntityToDataSourcesExtensions(_entityCtx);
+        if(this.validateFieldFailed)
+        {
+            throw Exception::ViewDataSourceValidation;
+        }
+    }
+    protected boolean saveDataSources(DataEntityRuntimeContext _entityCtx)
+    {
+        boolean rtrn = true;
+        DataEntityDataSourceRuntimeContext _dataSourceCtx = null;
+        // save data sources in topological order.
+        {
+            // handle datasources which are part of extensions and need to be saved before [ATXProductParameters]
+            if(!this.preSaveDataSource(_entityCtx, 'ATXProductParameters'))
+            {
+                return false;
+            }
+            _dataSourceCtx = _entityCtx.getRuntimeContextByName('ATXProductParameters');
+            // propagates foreign key values from referenced data sources which are part of extensions.
+            this.foreignKeyPropagationExtensions(_entityCtx, _dataSourceCtx);
+            // inserts/updates data source [ATXProductParameters].
+            if(!this.saveDataSource(_entityCtx, _dataSourceCtx))
+            {
+                // returns from here if the root data source fails to be saved.
+                return false;
+            }
+            this.postSaveDataSource();
+        }
+        // handle datasources which are part of extensions and need to be saved in last 
+        this.preSaveDataSource(_entityCtx, '');
+        return rtrn;
+    }
+    protected boolean deleteDataSources(DataEntityRuntimeContext _entityCtx)
+    {
+        boolean rtrn = true;
+        DataEntityDataSourceRuntimeContext _dataSourceCtx = null;
+        // delete data sources in reverse topological order.
+        {
+            // handle datasources which are part of extensions and need to be saved before [ATXProductParameters]
+            if(!this.preSaveDataSource(_entityCtx, 'ATXProductParameters'))
+            {
+                return false;
+            }
+            _dataSourceCtx = _entityCtx.getRuntimeContextByName('ATXProductParameters');
+            // deletes data source [ATXProductParameters].
+            if(!this.saveDataSource(_entityCtx, _dataSourceCtx))
+            {
+                // returns from here if the root data source fails to be saved.
+                return false;
+            }
+            this.postSaveDataSource();
+        }
+        // handle datasources which are part of extensions and need to be saved in last 
+        this.preSaveDataSource(_entityCtx, '');
+        return rtrn;
+    }
+    private void mapToDataSource_DS1(DataEntityRuntimeContext _entityCtx, DataEntityDataSourceRuntimeContext _dataSourceCtx, ATXProductParameters _aTXProductParameters, ATXProductParametersEntity _aTXProductParametersEntity)
+    {
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXProductParametersEntity, fieldnum(ATXProductParametersEntity, LockBOMTemplate), _aTXProductParameters, fieldnum(ATXProductParameters, LockBOMTemplate), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXProductParametersEntity, fieldnum(ATXProductParametersEntity, Key), _aTXProductParameters, fieldnum(ATXProductParameters, Key), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXProductParametersEntity, fieldnum(ATXProductParametersEntity, DummyValue), _aTXProductParameters, fieldnum(ATXProductParameters, DummyValue), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXProductParametersEntity, fieldnum(ATXProductParametersEntity, AddScrapToSalesBOMQty), _aTXProductParameters, fieldnum(ATXProductParameters, AddScrapToSalesBOMQty), 1);
+        
+        this.mapToDataSourceExtensions(_dataSourceCtx, _aTXProductParameters, _aTXProductParametersEntity);
+        _aTXProductParameters.trackFieldExternallySet(false);
+    }
+    protected void doMapEntityToDataSource(DataEntityRuntimeContext _entityCtx, DataEntityDataSourceRuntimeContext _dataSourceCtx)
+    {
+        switch(_dataSourceCtx.id())
+        {
+            case #ATXProductParameters_ID:
+                this.mapToDataSource_DS1(_entityCtx, _dataSourceCtx, _dataSourceCtx.getBuffer(), _entityCtx.getEntityRecord());
+                break;
+            default :
+                this.doMapEntityToDataSourceExtensions(_entityCtx, _dataSourceCtx);
+                break;
+        }
+    }
+    private void mapFromDataSource_DS1(DataEntityDataSourceRuntimeContext _dataSourceCtx, ATXProductParameters _aTXProductParameters, ATXProductParametersEntity _aTXProductParametersEntity)
+    {
+        this.mapDataSourceFieldToEntityField(_aTXProductParameters, fieldnum(ATXProductParameters, LockBOMTemplate), _aTXProductParametersEntity, fieldnum(ATXProductParametersEntity, LockBOMTemplate), false);
+        this.mapDataSourceFieldToEntityField(_aTXProductParameters, fieldnum(ATXProductParameters, Key), _aTXProductParametersEntity, fieldnum(ATXProductParametersEntity, Key), false);
+        this.mapDataSourceFieldToEntityField(_aTXProductParameters, fieldnum(ATXProductParameters, DummyValue), _aTXProductParametersEntity, fieldnum(ATXProductParametersEntity, DummyValue), false);
+        this.mapDataSourceFieldToEntityField(_aTXProductParameters, fieldnum(ATXProductParameters, AddScrapToSalesBOMQty), _aTXProductParametersEntity, fieldnum(ATXProductParametersEntity, AddScrapToSalesBOMQty), false);
+        this.mapFromDataSourceExtensions(_dataSourceCtx, _aTXProductParameters, _aTXProductParametersEntity);
+        // map system fields (e.g. recid and recversion) from data source buffer to view record.
+        _aTXProductParametersEntity.fromViewDataSource(_dataSourceCtx.id(), _aTXProductParameters);
+    }
+    protected void doMapDataSourceToEntity(DataEntityRuntimeContext _entityCtx, DataEntityDataSourceRuntimeContext _dataSourceCtx)
+    {
+        switch(_dataSourceCtx.id())
+        {
+            case #ATXProductParameters_ID:
+                this.mapFromDataSource_DS1(_dataSourceCtx, _dataSourceCtx.getBuffer(), _entityCtx.getEntityRecord());
+                break;
+            default :
+                this.doMapDataSourceToEntityExtensions(_entityCtx, _dataSourceCtx);
+                break;
+        }
+    }
+    protected Common doFindDataSource(DataEntityRuntimeContext _entityCtx, DataEntityDataSourceRuntimeContext _dataSourceCtx)
+    {
+        Common rtrn = null;
+        switch(_dataSourceCtx.id())
+        {
+            case #ATXProductParameters_ID:
+                rtrn = this.LookForUniqueKeyMatch_DS1(_entityCtx.getEntityRecord(), _dataSourceCtx.getBuffer());
+                break;
+            default :
+                rtrn = this.doFindDataSourceExtensions(_entityCtx, _dataSourceCtx);
+                break;
+        }
+        return rtrn;
+    }
+    protected boolean isAnyMappedDataSourceFieldSet_DS1(ATXProductParametersEntity _aTXProductParametersEntity, str disabledConfigKey = null)
+    {
+        boolean rtrn = false;
+        if(_aTXProductParametersEntity.isFieldSet(fieldnum(ATXProductParametersEntity, LockBOMTemplate)))
+        {
+            return true;
+        }
+        if(_aTXProductParametersEntity.isFieldSet(fieldnum(ATXProductParametersEntity, Key)))
+        {
+            return true;
+        }
+        if(_aTXProductParametersEntity.isFieldSet(fieldnum(ATXProductParametersEntity, DummyValue)))
+        {
+            return true;
+        }
+        if(_aTXProductParametersEntity.isFieldSet(fieldnum(ATXProductParametersEntity, AddScrapToSalesBOMQty)))
+        {
+            return true;
+        }
+        rtrn = this.isAnyMappedDataSourceExtensionFieldSet(_aTXProductParametersEntity, 'ATXProductParameters', disabledConfigKey);
+        return rtrn;
+    }
+    protected boolean isAnyMappedDataSourceFieldSet(DataEntityRuntimeContext _entityCtx, DataEntityDataSourceRuntimeContext _dataSourceCtx)
+    {
+        boolean rtrn = false;
+        switch(_dataSourceCtx.id())
+        {
+            case #ATXProductParameters_ID:
+                rtrn = this.isAnyMappedDataSourceFieldSet_DS1(_entityCtx.getEntityRecord());
+                break;
+            default :
+                rtrn = this.isAnyMappedDataSourceFieldSet_DSExtensions(_entityCtx, _dataSourceCtx);
+                break;
+        }
+        return rtrn;
+    }
+    private boolean validateDataSource_DS1(DataEntityRuntimeContext _entityCtx, ATXProductParametersEntity _aTXProductParametersEntity, DataEntityDataSourceRuntimeContext _dataSourceCtx, ATXProductParameters _aTXProductParameters)
+    {
+        boolean rtrn = true;
+        rtrn = this.validateMappedDataSourceField(_entityCtx, _dataSourceCtx, '', '', conNull(), _aTXProductParametersEntity, fieldnum(ATXProductParametersEntity, LockBOMTemplate), 'ATXProductParametersEntity.LockBOMTemplate', _aTXProductParameters, fieldnum(ATXProductParameters, LockBOMTemplate), false/*disallowEditOnCreate*/, false/*disallowEdit*/, true/*callValidateField*/, 1) ? rtrn : false;
+        rtrn = this.validateMappedDataSourceField(_entityCtx, _dataSourceCtx, '', '', conNull(), _aTXProductParametersEntity, fieldnum(ATXProductParametersEntity, Key), 'ATXProductParametersEntity.Key', _aTXProductParameters, fieldnum(ATXProductParameters, Key), true/*disallowEditOnCreate*/, true/*disallowEdit*/, true/*callValidateField*/, 1) ? rtrn : false;
+        rtrn = this.validateMappedDataSourceField(_entityCtx, _dataSourceCtx, '', '', conNull(), _aTXProductParametersEntity, fieldnum(ATXProductParametersEntity, DummyValue), 'ATXProductParametersEntity.DummyValue', _aTXProductParameters, fieldnum(ATXProductParameters, DummyValue), false/*disallowEditOnCreate*/, false/*disallowEdit*/, true/*callValidateField*/, 1) ? rtrn : false;
+        rtrn = this.validateMappedDataSourceField(_entityCtx, _dataSourceCtx, '', '', conNull(), _aTXProductParametersEntity, fieldnum(ATXProductParametersEntity, AddScrapToSalesBOMQty), 'ATXProductParametersEntity.AddScrapToSalesBOMQty', _aTXProductParameters, fieldnum(ATXProductParameters, AddScrapToSalesBOMQty), false/*disallowEditOnCreate*/, false/*disallowEdit*/, true/*callValidateField*/, 1) ? rtrn : false;
+        rtrn = this.validateDataSourceExtensions(_entityCtx, _aTXProductParametersEntity, _dataSourceCtx, _aTXProductParameters) ? rtrn : false;
+        return rtrn;
+    }
+    protected boolean validateDataSource(DataEntityRuntimeContext _entityCtx, DataEntityDataSourceRuntimeContext _dataSourceCtx)
+    {
+        boolean rtrn = true;
+        switch(_dataSourceCtx.id())
+        {
+            case #ATXProductParameters_ID:
+                rtrn = this.validateDataSource_DS1(_entityCtx,_entityCtx.getEntityRecord(),_dataSourceCtx,_dataSourceCtx.getBuffer());
+                break;
+            default :
+                rtrn = this.validateDataSourceExtensions_DSExtensions(_entityCtx, _dataSourceCtx);
+                break;
+        }
+        return rtrn;
+    }
+    private void mapToMatchingRecord_DS1(DataEntityDataSourceRuntimeContext _dataSourceCtx, ATXProductParameters _aTXProductParameters, ATXProductParameters _matchingRecord)
+    {
+        // map data changes in bound fields.
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXProductParameters, fieldnum(ATXProductParameters, LockBOMTemplate), _matchingRecord, fieldnum(ATXProductParameters, LockBOMTemplate), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXProductParameters, fieldnum(ATXProductParameters, Key), _matchingRecord, fieldnum(ATXProductParameters, Key), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXProductParameters, fieldnum(ATXProductParameters, DummyValue), _matchingRecord, fieldnum(ATXProductParameters, DummyValue), 1);
+        this.mapEntityFieldToDataSourceField(_dataSourceCtx.getDatabaseOperation(), _aTXProductParameters, fieldnum(ATXProductParameters, AddScrapToSalesBOMQty), _matchingRecord, fieldnum(ATXProductParameters, AddScrapToSalesBOMQty), 1);
+        this.mapToMatchingRecordExtensions(_dataSourceCtx, tablestr(ATXProductParametersEntity), _aTXProductParameters, _matchingRecord);
+    }
+    protected void mapDataSourceToMatchingRecord(DataEntityDataSourceRuntimeContext _dataSourceCtx, Common _matchingRecord)
+    {
+        switch(_dataSourceCtx.id())
+        {
+            case #ATXProductParameters_ID:
+                this.mapToMatchingRecord_DS1(_dataSourceCtx, _dataSourceCtx.getBuffer(), _matchingRecord);
+                break;
+            default :
+                this.mapDataSourceToMatchingRecordExtensions(_dataSourceCtx, _matchingRecord);
+                break;
+        }
+    }
+    protected void validateConfigurationKeys(DataEntityRuntimeContext _entityCtx)
+    {
+    }
+    protected void initializeDataSources(DataEntityRuntimeContext _entityCtx)
+    {
+        this.initializeDataSource(_entityCtx, 'ATXProductParameters', m_ATXProductParameters, this.getDataSourceId('ATXProductParameters'), this.getDataSourceRuntimeId('ATXProductParameters'), false/* optional */, false/* readonly */, false/* oneToMany */, false/* dateEffective */, false/* applyDateFilter */);
+        this.initializeDataSourcesExtensions(_entityCtx);
+    }
+    private ATXProductParameters LookForUniqueKeyMatch_DS1(ATXProductParametersEntity _aTXProductParametersEntity, ATXProductParameters _aTXProductParameters)
+    {
+        ATXProductParameters aTXProductParameters_ = null;
+        
+        select
+            forUpdate
+            firstOnly
+                aTXProductParameters_
+        where
+            aTXProductParameters_.Key == _aTXProductParameters.Key
+        ;
+        
+        if (aTXProductParameters_)
+        {
+            return aTXProductParameters_;
+        }
+        
+        return aTXProductParameters_;
+    }
+
+}
+

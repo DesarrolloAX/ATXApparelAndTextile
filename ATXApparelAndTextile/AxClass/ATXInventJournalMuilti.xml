@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXInventJournalMuilti</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+class ATXInventJournalMuilti
+{
+    }
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>newInventJournalTable</Name>
+				<Source><![CDATA[
+    InventJournalTable newInventJournalTable(
+    InventJournalType   _journalType,
+    Description     _description)
+    {
+
+        InventJournalName   inventJournalName;
+        InventJournalTable  inventJournalTable;
+
+        ;
+
+        inventJournalTable.clear();
+        inventJournalTable.initValue();
+
+        switch (_journalType)
+        {
+            case    InventJournalType::LossProfit:
+                inventJournalName = InventJournalName::find(InventParameters::find().LossProfitJournalNameId);
+                break;
+            case    InventJournalType::Transfer:
+                inventJournalName = InventJournalName::find(InventParameters::find().TransferJournalNameId);
+                break;
+            default:
+                throw error(strFmt("Tipo de diario erroneo : %1",enum2str(_journalType)));
+        }
+
+        if(!inventJournalName.RecId)
+        {
+            throw error(strFmt("Tipo de diario no configurado: %1",enum2str(_journalType)));
+        }
+        inventJournalTable.initFromInventJournalName(inventJournalName);
+        inventJournalTable.JournalNameId    = inventJournalName.JournalNameId;
+        inventJournalTable.Description      = _description ? _description : inventJournalName.Description;
+        inventJournalTable.JournalType      = inventJournalName.JournalType;
+        inventJournalTable.insert();
+        return inventJournalTable;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>postInventJournal</Name>
+				<Source><![CDATA[
+    void postInventJournal(InventJournalTable _inventJournalTable, boolean _validatePost = false)
+    {
+        JournalCheckPost        journalCheckPost;
+        InventJournalTable      localTable;
+
+        ttsBegin;
+        if (_inventJournalTable)
+        {
+            journalCheckPost    = InventJournalCheckPost::newPostJournal(_inventJournalTable);
+            if (journalCheckPost.validate())
+            {
+                journalCheckPost.run();
+            }
+
+            if(_validatePost)
+            {
+                if(!InventJournalTable::find(_inventJournalTable.JournalId).Posted)
+                {
+                    localTable = InventJournalTable::find(_inventJournalTable.JournalId,true);
+                    localTable.delete();
+
+                    throw error(strfmt("@ATX42",_inventJournalTable.JournalId));
+                }
+            }
+        }
+        ttsCommit;
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>

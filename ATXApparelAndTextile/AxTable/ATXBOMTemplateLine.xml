@@ -1,0 +1,871 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxTable xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXBOMTemplateLine</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+public class ATXBOMTemplateLine extends common
+{
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>findRecId</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Select season record if exist
+    /// </summary>
+    /// <param name = "_recId">RecId to select</param>
+    /// <param name = "_forUpdate">True if need update</param>
+    /// <returns>Table instance</returns>
+    public static ATXBOMTemplateLine findRecId(RefRecId _recId,boolean _forUpdate = false)
+    {
+        ATXBOMTemplateLine bomTemplateLine;
+
+        bomTemplateLine.selectForUpdate(_forUpdate);
+        select firstonly bomTemplateLine
+            where bomTemplateLine.RecId == _recId;
+
+        return bomTemplateLine;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>existRecId</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Select BOMTemplate record if exist
+    /// </summary>
+    /// <param name = "_recId">RecId to select</param>
+    /// <returns>True if found</returns>
+    public static boolean existRecId(RefRecId _recId)
+    {
+        return (select firstonly RecId from ATXBOMTemplateLine
+            where ATXBOMTemplateLine.RecId == _recId).RecId != 0;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>nameAlias</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    /// <returns></returns>
+    /*public boolean validateWrite()
+    {
+        boolean ret;
+        BOMVersion bomVersion;
+
+        ret = super();
+        if (ret && this.MatrixConfig && !this.ItemId)
+        {
+            ret = checkFailed("@ATXApparelAndTextile_AT:NewLabel72");
+        }
+
+        // Check if item is lock in Inventory
+        if (this.inventTable().inventItemPurchSetup().Stopped)
+        {
+            ret = checkFailed("@ATXApparelAndTextile_AT:NewLabel71");
+        }
+
+        if (ATXProductParameters::find().LockBOMTemplate)
+        {
+            select firstonly bomVersion
+                where bomVersion.BOMId == bomVersion.BOMId;
+
+            info(strFmt("Validación OUT Verison LMAT %1 Estilo %2 Tipo %3 BomBlockingTableRecid %4",
+                bomVersion.BOMId,
+                this.ItemId,
+                InventTable::find(this.ItemId).BOMTypeId_AT,
+                ATXBOMBlokingLogTable::find(bomVersion.ItemId, InventTable::find(this.ItemId).ATXBOMTypeId).RecId));
+
+            //<DGANAVA do validation by bomid>
+            //if (BOMBlokingLogTable_AT::find(bomVersion.ItemId, InventTable::find(this.ItemId).BOMTypeId_AT).BOMTypeIdActive)
+            if(BOMBlokingLogTable_AT::findByBomId(bomVersion.ItemId, InventTable::find(this.ItemId).BOMTypeId_AT, bomVersion.BOMId).BOMTypeIdActive)
+            {
+                info(strFmt("Validación  In Verison LMAT %1 Estilo %2 Tipo %3 BomBlockingTableRecid %4",
+                    bomVersion.BOMId,
+                    this.ItemId,
+                    InventTable::find(this.ItemId).BOMTypeId_AT,
+                    BOMBlokingLogTable_AT::find(bomVersion.ItemId, InventTable::find(this.ItemId).BOMTypeId_AT).RecId));
+
+                throw Error("@ATXApparelAndTextile_AT:NewLabel207");
+            }
+            if (!this.BOMTypeId)
+            {
+                throw Error("@ATXApparelAndTextile_AT:NewLabel261");
+            }
+        }
+
+        return ret;
+    }*/
+
+    /// <summary>
+    ///
+    /// </summary>
+    /*public void update()
+    {
+        ;
+
+        if (this.RecId && this.orig().InventDimId != this.InventDimId)
+        {
+            new BOMTemplateEngine_AT(this, NoYes::Yes).updateFieldData();
+        }
+        super();
+    }*/
+
+    /// <summary>
+    /// Display name alias
+    /// </summary>
+    /// <returns></returns>
+    [SysClientCacheDataMethodAttribute(true)]
+    display NameAlias nameAlias()
+    {
+        return InventTable::find(this.ItemId).NameAlias;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>modifiedField</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name = "_fieldId"></param>
+    public void modifiedField(fieldId _fieldId)
+    {
+        InventTable             inventTable;
+        InventItemInventSetup   inventItemInventSetup;
+        InventDim               inventDim,joinDim;
+
+        super(_fieldId);
+        switch (_fieldId)
+        {
+            case fieldnum(ATXBOMTemplateLine, ItemId):
+                select firstonly inventItemInventSetup
+                where inventItemInventSetup.ItemId == this.ItemId
+                join inventDim
+                where inventDim.inventDimId         == inventItemInventSetup.InventDimIdDefault
+                    && inventDim.InventLocationId;
+
+                inventTable      = InventTable::find(this.ItemId);
+                this.UnitId      = inventTable.BOMUnitId;
+                this.ScrapConst  = inventTable.ScrapConst;
+                this.ScrapVar    = inventTable.ScrapVar;
+                //this.BOMTypeId   = inventTable.BOMTypeId_AT;
+                this.InventDimId = inventItemInventSetup.InventDimIdDefault;
+                break;
+        }
+        /*
+        if (this.RecId)
+        {
+            new BOMTemplateEngine_AT(this, NoYes::Yes).modifiedField(_fieldId);
+        }
+        else
+        {
+            new BOMTemplateEngine_AT(this, NoYes::Yes).validateModifiedField(_fieldId);
+        }*/
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>itemName</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Display item name
+    /// </summary>
+    /// <returns></returns>
+    [SysClientCacheDataMethodAttribute(true)]
+    display ItemName itemName()
+    {
+        return InventTable::find(this.ItemId).itemName();
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>inventTableBOMVersion</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    /// <returns></returns>
+    InventTable inventTableBOMVersion()
+    {
+        return InventTable::find((select firstOnly ItemId from BOMVersion where BOMVersion.BOMId == this.BOMId).ItemId);
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>inventTable</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name = "_forUpdate"></param>
+    /// <returns></returns>
+    InventTable inventTable(boolean _forUpdate = false)
+    {
+        return InventTable::find(this.ItemId,_forUpdate);
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>inventDim</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name = "_forUpdate"></param>
+    /// <returns></returns>
+    InventDim inventDim(boolean _forUpdate = false)
+    {
+        ;
+        return InventDim::find(this.InventDimId,_forUpdate);
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>firstExternalItemId</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    /// <returns></returns>
+    [SysClientCacheDataMethodAttribute(true)]
+    display ExternalItemId firstExternalItemId()
+    {
+        return (select firstOnly CustVendExternalItem
+            where CustVendExternalItem.ItemId == this.ItemId).ExternalItemId;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>bomTable</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    /*public void delete()
+    {
+        ATXBOMMatrixTemplate    bomMatrixTemplate_AT;
+        bom                     bom;
+        %1 %1;
+        
+        delete_from bom
+            where   bom.RefRecId_AT == this.RecId
+            exists join %1
+            where %1.BOMId == bom.BOMId
+            && %1.BOMType_AT == BOMType_AT::Template;
+
+        delete_from bom
+            where bom.BOMTemplateLine_AT == this.RecId
+            exists join %1
+            where %1.BOMId == bom.BOMId
+            && %1.BOMType_AT == BOMType_AT::Template;
+
+        delete_from bomMatrixTemplate_AT
+            where   bomMatrixTemplate_AT.BOMTemplateline    == this.RecId;
+
+        super();
+    }*/
+
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name = "_forUpdate"></param>
+    /// <returns></returns>
+    public BOMTable bomTable(boolean _forUpdate = false)
+    {
+        return BOMTable::find(this.bomId,_forUpdate);
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>validateDelete</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Not allow deleting locked BOMTypeId
+    /// </summary>
+    /// <returns></returns>
+    public boolean validateDelete()
+    {
+        boolean ret;
+    
+        ret = super();
+        if (ret && this.Blocking)
+        {
+            ret = checkFailed("@ATXAT:NewLabel118");
+        }
+    
+        return ret;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>displayNameAlias</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    /// <returns></returns>
+    /*display SizeActive_AT displaySizeActive()
+    {
+        return this.inventTable().sizeActive();
+    }*/
+
+    /// <summary>
+    ///
+    /// </summary>
+    /// <returns></returns>
+    [SysClientCacheDataMethodAttribute(true)]
+    display NameAlias displayNameAlias()
+    {
+        return this.inventTable().NameAlias;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>insert</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    /// <returns></returns>
+    /*public boolean aosValidateInsert()
+    {
+        boolean ret;
+    
+        ret = super();
+        if (ret)
+        {
+            if (ProductParameters_AT::find().LockBOMTemplate)
+            {
+                if (BOMBlokingLogTable_AT::find(this.ItemStyleId, InventTable::find(this.ItemId).BOMTypeId_AT).BOMTypeIdActive)
+                {
+                    throw Error("@ATXApparelAndTextile_AT:NewLabel207");
+                }
+                if (!this.BOMTypeId)
+                {
+                    throw Error("@ATXApparelAndTextile_AT:NewLabel261");
+                }
+            }
+        }
+    
+        return ret;
+    }*/
+
+    /// <summary>
+    ///
+    /// </summary>
+    public void insert()
+    {
+        
+        /*if (!this.BOMTypeId)
+        {
+            this.BOMTypeId   = InventTable::find(this.ItemId).BOMTypeId_AT;
+        }*/
+        /*if (!ATXProductParameters::find().AllowDuplicatesBOMTemplate)
+        {
+            select firstonly bomTemplateLine_AT
+                where bomTemplateLine_AT.BOMId == this.BOMId
+                && bomTemplateLine_AT.ItemId == this.ItemId;
+            if (bomTemplateLine_AT)
+            {
+                throw error(strFmt("@ATXApparelAndTextile_AT:NewLabel75", this.ItemId));
+            }
+        }*/
+
+        super();
+        new ATXBOMTemplateEngine(this, this.MatrixConfig).updateFromDoApply();
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>initValue</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    void initValue()
+    {
+        //BOMVersion          bomVersion;
+
+        super();
+
+        //this.bomQtySerie = ATXProductParameters::find().BOMQtySerie;
+        this.HasAnyChild = NoYes::No;
+        this.Calculation = NoYes::Yes;
+        this.bomQtySerie = 1;
+        /*
+        select firstOnly bomVersion
+            where bomVersion.BOMId == this.BOMId;
+        this.ProductMasterItemId = bomVersion.ItemId;*/
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+	<Label>@ATXAT:NewLabel22</Label>
+	<SubscriberAccessLevel>
+		<Read>Allow</Read>
+	</SubscriberAccessLevel>
+	<DeleteActions />
+	<FieldGroups>
+		<AxTableFieldGroup>
+			<Name>AutoReport</Name>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoLookup</Name>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoIdentification</Name>
+			<AutoPopulate>Yes</AutoPopulate>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoSummary</Name>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoBrowse</Name>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>General</Name>
+			<Label>@SYS35893</Label>
+			<Fields>
+				<AxTableFieldGroupField>
+					<DataField>MatrixConfig</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>ItemId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>itemName</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>nameAlias</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>BOMTypeId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>Blocking</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>PlacementId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>OprNum</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>RouteOprId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>BOMQty</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>BOMQtySerie</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>UnitId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>ScrapConst</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>ScrapVar</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>ConfigIdFlag</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>InventSizeIdFlag</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>InventColorIdFlag</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>InventStyleIdFlag</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>BOMConsumpType</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>BOMType</DataField>
+				</AxTableFieldGroupField>
+			</Fields>
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>ProductMasterDim</Name>
+			<Label>@ATXAT:NewLabel54</Label>
+			<Fields>
+				<AxTableFieldGroupField>
+					<DataField>ConfigId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>InventSizeId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>InventColorId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>InventStyleId</DataField>
+				</AxTableFieldGroupField>
+			</Fields>
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>GenerateBOMBy</Name>
+			<Label>@ATXAT:NewLabel60</Label>
+			<Fields>
+				<AxTableFieldGroupField>
+					<DataField>ConfigIdFlag</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>InventSizeIdFlag</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>InventColorIdFlag</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>InventStyleIdFlag</DataField>
+				</AxTableFieldGroupField>
+			</Fields>
+		</AxTableFieldGroup>
+	</FieldGroups>
+	<Fields>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldEnum">
+			<Name>BOMConsumpType</Name>
+			<EnumType>BOMConsumpType</EnumType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>BOMId</Name>
+			<ExtendedDataType>BOMId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldReal">
+			<Name>BOMQty</Name>
+			<ExtendedDataType>BOMQty</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldReal">
+			<Name>BOMQtySerie</Name>
+			<ExtendedDataType>BOMQtySerie</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldEnum">
+			<Name>BOMType</Name>
+			<EnumType>BOMType</EnumType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldEnum">
+			<Name>Calculation</Name>
+			<ExtendedDataType>BOMCalcBOMLine</ExtendedDataType>
+			<EnumType>NoYes</EnumType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>ConfigGroupId</Name>
+			<ExtendedDataType>ConfigGroupId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldEnum">
+			<Name>ConfigIdFlag</Name>
+			<ExtendedDataType>EcoResConfigurationFlag</ExtendedDataType>
+			<EnumType>NoYes</EnumType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldEnum">
+			<Name>BOMEndSchedConsump</Name>
+			<ExtendedDataType>BOMEndSchedConsump</ExtendedDataType>
+			<EnumType>NoYes</EnumType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldEnum">
+			<Name>Formula</Name>
+			<EnumType>BOMFormula</EnumType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldDate">
+			<Name>FromDate</Name>
+			<ExtendedDataType>StartDate</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldEnum">
+			<Name>HasAnyChild</Name>
+			<ExtendedDataType>NoYesId</ExtendedDataType>
+			<EnumType>NoYes</EnumType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>InventColorId</Name>
+			<ExtendedDataType>EcoResColorName</ExtendedDataType>
+			<Label>@ATXAT:NewLabel57</Label>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldEnum">
+			<Name>InventColorIdFlag</Name>
+			<ExtendedDataType>EcoResColorFlag</ExtendedDataType>
+			<EnumType>NoYes</EnumType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>InventDimId</Name>
+			<ExtendedDataType>InventDimId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>InventSizeId</Name>
+			<ExtendedDataType>EcoResSizeName</ExtendedDataType>
+			<Label>@ATXAT:NewLabel56</Label>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldEnum">
+			<Name>InventSizeIdFlag</Name>
+			<ExtendedDataType>EcoResSizeFlag</ExtendedDataType>
+			<EnumType>NoYes</EnumType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldEnum">
+			<Name>InventStyleIdFlag</Name>
+			<ExtendedDataType>EcoResStyleFlag</ExtendedDataType>
+			<EnumType>NoYes</EnumType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>ItemId</Name>
+			<ExtendedDataType>ItemId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>ItemBOMId</Name>
+			<ExtendedDataType>ItemBOMId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>ItemRouteId</Name>
+			<ExtendedDataType>ItemRouteId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>InventStyleId</Name>
+			<ExtendedDataType>EcoResStyleName</ExtendedDataType>
+			<Label>@ATXAT:NewLabel58</Label>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldReal">
+			<Name>LineNum</Name>
+			<ExtendedDataType>LineNum</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldEnum">
+			<Name>MainFabric</Name>
+			<ExtendedDataType>NoYesId</ExtendedDataType>
+			<EnumType>NoYes</EnumType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>MaterialRouting</Name>
+			<ExtendedDataType>SysGroup</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldEnum">
+			<Name>MatrixConfig</Name>
+			<ExtendedDataType>NoYesId</ExtendedDataType>
+			<HelpText>@ATXAT:NewLabel50</HelpText>
+			<Label>@ATXAT:NewLabel59</Label>
+			<EnumType>NoYes</EnumType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>MatrixId</Name>
+			<ExtendedDataType>String20</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldInt">
+			<Name>OprNum</Name>
+			<ExtendedDataType>OprNumBOMLine</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldInt">
+			<Name>OprNumBOMLine</Name>
+			<ExtendedDataType>OprNumBOMLine</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>Position</Name>
+			<ExtendedDataType>BOMPosition</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldEnum">
+			<Name>ProdFlushingPrincip</Name>
+			<EnumType>ProdFlushingPrincipBOM</EnumType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>InventLocationId</Name>
+			<ExtendedDataType>InventLocationId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>ConfigId</Name>
+			<ExtendedDataType>EcoResConfigurationName</ExtendedDataType>
+			<Label>@ATXAT:NewLabel55</Label>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>PlacementId</Name>
+			<ExtendedDataType>ATXPlacementId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>RouteOprId</Name>
+			<ExtendedDataType>RouteOprId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>BOMUnitId</Name>
+			<ExtendedDataType>BOMUnitId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>VendAccount</Name>
+			<ExtendedDataType>VendAccount</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>ProductMasterItemId</Name>
+			<ExtendedDataType>ItemId</ExtendedDataType>
+			<Label>@ATXAT:NewLabel276</Label>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>UnitId</Name>
+			<ExtendedDataType>BOMUnitId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldReal">
+			<Name>ScrapConst</Name>
+			<ExtendedDataType>ScrapConst</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldReal">
+			<Name>ScrapVar</Name>
+			<ExtendedDataType>ScrapVar</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>VendId</Name>
+			<ExtendedDataType>VendAccount</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldEnum">
+			<Name>WrkCtrConsumption</Name>
+			<ExtendedDataType>WrkCtrConsumption</ExtendedDataType>
+			<EnumType>boolean</EnumType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldEnum">
+			<Name>Blocking</Name>
+			<ExtendedDataType>NoYesId</ExtendedDataType>
+			<Label>@ATXAT:NewLabel52</Label>
+			<EnumType>NoYes</EnumType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>BOMTypeId</Name>
+			<ExtendedDataType>ATXBOMTypeId</ExtendedDataType>
+		</AxTableField>
+	</Fields>
+	<FullTextIndexes />
+	<Indexes>
+		<AxTableIndex>
+			<Name>BOMIdx</Name>
+			<AllowDuplicates>Yes</AllowDuplicates>
+			<Fields>
+				<AxTableIndexField>
+					<DataField>BOMId</DataField>
+				</AxTableIndexField>
+				<AxTableIndexField>
+					<DataField>ItemId</DataField>
+				</AxTableIndexField>
+			</Fields>
+		</AxTableIndex>
+	</Indexes>
+	<Mappings />
+	<Relations>
+		<AxTableRelation>
+			<Name>BOMVersion</Name>
+			<RelatedTable>BOMVersion</RelatedTable>
+			<Constraints>
+				<AxTableRelationConstraint xmlns=""
+					i:type="AxTableRelationConstraintField">
+					<Name>BOMId</Name>
+					<Field>BOMId</Field>
+					<RelatedField>BOMId</RelatedField>
+				</AxTableRelationConstraint>
+				<AxTableRelationConstraint xmlns=""
+					i:type="AxTableRelationConstraintField">
+					<Name>ProductMasterItemId</Name>
+					<Field>ProductMasterItemId</Field>
+					<RelatedField>ItemId</RelatedField>
+				</AxTableRelationConstraint>
+			</Constraints>
+		</AxTableRelation>
+		<AxTableRelation>
+			<Name>InventDim</Name>
+			<RelatedTable>InventDim</RelatedTable>
+			<Constraints>
+				<AxTableRelationConstraint xmlns=""
+					i:type="AxTableRelationConstraintField">
+					<Name>InventDimId</Name>
+					<Field>InventDimId</Field>
+					<RelatedField>inventDimId</RelatedField>
+				</AxTableRelationConstraint>
+			</Constraints>
+		</AxTableRelation>
+		<AxTableRelation>
+			<Name>InventTable</Name>
+			<RelatedTable>InventTable</RelatedTable>
+			<Constraints>
+				<AxTableRelationConstraint xmlns=""
+					i:type="AxTableRelationConstraintField">
+					<Name>ItemId</Name>
+					<Field>ItemId</Field>
+					<RelatedField>ItemId</RelatedField>
+				</AxTableRelationConstraint>
+			</Constraints>
+		</AxTableRelation>
+		<AxTableRelation>
+			<Name>ATXBOMTypeTable</Name>
+			<RelatedTable>ATXBOMTypeTable</RelatedTable>
+			<Constraints>
+				<AxTableRelationConstraint xmlns=""
+					i:type="AxTableRelationConstraintField">
+					<Name>BOMTypeId</Name>
+					<Field>BOMTypeId</Field>
+					<RelatedField>BOMTypeId</RelatedField>
+				</AxTableRelationConstraint>
+			</Constraints>
+		</AxTableRelation>
+	</Relations>
+	<StateMachines />
+</AxTable>

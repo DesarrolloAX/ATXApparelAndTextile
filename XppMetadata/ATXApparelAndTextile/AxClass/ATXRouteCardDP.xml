@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<z:anyType xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns=""
+	i:type="AxCompilerMetadata" xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/">
+	<Extends>SRSReportDataProviderBase</Extends>
+	<IsPublic>true</IsPublic>
+	<Attributes>
+		<AxAttribute>
+			<Name>SRSReportParameterAttribute</Name>
+			<Parameters>
+				<AxAttributeParameter>
+					<Type>Intrinsic</Type>
+					<TypeValue>classStr</TypeValue>
+					<AdditionalData>
+						<AxAttributeParameter>
+							<TypeValue>ATXRouteCardContract</TypeValue>
+							<AdditionalData />
+						</AxAttributeParameter>
+						<AxAttributeParameter>
+							<AdditionalData />
+						</AxAttributeParameter>
+						<AxAttributeParameter>
+							<AdditionalData />
+						</AxAttributeParameter>
+					</AdditionalData>
+				</AxAttributeParameter>
+			</Parameters>
+		</AxAttribute>
+	</Attributes>
+	<Members>
+		<AxClassMemberVariable>
+			<Type>Record</Type>
+			<TypeName>ATXRouteCardHeaderTmp</TypeName>
+			<Name>routeCardHeader</Name>
+			<Attributes />
+		</AxClassMemberVariable>
+		<AxClassMemberVariable>
+			<Type>Record</Type>
+			<TypeName>ATXRouteCardBreakdownTmp</TypeName>
+			<Name>routeCardBreakdown</Name>
+			<Attributes />
+		</AxClassMemberVariable>
+		<AxClassMemberVariable>
+			<Type>Record</Type>
+			<TypeName>ATXRouteCardRouteTmp</TypeName>
+			<Name>routeCardRoute</Name>
+			<Attributes />
+		</AxClassMemberVariable>
+		<AxClassMemberVariable>
+			<Type>Record</Type>
+			<TypeName>ProdTable</TypeName>
+			<Name>prodTable</Name>
+			<Attributes />
+		</AxClassMemberVariable>
+		<AxClassMemberVariable>
+			<Type>ExtendedDataType</Type>
+			<TypeName>RouteOprId</TypeName>
+			<Name>routeOprId</Name>
+			<Attributes />
+		</AxClassMemberVariable>
+	</Members>
+	<Methods>
+		<Method>
+			<Name>processReport</Name>
+			<Visibility>Public</Visibility>
+			<ReturnType>
+				<TypeName></TypeName>
+			</ReturnType>
+		</Method>
+		<Method>
+			<Name>insertHeader</Name>
+			<Parameters>
+				<AxMethodParameter>
+					<Type>Record</Type>
+					<TypeName>ProdTable</TypeName>
+					<Name>_prodTable</Name>
+				</AxMethodParameter>
+			</Parameters>
+			<ReturnType>
+				<TypeName></TypeName>
+			</ReturnType>
+		</Method>
+		<Method>
+			<Name>insertBreackOrderLines</Name>
+			<Parameters>
+				<AxMethodParameter>
+					<Type>Record</Type>
+					<TypeName>ProdTable</TypeName>
+					<Name>_prodTable</Name>
+				</AxMethodParameter>
+			</Parameters>
+			<ReturnType>
+				<TypeName></TypeName>
+			</ReturnType>
+		</Method>
+		<Method>
+			<Name>insertRoute</Name>
+			<Parameters>
+				<AxMethodParameter>
+					<Type>Record</Type>
+					<TypeName>ProdTable</TypeName>
+					<Name>_prodTable</Name>
+				</AxMethodParameter>
+			</Parameters>
+			<ReturnType>
+				<TypeName></TypeName>
+			</ReturnType>
+		</Method>
+		<Method>
+			<Name>getRouteCardHeaderTmp</Name>
+			<Visibility>Public</Visibility>
+			<Attributes>
+				<AxAttribute>
+					<Name>SrsReportDataSetAttribute</Name>
+					<Parameters>
+						<AxAttributeParameter>
+							<Type>Intrinsic</Type>
+							<TypeValue>tableStr</TypeValue>
+							<AdditionalData>
+								<AxAttributeParameter>
+									<TypeValue>ATXRouteCardHeaderTmp</TypeValue>
+									<AdditionalData />
+								</AxAttributeParameter>
+								<AxAttributeParameter>
+									<AdditionalData />
+								</AxAttributeParameter>
+								<AxAttributeParameter>
+									<AdditionalData />
+								</AxAttributeParameter>
+							</AdditionalData>
+						</AxAttributeParameter>
+					</Parameters>
+				</AxAttribute>
+			</Attributes>
+			<ReturnType>
+				<Type>Record</Type>
+				<TypeName>ATXRouteCardHeaderTmp</TypeName>
+			</ReturnType>
+		</Method>
+		<Method>
+			<Name>getRouteCardBreakdownTmp</Name>
+			<Visibility>Public</Visibility>
+			<Attributes>
+				<AxAttribute>
+					<Name>SrsReportDataSetAttribute</Name>
+					<Parameters>
+						<AxAttributeParameter>
+							<Type>Intrinsic</Type>
+							<TypeValue>tableStr</TypeValue>
+							<AdditionalData>
+								<AxAttributeParameter>
+									<TypeValue>ATXRouteCardBreakdownTmp</TypeValue>
+									<AdditionalData />
+								</AxAttributeParameter>
+								<AxAttributeParameter>
+									<AdditionalData />
+								</AxAttributeParameter>
+								<AxAttributeParameter>
+									<AdditionalData />
+								</AxAttributeParameter>
+							</AdditionalData>
+						</AxAttributeParameter>
+					</Parameters>
+				</AxAttribute>
+			</Attributes>
+			<ReturnType>
+				<Type>Record</Type>
+				<TypeName>ATXRouteCardBreakdownTmp</TypeName>
+			</ReturnType>
+		</Method>
+		<Method>
+			<Name>getRouteCardRouteTmp</Name>
+			<Visibility>Public</Visibility>
+			<Attributes>
+				<AxAttribute>
+					<Name>SrsReportDataSetAttribute</Name>
+					<Parameters>
+						<AxAttributeParameter>
+							<Type>Intrinsic</Type>
+							<TypeValue>tableStr</TypeValue>
+							<AdditionalData>
+								<AxAttributeParameter>
+									<TypeValue>ATXRouteCardRouteTmp</TypeValue>
+									<AdditionalData />
+								</AxAttributeParameter>
+								<AxAttributeParameter>
+									<AdditionalData />
+								</AxAttributeParameter>
+								<AxAttributeParameter>
+									<AdditionalData />
+								</AxAttributeParameter>
+							</AdditionalData>
+						</AxAttributeParameter>
+					</Parameters>
+				</AxAttribute>
+			</Attributes>
+			<ReturnType>
+				<Type>Record</Type>
+				<TypeName>ATXRouteCardRouteTmp</TypeName>
+			</ReturnType>
+		</Method>
+	</Methods>
+</z:anyType>

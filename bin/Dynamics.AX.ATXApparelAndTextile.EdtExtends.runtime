@@ -1,0 +1,10 @@
+﻿ATXCutPackQty	ATXQtyBase
+ATXQtyRemain	ATXQtyBase
+ATXQtyPosted	ATXQtyBase
+ATXQtyOrig	ATXQtyBase
+ATXCutQty	ATXQtyBase
+ATXQtyPostPrevError	ATXQtyBase
+ATXApproved	NoYesId
+ATXQtyPostPrev	ATXQtyBase
+ATXRequestQty	Qty
+ATXReleasedDate	TransDate

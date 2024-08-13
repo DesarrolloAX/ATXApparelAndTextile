@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXUnApproveTasks</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+class ATXUnApproveTasks
+{
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>main</Name>
+				<Source><![CDATA[
+    public static void main(Args _args)
+    {
+        ATXProductPreProdTask    productPreProdTask;
+        
+        ATXUnApproveTasks engine = new ATXUnApproveTasks();
+        
+        if(_args.record())
+        {
+            productPreProdTask = _args.record();
+            engine.run(productPreProdTask.dataSource());
+        }
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>run</Name>
+				<Source><![CDATA[
+    public void run(FormDataSource _productMasterSizeDS)
+    {
+        ATXProductPreProdTask    productPreProdTask;
+        HcmWorker                hcmWorker;
+        int                      counter;
+        
+        ttsbegin;
+        productPreProdTask = _productMasterSizeDS.getFirst(1, false);
+
+        while(productPreProdTask)
+        {
+            productPreProdTask.selectForUpdate(true);
+            productPreProdTask.TransDate       = dateNull();
+            productPreProdTask.Approver        = 0;
+            productPreProdTask.Approved        = NoYes::No;
+            // TODO productPreProdTask.DisapprovalDate = systemDateGet();
+            // TODO productPreProdTask.Disapprover     = HcmWorker::userId2Worker(curUserId());
+            productPreProdTask.update();
+
+            counter++;
+
+            productPreProdTask = _productMasterSizeDS.getNext();
+        }
+        ttscommit;
+
+        info(strFmt("@ATXAT:NewLabel310", counter));
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>

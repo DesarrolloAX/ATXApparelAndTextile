@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXProdJournalTools</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+class ATXProdJournalTools extends ATXFormCanvasLog
+{
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>newProdJournalTable</Name>
+				<Source><![CDATA[
+    ProdJournalTable newProdJournalTable(ProdId _prodId, ProdJournalType _prodJournalType, Description _description)
+    {
+        ProdJournalName     prodJournalName;
+        ProdJournalTable    prodJournalTable;
+
+        try
+        {
+            prodJournalTable.clear();
+            prodJournalTable.initValue();
+            switch (_prodJournalType)
+            {
+                case ProdJournalType::Picklist:
+                    prodJournalName = ProdJournalName::find(ProdParametersDim::findDefault().BOMJournalNameId);
+                    break;
+                case ProdJournalType::RouteCard:
+                    prodJournalName = ProdJournalName::find(ProdParametersDim::findDefault().RouteJournalNameId);
+                    break;
+                case ProdJournalType::ReportFinished:
+                    prodJournalName = ProdJournalName::find(ProdParametersDim::findDefault().ProdJournalNameId);
+                    break;
+                default:
+                    throw error(strFmt("Tipo de diario seleccionado es invalido: %1",enum2str(_prodJournalType)));
+            }
+
+            if (!prodJournalName)
+            {
+                throw error(strFmt("Tipo de diario seleccionado no configurado: %1",enum2str(_prodJournalType)));
+            }
+
+            prodJournalTable.JournalNameId              = prodJournalName.JournalNameId;
+            prodJournalTable.Description                = _description ? _description : prodJournalName.Description;
+            prodJournalTable.DeletePostedLines          = prodJournalName.DeletePostedLines;
+            prodJournalTable.JournalType                = prodJournalName.JournalType;
+            prodJournalTable.VoucherDraw                = prodJournalName.VoucherDraw;
+            prodJournalTable.VoucherSeqRecId            = prodJournalName.VoucherSeqRecId;
+            // TODO ERROR? prodJournalTable.DetailSummary              = prodJournalName.DetailSummary;
+            prodJournalTable.VoucherChange              = prodJournalName.VoucherChange;
+
+            prodJournalTable.modifiedField(fieldnum(ProdJournalTable, JournalNameId));
+            prodJournalTable.ProdId                     = _prodId;
+            prodJournalTable.JournalType                = _prodJournalType;
+
+            if (prodJournalTable.validateWrite())
+            {
+                prodJournalTable.insert();
+            }
+        }
+        #ATXScannerStationLogCatch
+
+        return prodJournalTable;
+
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>postProdJournalBOMBF</Name>
+				<Source><![CDATA[
+    boolean postProdJournalBOMBF(ProdJournalTable  _prodJournalTable)
+    {
+        ProdJournalCheckPost    journalCheckPost;
+        ProdJournalTable        localProd;
+        boolean                 ret = false;
+
+        try
+        {
+            if (_prodJournalTable)
+            {
+                ttsbegin;
+                journalCheckPost    = ProdJournalCheckPostBOM::newJournalCheckPost(false,true,JournalCheckPostType::Post,tableNum(ProdJournalTable), _prodJournalTable.JournalId);
+                if (journalCheckPost.validate())
+                {
+                    journalCheckPost.run();
+                }
+                ttscommit;
+            }
+
+            if (!ProdJournalTable::find(_prodJournalTable.JournalId).Posted)
+            {
+                warning(strfmt("@ATX42",_prodJournalTable.JournalId));
+            }
+            else
+            {
+                ret = true;
+            }
+        }
+        #ATXScannerStationLogCatch
+
+        return ret;
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>

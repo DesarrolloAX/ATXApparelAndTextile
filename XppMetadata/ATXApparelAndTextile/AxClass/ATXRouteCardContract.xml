@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<z:anyType xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns=""
+	i:type="AxCompilerMetadata" xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/">
+	<IsPublic>true</IsPublic>
+	<Members>
+		<AxClassMemberVariable>
+			<Type>ExtendedDataType</Type>
+			<TypeName>RefRecId</TypeName>
+			<Name>recId</Name>
+			<Attributes />
+		</AxClassMemberVariable>
+		<AxClassMemberVariable>
+			<Type>ExtendedDataType</Type>
+			<TypeName>RouteOprId</TypeName>
+			<Name>routeOprId</Name>
+			<Attributes />
+		</AxClassMemberVariable>
+	</Members>
+	<Methods>
+		<Method>
+			<Name>refRecId</Name>
+			<Visibility>Public</Visibility>
+			<Attributes>
+				<AxAttribute>
+					<Name>DataMemberAttribute</Name>
+					<Parameters>
+						<AxAttributeParameter>
+							<TypeValue>"RecId"</TypeValue>
+							<AdditionalData />
+						</AxAttributeParameter>
+					</Parameters>
+				</AxAttribute>
+				<AxAttribute>
+					<Name>SysOperationControlVisibilityAttribute</Name>
+					<Parameters>
+						<AxAttributeParameter>
+							<Type>Boolean</Type>
+							<TypeValue>False</TypeValue>
+							<AdditionalData />
+						</AxAttributeParameter>
+					</Parameters>
+				</AxAttribute>
+			</Attributes>
+			<Parameters>
+				<AxMethodParameter>
+					<Type>ExtendedDataType</Type>
+					<TypeName>RefRecId</TypeName>
+					<DefaultValue>recId</DefaultValue>
+					<Name>_recId</Name>
+				</AxMethodParameter>
+			</Parameters>
+			<ReturnType>
+				<Type>ExtendedDataType</Type>
+				<TypeName>RefRecId</TypeName>
+			</ReturnType>
+		</Method>
+		<Method>
+			<Name>parmRouteOprId</Name>
+			<Visibility>Public</Visibility>
+			<Attributes>
+				<AxAttribute>
+					<Name>DataMemberAttribute</Name>
+					<Parameters>
+						<AxAttributeParameter>
+							<Type>Intrinsic</Type>
+							<TypeValue>extendedTypeStr</TypeValue>
+							<AdditionalData>
+								<AxAttributeParameter>
+									<TypeValue>RouteOprId</TypeValue>
+									<AdditionalData />
+								</AxAttributeParameter>
+								<AxAttributeParameter>
+									<AdditionalData />
+								</AxAttributeParameter>
+								<AxAttributeParameter>
+									<AdditionalData />
+								</AxAttributeParameter>
+							</AdditionalData>
+						</AxAttributeParameter>
+					</Parameters>
+				</AxAttribute>
+			</Attributes>
+			<Parameters>
+				<AxMethodParameter>
+					<Type>ExtendedDataType</Type>
+					<TypeName>RouteOprId</TypeName>
+					<DefaultValue>routeOprId</DefaultValue>
+					<Name>_routeOprId</Name>
+				</AxMethodParameter>
+			</Parameters>
+			<ReturnType>
+				<Type>ExtendedDataType</Type>
+				<TypeName>RouteOprId</TypeName>
+			</ReturnType>
+		</Method>
+	</Methods>
+</z:anyType>

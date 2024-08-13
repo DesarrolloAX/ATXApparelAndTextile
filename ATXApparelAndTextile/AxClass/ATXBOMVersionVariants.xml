@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXBOMVersionVariants</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+// TODO Eliminar clase
+class ATXBOMVersionVariants
+{
+    BOMVersion              templateBOMVersion;
+    ItemId                  templateItemId;
+    EcoResColorName         inventColorId;
+    #AviFiles
+    #ATXBOM
+
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>getBOMId</Name>
+				<Source><![CDATA[
+    static BOMId getBOMId()
+    {
+        BOMId       bomId;
+        NumberSeq           numberSeq;
+        NumberSequenceTable numberSequenceTable;
+
+        ;
+
+        numberSeq = BOMTable::numberSeq();
+        bomId = numberSeq.num();
+        
+        return bomId;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>getBOMNameFromSalesLine</Name>
+				<Source><![CDATA[
+    static BOMId getBOMNameFromSalesLine(SalesLine _salesLine)
+    {
+        #ATXBOM
+
+        ;
+
+        return  #Salesorder + _salesline.SalesId + " " + _salesLine.InventTransId;
+
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>approveBOMVersions</Name>
+				<Source><![CDATA[
+    private void approveBOMVersions()
+    {
+        InventDimCombination    inventDimCombination;
+        BOMVersion              bomVersion;
+        InventTable             inventTable;
+        InventDim               inventDim, inventDimBOMVersion, inventDimBOMVersionQry;
+        BOM                     bomLine;
+        InventSiteId            defaultSiteId = templateBOMVersion.inventDim().InventSiteId;
+        Name                    bomName;
+        BOMId                   bomId;
+        SysGroup                dummyDimValue = ATXProductParameters::find().DummyValue;
+        boolean                 hasQuality;
+
+        ;
+
+        // Generar lineas por color
+        hasQuality  = InventTable::find(templateitemId).styleActive();
+
+        if (inventColorId)
+        {
+            while select BOMId, itemId, RecId from bomVersion
+                index hint ItemIdx
+            where bomVersion.ItemId     == templateitemId
+               && bomVersion.ATXBOMType == ATXBOMType::Variant
+            join inventDim
+            where inventDim.inventDimId         == bomVersion.InventDimId
+               && inventDim.ConfigId        != dummyDimValue
+               && inventDim.InventSizeId    != dummyDimValue
+               && inventDim.InventColorId   == inventColorId
+               && (inventDim.InventStyleId  == #FirstQualityBOM
+                   || !hasQuality)
+            {
+                ATXBOMVersionVariants::approveBOMVersion(bomVersion);
+            }
+        }
+        else
+        {
+            while select BOMId, itemId, RecId from bomVersion
+                index hint ItemIdx
+            where bomVersion.ItemId     == templateitemId
+               && bomVersion.ATXBOMType == ATXBOMType::Variant
+            join inventDim
+            where inventDim.inventDimId         == bomVersion.InventDimId
+               && inventDim.ConfigId        != dummyDimValue
+               && inventDim.InventSizeId    != dummyDimValue
+               && inventDim.InventColorId   != dummyDimValue
+               && (inventDim.InventStyleId  == #FirstQualityBOM
+                   || !hasQuality)
+            {
+                ATXBOMVersionVariants::approveBOMVersion(bomVersion);
+            }
+        }
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>approveBOMVersion</Name>
+				<Source><![CDATA[
+    static void approveBOMVersion(BOMVersion _bomVersion)
+    {
+        Args                args = new Args();
+        BOMVersionApprove   bomApprove;
+        BOMRouteApprover    bomRouteApprover;
+        ATXProdParameters   prodParameters = ATXProdParameters::find();
+
+        ;
+
+        // Check if is active approve bom
+        if (prodParameters.BOMVersionApproved)
+        {
+            args.record(_bomVersion);
+            bomApprove  = new BOMVersionApprove();
+            bomApprove.getLast();
+            bomApprove.parmRecId(_bomVersion.RecId);
+            bomApprove.init();
+
+            bomRouteApprover    = hcmWorker::userId2Worker(curUserId());//DirPersonUser::currentWorker();
+            if (!bomRouteApprover)
+            {
+                if (prodParameters.BOMRouteApprover)
+                {
+                    bomRouteApprover = prodParameters.BOMRouteApprover;
+                }
+            }
+            if (!bomRouteApprover)
+            {
+                throw error("@ATXProdLabel_AT:NewLabel11");
+            }
+            bomApprove.parmApprover(bomRouteApprover);
+            bomApprove.parmApproveBOM(true);
+
+            bomApprove.run();
+        }
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>

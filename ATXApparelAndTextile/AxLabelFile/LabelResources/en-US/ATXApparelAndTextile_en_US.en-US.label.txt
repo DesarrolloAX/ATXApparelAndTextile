@@ -1,0 +1,262 @@
+﻿ATXL00001=Requisition header
+ ;Requisition header
+ATXL00002=Comments
+ ;Comments
+ATXL00003=CPO
+ ;CPO
+ATXL00004=lbl class
+ ;lbl class
+ATXL00005=Cancellation date
+ ;Cancellation date
+ATXL00006=Delivery date
+ ;Delivery date
+ATXL00007=Grouper
+ ;Grouper
+ATXL00008=LBL - Grouper
+ ;LBL - Grouper
+ATXL00009=Overview
+ ;Overview
+ATXL00010=Order group
+ ;Order group
+ATXL00011=Requesition
+ ;Requesition
+ATXL00012=Status
+ ;Status
+ATXL00013=Loaded
+ ;Loaded
+ATXL00014=Authorized
+ ;Authorized
+ATXL00015=Completed
+ ;Completed
+ATXL00016=Rejected
+ ;Rejected
+ATXL00017=Error
+ ;Error
+ATXL00018=Order type
+ ;Order type
+ATXL00019=Sample
+ ;Sample
+ATXL00020=Sales
+ ;Sales
+ATXL00021=Review date
+ ;Review date
+ATXL00022=Season
+ ;Season
+ATXL00023=Store
+ ;Store
+ATXL00024=Brand
+ ;Brand
+ATXL00025=Division
+ ;Division
+ATXL00026=Delivery destination
+ ;Delivery destination
+ATXL00027=Sample type
+ ;Sample type
+ATXL00028=Authorization date
+ ;Authorization date
+ATXL00029=Previous cust ref
+ ;Previous cust ref
+ATXL00030=ReqId original
+ ;ReqId original
+ATXL00031=Issue date
+ ;Issue date
+ATXL00032=Plan number
+ ;Plan number
+ATXL00033=OV Quantity
+ ;OV Quantity
+ATXL00034=Skip BOM Validation
+ ;Skip BOM Validation
+ATXL00035=Customer data ()
+ ;Customer data ()
+ATXL00036=Dates ()
+ ;Dates ()
+ATXL00037=Physical dimensions
+ ;Physical dimensions
+ATXL00038=Filters ()
+ ;Filters ()
+ATXL00039=Fabric
+ ;Fabric
+ATXL00040=Category
+ ;Category
+ATXL00041=NAFTA
+ ;NAFTA
+ATXL00042=No NAFTA
+ ;No NAFTA
+ATXL00043=NAFTA Clasification
+ ;NAFTA Clasification
+ATXL00044=Version ()
+ ;Version ()
+ATXL00045=Revision date
+ ;Revision date
+ATXL00046=Alert
+ ;Alert
+ATXL00047=Emails
+ ;Emails
+ATXL00048=BOM Block
+ ;BOM Block
+ATXL00049=BOM TypeBlock
+ ;BOM TypeBlock
+ATXL00050=Generate BOM on Request authorize
+ ;Generate BOM on Request authorize
+ATXL00051=Request order release
+ ;Request order release
+ATXL00052=PO change
+ ;PO change
+ATXL00053=Change size or quantity
+ ;Change size or quantity
+ATXL00054=Sample request order release
+ ;Sample request order release
+ATXL00055=Create items alert
+ ;Create items alert
+ATXL00056=Production pool [Extraction]
+ ;Production pool [Extraction]
+ATXL00057=Confirmation (Time & Action)
+ ;Confirmation (Time & Action)
+ATXL00058=Approved
+ ;Approved
+ATXL00059=Grid Id
+ ;Grid Id
+ATXL00060=Sizes
+ ;Sizes
+ATXL00061=LBL - Lines matrix dimensions
+ ;LBL - Lines matrix dimensions
+ATXL00062=Config Matrix
+ ;Config Matrix
+ATXL00063=Size Matrix
+ ;Size Matrix
+ATXL00064=Color Matrix
+ ;Color Matrix
+ATXL00065=Style Matrix
+ ;Style Matrix
+ATXL00066=You can not delete an matrix in use. () in item % 1
+ ;You can not delete an matrix in use. () in item % 1
+ATXL00067=Placement
+ ;Placement
+ATXL00068=Alternative text
+ ;Alternative text
+ATXL00069=Type
+ ;Type
+ATXL00070=Placement
+ ;Placement
+ATXL00071=BOM Placement
+ ;BOM Placement
+ATXL00072=Template
+ ;Template
+ATXL00073=Style
+ ;Style
+ATXL00074=BOM
+ ;BOM
+ATXL00075=Sample
+ ;Sample
+ATXL00076=Template type
+ ;Template type
+ATXL00077=Lock BOM template
+ ;Lock BOM template
+ATXL00078=Overcut configuration code
+ ;Overcut configuration code
+ATXL00079=Material group
+ ;Material group
+ATXL00080=Group product dimensions symbol [Request order]
+ ;Group product dimensions symbol [Request order]
+ATXL00081=Qty
+ ;Qty
+ATXL00082=Production Quantity
+ ;Production Quantity
+ATXL00083=Produced
+ ;Produced
+ATXL00084=Cust qty
+ ;Cust qty
+ATXL00085=Split qty
+ ;Split qty
+ATXL00086=Requisition header
+ ;Requisition header
+ATXL00087=Load date
+ ;Load date
+ATXL00088=Create request version
+ ;Create request version
+ATXL00089=Request versión has been created
+ ;Request versión has been created
+ATXL00090=Order request
+ ;Order request
+ATXL00091=Apparel And Textile
+ ;Apparel And Textile
+ATXL00092=Update quantity to Sales line
+ ;Update quantity to Sales line
+ATXL00093=Create request
+ ;Create request
+ATXL00094=Cancel order
+ ;Cancel order
+ATXL00095=Version number
+ ;Version number
+ATXL00096=Copy request
+ ;Copy request
+ATXL00098=Create request version
+ ;Create request version
+ATXL00099=Change Purchase order
+ ;Change Purchase order
+ATXL00100=Pending
+ ;Pending
+ATXL00101=Update production orders references
+ ;Update production orders references
+ATXL00102=End file
+ ;End file
+ATXL00103=There are errors while loading file
+ ;There are errors while loading file
+ATXL00104=Plan number
+ ;Plan number
+ATXL00105=Migration file
+ ;Migration file
+ATXL00106=Order request
+ ;Order request
+ATXL00107=Migration error log
+ ;Migration error log
+ATXL00108=Clear log
+ ;Clear log
+ATXL00109=Configuration %1 not released for item %2
+ ;Configuration %1 not released for item %2
+ATXL00110=Size %1 not released for item %2
+ ;Size %1 not released for item %2
+ATXL00111=Color %1 not released for item %2
+ ;Color %1 not released for item %2
+ATXL00112=Customer %1 doesn't exist
+ ;Customer %1 doesn't exist
+ATXL00113=Customer %1 doesn't have currency
+ ;Customer %1 doesn't have currency
+ATXL00114=Production pool %1 does not exist
+ ;Production pool %1 does not exist
+ATXL00115=Season %1 does not exist
+ ;Season %1 does not exist
+ATXL00116=Destination %1 does not exist
+ ;Destination %1 does not exist
+ATXL00117=Division %1 does not exist
+ ;Division %1 does not exist
+ATXL00118=Breanch %1 does not exist
+ ;Breanch %1 does not exist
+ATXL00119=Item %1 does not exist
+ ;Item %1 does not exist
+ATXL00120=Site %1 does not exist
+ ;Site %1 does not exist
+ATXL00121=Warehouse %1 does not exist
+ ;Warehouse %1 does not exist
+ATXL00122=Sample type %1 does not exist
+ ;Sample type %1 does not exist
+ATXL00123=Configuration%1 doesn't exist for item %2
+ ;Configuration%1 doesn't exist for item %2
+ATXL00124=Size %1 doesn't exist for item %2
+ ;Size %1 doesn't exist for item %2
+ATXL00125=Color %1 doesn't exist for item %2
+ ;Color %1 doesn't exist for item %2
+ATXL00126=Sales line is linked to Production order %1
+ ;Sales line is linked to Production order %1
+ATXL00127=Upload file
+ ;Upload file
+ATXL00128=Setup
+ ;Setup
+ATXL00129=Sales parameters
+ ;Sales parameters
+ATXL00130=Apparel And Textile parameters
+ ;Apparel And Textile parameters
+ATXL00131=[Request order] sequence
+ ;[Request order] sequence
+ATXL00132=Product dimension matrix
+ ;Product dimension matrix

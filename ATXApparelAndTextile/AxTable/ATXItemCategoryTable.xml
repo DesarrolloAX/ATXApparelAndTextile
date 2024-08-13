@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxTable xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXItemCategoryTable</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+public class ATXItemCategoryTable extends common
+{
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>find</Name>
+				<Source><![CDATA[
+    static ATXItemCategoryTable find(ATXItemCategoryId _ctegoryId, boolean _update = false)
+    {
+        ATXItemCategoryTable categoryTable;
+
+        if(_ctegoryId)
+        {
+            categoryTable.selectForUpdate(_update);
+
+            select firstOnly categoryTable
+                index hint CategoryIdx
+                where categoryTable.ItemCategoryId == _ctegoryId;
+        }
+
+        return categoryTable;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>exist</Name>
+				<Source><![CDATA[
+    static boolean exist(ATXItemCategoryId _ctegoryId)
+    {
+        return _ctegoryId &&  (select firstOnly RecId from ATXItemCategoryTable
+                                index hint CategoryIdx
+                                where ATXItemCategoryTable.ItemCategoryId == _ctegoryId).RecId != 0;
+
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>modifiedField</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name = "_fieldId"></param>
+    public void modifiedField(FieldId _fieldId)
+    {
+        super(_fieldId);
+        if(_fieldId)
+        {
+            switch(_fieldId)
+            {
+                case fieldNum(ATXItemCategoryTable, ItemCategoryId):
+                    this.Description    = this.ItemCategoryId;
+                    break;
+            }
+        }
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+	<FormRef>ATXItemCategoryTableForm</FormRef>
+	<Label>@ATXApparelAndTextile_en_US:ATXL00040</Label>
+	<SubscriberAccessLevel>
+		<Read>Allow</Read>
+	</SubscriberAccessLevel>
+	<TitleField1>ItemCategoryId</TitleField1>
+	<TitleField2>Description</TitleField2>
+	<DeleteActions />
+	<FieldGroups>
+		<AxTableFieldGroup>
+			<Name>AutoReport</Name>
+			<Fields>
+				<AxTableFieldGroupField>
+					<DataField>ItemCategoryId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>Description</DataField>
+				</AxTableFieldGroupField>
+			</Fields>
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoLookup</Name>
+			<Fields>
+				<AxTableFieldGroupField>
+					<DataField>ItemCategoryId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>Description</DataField>
+				</AxTableFieldGroupField>
+			</Fields>
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoIdentification</Name>
+			<AutoPopulate>Yes</AutoPopulate>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoSummary</Name>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoBrowse</Name>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>Overview</Name>
+			<Label>@ATXApparelAndTextile_en_US:ATXL00009</Label>
+			<Fields>
+				<AxTableFieldGroupField>
+					<DataField>ItemCategoryId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>Description</DataField>
+				</AxTableFieldGroupField>
+			</Fields>
+		</AxTableFieldGroup>
+	</FieldGroups>
+	<Fields>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>ItemCategoryId</Name>
+			<ExtendedDataType>ATXItemCategoryId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>Description</Name>
+			<ExtendedDataType>Description</ExtendedDataType>
+		</AxTableField>
+	</Fields>
+	<FullTextIndexes />
+	<Indexes>
+		<AxTableIndex>
+			<Name>CategoryIdx</Name>
+			<AlternateKey>Yes</AlternateKey>
+			<Fields>
+				<AxTableIndexField>
+					<DataField>ItemCategoryId</DataField>
+				</AxTableIndexField>
+			</Fields>
+		</AxTableIndex>
+	</Indexes>
+	<Mappings />
+	<Relations />
+	<StateMachines />
+</AxTable>

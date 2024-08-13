@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxTableExtension xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>BOMVersion.ATXApparelAndTextile</Name>
+	<FieldGroupExtensions />
+	<FieldGroups>
+		<AxTableFieldGroup>
+			<Name>ATXBOMTemplateOptions</Name>
+			<Label>@ATXAT:NewLabel23</Label>
+			<Fields>
+				<AxTableFieldGroupField>
+					<DataField>ATXInventStyleId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>ATXBOMType</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>ATXConfigId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>ATXInventSizeId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>ATXInventColorId</DataField>
+				</AxTableFieldGroupField>
+			</Fields>
+		</AxTableFieldGroup>
+	</FieldGroups>
+	<FieldModifications />
+	<Fields>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldEnum">
+			<Name>ATXBOMType</Name>
+			<AllowEdit>No</AllowEdit>
+			<EnumType>ATXBOMType</EnumType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>ATXConfigId</Name>
+			<AllowEdit>No</AllowEdit>
+			<ExtendedDataType>EcoResConfigurationName</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>ATXInventSizeId</Name>
+			<AllowEdit>No</AllowEdit>
+			<ExtendedDataType>EcoResSizeName</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>ATXInventColorId</Name>
+			<AllowEdit>No</AllowEdit>
+			<ExtendedDataType>EcoResColorName</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>ATXInventStyleId</Name>
+			<AllowEdit>No</AllowEdit>
+			<ExtendedDataType>EcoResStyleName</ExtendedDataType>
+		</AxTableField>
+	</Fields>
+	<FullTextIndexes />
+	<Indexes />
+	<Mappings />
+	<PropertyModifications />
+	<RelationExtensions />
+	<RelationModifications />
+	<Relations />
+</AxTableExtension>

@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxTable xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXSampleBookTable</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+public class ATXSampleBookTable extends common
+{
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>productsInSampleBook</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    [SysClientCacheDataMethodAttribute(true)] 
+    display NumberOfRecords productsInSampleBook()
+    {
+        NumberOfRecords records;
+
+        records = (select count(RecId) from InventTable where InventTable.ATXSampleBookId == this.SampleBookId).RecId;
+        return records;
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+	<FormRef>ATXSampleBook</FormRef>
+	<Label>@ATXPLM:NewLabel14</Label>
+	<SubscriberAccessLevel>
+		<Read>Allow</Read>
+	</SubscriberAccessLevel>
+	<TitleField1>SampleBookId</TitleField1>
+	<TitleField2>SeasonId</TitleField2>
+	<ClusteredIndex>SampleBookIdx</ClusteredIndex>
+	<CreatedBy>Yes</CreatedBy>
+	<CreatedDateTime>Yes</CreatedDateTime>
+	<ModifiedBy>Yes</ModifiedBy>
+	<ModifiedDateTime>Yes</ModifiedDateTime>
+	<PrimaryIndex>SampleBookIdx</PrimaryIndex>
+	<DeleteActions />
+	<FieldGroups>
+		<AxTableFieldGroup>
+			<Name>AutoReport</Name>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoLookup</Name>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoIdentification</Name>
+			<AutoPopulate>Yes</AutoPopulate>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoSummary</Name>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoBrowse</Name>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>General</Name>
+			<Label>@SYS35893</Label>
+			<Fields>
+				<AxTableFieldGroupField>
+					<DataField>SampleBookId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>SeasonId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>CustAccount</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>BrandId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>QuantityPlan</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>productsInSampleBook</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>StartDate</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>EndDate</DataField>
+				</AxTableFieldGroupField>
+			</Fields>
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>Id</Name>
+			<Fields>
+				<AxTableFieldGroupField>
+					<DataField>SampleBookId</DataField>
+				</AxTableFieldGroupField>
+			</Fields>
+		</AxTableFieldGroup>
+	</FieldGroups>
+	<Fields>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>SampleBookId</Name>
+			<AllowEdit>No</AllowEdit>
+			<ExtendedDataType>ATXSampleBookId</ExtendedDataType>
+			<Mandatory>Yes</Mandatory>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>SeasonId</Name>
+			<ExtendedDataType>ATXSeasonId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>CustAccount</Name>
+			<ExtendedDataType>CustAccount</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>BrandId</Name>
+			<ExtendedDataType>ATXBrandId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldInt64">
+			<Name>QuantityPlan</Name>
+			<ExtendedDataType>NumberOfRecords</ExtendedDataType>
+			<Label>@ATXPLM:NewLabel15</Label>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldDate">
+			<Name>StartDate</Name>
+			<ExtendedDataType>StartDate</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldDate">
+			<Name>EndDate</Name>
+			<ExtendedDataType>EndDate</ExtendedDataType>
+		</AxTableField>
+	</Fields>
+	<FullTextIndexes />
+	<Indexes>
+		<AxTableIndex>
+			<Name>SampleBookIdx</Name>
+			<AlternateKey>Yes</AlternateKey>
+			<Fields>
+				<AxTableIndexField>
+					<DataField>SampleBookId</DataField>
+				</AxTableIndexField>
+			</Fields>
+		</AxTableIndex>
+	</Indexes>
+	<Mappings />
+	<Relations>
+		<AxTableRelation>
+			<Name>ATXSeasonTable</Name>
+			<RelatedTable>ATXSeasonTable</RelatedTable>
+			<Constraints>
+				<AxTableRelationConstraint xmlns=""
+					i:type="AxTableRelationConstraintField">
+					<Name>SeasonId</Name>
+					<Field>SeasonId</Field>
+					<RelatedField>SeasonId</RelatedField>
+				</AxTableRelationConstraint>
+			</Constraints>
+		</AxTableRelation>
+		<AxTableRelation>
+			<Name>ATXBrandTable</Name>
+			<RelatedTable>ATXBrandTable</RelatedTable>
+			<Constraints>
+				<AxTableRelationConstraint xmlns=""
+					i:type="AxTableRelationConstraintField">
+					<Name>BrandId</Name>
+					<Field>BrandId</Field>
+					<RelatedField>BrandId</RelatedField>
+				</AxTableRelationConstraint>
+			</Constraints>
+		</AxTableRelation>
+	</Relations>
+	<StateMachines />
+</AxTable>

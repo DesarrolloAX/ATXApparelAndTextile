@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXReleaseBOMVersionVariants</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+/// <summary>
+/// Dialog class
+/// Create a BOMVersion for every combination on InventDim of a product master
+/// Type::Variant
+/// </summary>
+class ATXReleaseBOMVersionVariants extends RunBaseBatch
+{
+    BOMVersion BOMVersion;
+    BOMId bomId;
+    Dialog dialog;
+    DialogField dflBOMId;
+
+    #DEFINE.CurrentVersion(7)
+    #LOCALMACRO.CurrentList
+        bomId
+    #endMacro
+
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>pack</Name>
+				<Source><![CDATA[
+    public container pack()
+    {
+        return [#CurrentVersion,#CurrentList,super()];
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>unpack</Name>
+				<Source><![CDATA[
+    public boolean unpack(container packedClass)
+    {
+        Integer version = conPeek(packedClass,1);
+        container base;
+
+        switch (version)
+        {
+            case #CurrentVersion:
+                [version,#CurrentList,base] = packedClass;
+                super(base);
+                break;
+
+            default:
+                return false;
+        }
+        return true;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmBOMId</Name>
+				<Source><![CDATA[
+    public BOMId parmBOMId(BOMId _bomId = bomId)
+    {
+        bomId = _bomId;
+        return bomId;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>construct</Name>
+				<Source><![CDATA[
+    static ATXReleaseBOMVersionVariants construct()
+    {
+        return new ATXReleaseBOMVersionVariants();
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>new</Name>
+				<Source><![CDATA[
+    protected void new()
+    {
+        super();
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>run</Name>
+				<Source><![CDATA[
+    public void run()
+    {
+        BOMVersion bomVersionQry;
+        BOMTable bomTable;
+
+        select firstonly bomVersionQry
+            index BOMIdx
+            where bomVersionQry.BOMId == this.parmBOMId()
+            join bomTable
+            where bomTable.BOMId == bomVersionQry.BOMId
+            && bomTable.ATXBOMType == ATXBOMType::Template;
+        if (bomVersionQry)
+        {
+            //Create BOMVersions based on template
+            ATXBOMVersionEngine::generateVariantBOMVersions(bomVersionQry.BOMId, bomVersionQry.ItemId);
+        }
+        else
+        {
+            throw Error("@ATXAT:NewLabel24");
+        }
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>main</Name>
+				<Source><![CDATA[
+    public static void main(Args _args)
+    {
+        ATXReleaseBOMVersionVariants engine = new ATXReleaseBOMVersionVariants();
+        if (_args.dataset() == tableNum(BOMVersion))
+        {
+            engine.parmBOMVersion(_args.record());
+        }
+
+        if (engine.prompt())
+        {
+            engine.run();
+        }
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>dialog</Name>
+				<Source><![CDATA[
+    public Object dialog()
+    {
+        dialog = super();
+
+        dflBOMId = dialog.addFieldValue(extendedTypeStr(BOMId), bomId);
+        dflBOMId.value(this.parmBOMVersion().BOMId);
+
+        return dialog;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>getFromDialog</Name>
+				<Source><![CDATA[
+    public boolean getFromDialog()
+    {
+        bomId = dflBOMId.value();
+
+        return super();
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmBOMVersion</Name>
+				<Source><![CDATA[
+    public BOMVersion parmBOMVersion(BOMVersion _bomVersion = bomVersion)
+    {
+        bomVersion = _bomVersion;
+        return bomVersion;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>caption</Name>
+				<Source><![CDATA[
+    public ClassDescription caption()
+    {
+        ClassDescription ret;
+    
+        ret = strFmt("@ATXAT:NewLabel18", this.parmBOMId());
+    
+        return ret;
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>

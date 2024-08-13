@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXProdTableProdCut</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+class ATXProdTableProdCut
+{
+    ProdTable        prodTable;
+
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>createFromProdTable</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name = "_prodTable"></param>
+    public void createFromProdTable(ProdTable _prodTable)
+    {
+        ATXProdCutHeader            prodCutHeader;
+        ATXProdCutSection           prodCutSection;
+        ATXProdCutPattern           prodCutPattern;
+        
+        if (_prodTable)
+        {
+            ttsbegin;
+            prodCutHeader.clear();
+            prodCutHeader.initFromProdTable(_prodTable);
+            prodCutHeader.insert();
+
+            prodCutSection.clear();
+            prodCutSection.iniFromProdCutHeader(prodCutHeader);
+            prodCutSection.CutId = ATXProdCutSection::nextCutId();
+            prodCutSection.insert();
+
+            prodCutPattern.clear();
+            prodCutPattern.ProdCutSectionRecId = prodCutSection.RecId;
+            prodCutPattern.Section = prodCutSection.Section;
+            prodCutPattern.ProdQty = prodCutHeader.Qty;
+            prodCutPattern.insert();
+            ttscommit;
+        }
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>new</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    public void new(ProdTable _prodTable)
+    {
+        prodTable = _prodTable;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>run</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    public void run()
+    {
+        if (prodTable)
+        {
+            if (!ATXProdCutHeader::find(prodTable.ProdId))
+            {
+                this.createFromProdTable(prodTable);
+            }
+            else
+            {
+                return;
+            }
+        }
+        else
+        {
+            throw Error("Se requiere un colchon de o para procesamiento activo.");
+        }
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>

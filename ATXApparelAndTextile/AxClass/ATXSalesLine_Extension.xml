@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXSalesLine_Extension</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+[ExtensionOf(tableStr(SalesLine))]
+final class ATXSalesLine_Extension
+{
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>atxFindItemDim</Name>
+				<Source><![CDATA[
+    static salesline atxFindItemDim(SalesId _salesId, ItemId _itemId, InventDim _inventDim, InventTransId _origInventTransId, boolean _forupdate = false)
+    {
+        SalesLine   salesLine;
+        InventDim   inventDim;
+
+        salesLine.selectForUpdate(_forUpdate);
+
+        select firstOnly salesLine
+        where   salesLine.SalesId                == _salesId
+            &&  salesLine.ItemId                 == _itemId
+            &&  salesLine.ATXInventTransIdOrigin == _origInventTransId
+            join inventDim
+                where   inventDim.inventDimId   == salesLine.InventDimId
+                    &&  inventDim.configId      == _inventDim.configId
+                    &&  inventDim.InventSizeId  == _inventDim.InventSizeId
+                    &&  inventDim.InventColorId == _inventDim.InventColorId
+                    &&  inventDim.InventStyleId == _inventDim.InventStyleId;
+
+        return salesLine;
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>

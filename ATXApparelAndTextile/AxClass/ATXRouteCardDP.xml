@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXRouteCardDP</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+[SRSReportParameterAttribute(classStr(ATXRouteCardContract))]
+class ATXRouteCardDP extends SRSReportDataProviderBase
+{
+    ATXRouteCardHeaderTmp      routeCardHeader;
+    ATXRouteCardBreakdownTmp   routeCardBreakdown;
+    ATXRouteCardRouteTmp       routeCardRoute;
+    ProdTable                  prodTable;
+    RouteOprId                 routeOprId;
+
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>processReport</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    public void processReport()
+    {
+        ATXRouteCardContract contract = this.parmDataContract();
+
+        select firstonly prodTable
+            where prodTable.RecId == contract.refRecId();
+
+        routeOprId = contract.parmRouteOprId();
+
+        super();
+
+        this.insertHeader(prodTable);
+        this.insertBreackOrderLines(prodTable);
+        this.insertRoute(prodTable);
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>insertHeader</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name = "_prodTable"></param>
+    private void insertHeader(ProdTable _prodTable)
+    {
+        InventDim                   inventDim;
+        SalesTable                  salesTable;
+        ProdJournalRoute            prodJournalRoute;
+
+        ;
+
+        inventDim = InventDim::find(_prodTable.InventDimId);
+        salesTable  = SalesTable::find(_prodTable.ATXInventRefId);
+
+        routeCardHeader.clear();
+        routeCardHeader.initValue();
+        routeCardHeader.ProdId              = _prodTable.ProdId;
+        routeCardHeader.CustName            = salesTable.customerName();
+        routeCardHeader.CustPurchaseOrder   = salesTable.PurchOrderFormNum;
+        routeCardHeader.ItemId              = _prodTable.ItemId;
+        routeCardHeader.ItemName            = _prodTable.inventTable().itemName();
+        routeCardHeader.SalesId             = salesTable.SalesId;
+        routeCardHeader.InventBatchId       = inventDim.inventBatchId;
+        routeCardHeader.DeliveryDate        = salesTable.DeliveryDate;
+        routeCardHeader.ProdIdBarcode       = strFmt("*%1*",_prodTable.ProdId);
+        //routeCardHeader.SeasonId
+        //routeCardHeader.DestinationPlaceId
+        routeCardHeader.insert();
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>insertBreackOrderLines</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name = "_prodTable"></param>
+    private void insertBreackOrderLines(ProdTable _prodTable)
+    {
+        ATXBreakdownOrderLine       breackDownOrderLine;
+        ProdJournalRoute            prodJournalRoute;
+        ProdJournalTable            prodJournalTable;
+        int                         pos;
+
+        ;
+
+        while select sum(Qty) from breackDownOrderLine
+            group by InventSizeId
+            where   breackDownOrderLine.SalesId         == _prodTable.ATXInventRefId
+                &&  breackDownOrderLine.InventTransId   == _prodTable.ATXInventRefTransId
+                &&  breackDownOrderLine.Qty             != 0
+        {
+            routeCardBreakdown.clear();
+            routeCardBreakdown.InventSizeId = breackDownOrderLine.InventSizeId;
+            routeCardBreakdown.Qty          = breackDownOrderLine.Qty;
+            routeCardBreakdown.insert();
+
+        }
+        
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>insertRoute</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name = "_prodTable"></param>
+    private void insertRoute(ProdTable _prodTable)
+    {
+        ProdRoute           prodRoute;
+        Query               q = new Query();
+        QueryRun            qR;
+
+        QueryBuildDataSource    qDS = q.addDataSource(tableNum(ProdRoute));
+        qDS.addRange(fieldNum(ProdRoute,ProdId)).value(_prodTable.ProdId);
+        qDS.addRange(fieldNum(ProdRoute,Oprid)).value(routeOprId);
+
+        qR = new QueryRun(q);
+
+        while(qR.next())
+        {
+            prodRoute = qR.get(tableNum(ProdRoute));
+
+            routeCardRoute.clear();
+            routeCardRoute.initValue();
+            routeCardRoute.OprId          = prodRoute.OprId;
+            routeCardRoute.OprNum         = prodRoute.OprNum;
+            routeCardRoute.Name           = RouteOprTable::find(prodRoute.OprId).Name;
+            routeCardRoute.OprIdBarCode   = strFmt("*%1%2*",_prodTable.ProdId, prodRoute.OprNum);
+            routeCardRoute.insert();
+        }
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>getRouteCardHeaderTmp</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    /// <returns></returns>
+    [SrsReportDataSetAttribute(tableStr(ATXRouteCardHeaderTmp))]
+    public ATXRouteCardHeaderTmp getRouteCardHeaderTmp()
+    {
+        select routeCardHeader;
+
+        return routeCardHeader;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>getRouteCardBreakdownTmp</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    /// <returns></returns>
+    [SrsReportDataSetAttribute(tableStr(ATXRouteCardBreakdownTmp))]
+    public ATXRouteCardBreakdownTmp getRouteCardBreakdownTmp()
+    {
+        select routeCardBreakdown;
+
+        return routeCardBreakdown;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>getRouteCardRouteTmp</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    /// <returns></returns>
+    [SrsReportDataSetAttribute(tableStr(ATXRouteCardRouteTmp))]
+    public ATXRouteCardRouteTmp getRouteCardRouteTmp()
+    {
+        select routeCardRoute;
+
+        return routeCardRoute;
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXRequestOrderNewVersion</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+class ATXRequestOrderNewVersion
+{
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>main</Name>
+				<Source><![CDATA[
+    public static void main(Args _args)
+    {
+        ATXRequestOrderUpdates  requestOrderUpdate;
+        ATXRequestOrderHeader   requestOrderHeader;
+        ATXRequestOrderLine     localRequestOrderLine, newRequestOrderLine;
+        ATXRequestOrderUpdateId orderUpdate;
+        FormRun fr;
+        ATXRequestOrderUpdateId newRequestOrderUpdateId;
+        requestOrderHeader = _args.record();
+
+        if (requestOrderHeader.RequestOrderStatus == ATXRequestOrderStatus::Authorized)
+        {
+            warning("@ATXAT:NewLabel97");
+            return;
+        }
+
+        orderUpdate = ATXRequestOrderUpdates::lastVersion(requestOrderHeader.RequestOrderId);
+        newRequestOrderUpdateId = ATXRequestOrderUpdates::lastVersion(requestOrderHeader.RequestOrderId) + 1;
+        requestOrderUpdate.clear();
+        requestOrderUpdate.RequestOrderId       = requestOrderHeader.RequestOrderId;
+        requestOrderUpdate.RequestOrderDate     = requestOrderHeader.RequestOrderDate;
+        requestOrderUpdate.RequestOrderUpdateId = newRequestOrderUpdateId;
+        requestOrderUpdate.insert();
+
+        newRequestOrderLine.skipDataMethods(true);
+        ttsbegin;
+        insert_recordset newRequestOrderLine(BranchId, DestinationPlaceId, DlvModeId, InventDimId, InventTransIdOrigin, InventTransOriginId, ItemDivisionId, ItemId, LineAmount, LineAmountOrig, LineDisc, LineNum, LinePercent, QtyOrig, RequestOrderCancelDate, RequestOrderDate, RequestOrderId, RequestOrderUpdateId, RequestQty, ReviewedOrderDate, SalesPrice, SeasonId)
+            select BranchId, DestinationPlaceId, DlvModeId, InventDimId, InventTransIdOrigin, InventTransOriginId, ItemDivisionId, ItemId, LineAmount, LineAmountOrig, LineDisc, LineNum, LinePercent, QtyOrig, RequestOrderCancelDate, RequestOrderDate, RequestOrderId, newRequestOrderUpdateId, RequestQty, ReviewedOrderDate, SalesPrice, SeasonId
+            from localRequestOrderLine
+            where localRequestOrderLine.RequestOrderId == requestOrderHeader.RequestOrderId
+            && localRequestOrderLine.RequestOrderUpdateId == orderUpdate;
+        ttscommit;
+        info("@ATXAT:NewLabel95");
+
+        fr = _args.caller();
+        fr.doRefresh();
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>

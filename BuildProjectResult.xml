@@ -1,0 +1,506 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Diagnostics
+  GenerationTime="2022-01-19T03:33:01.8912695+00:00">
+  <Items>
+    <Diagnostic>
+      <DiagnosticType>TaskListItem</DiagnosticType>
+      <Severity>Informational</Severity>
+      <Path>dynamics://Class/ATXAXRequestOrderHeader/Method/requestOrderHeader</Path>
+      <ElementType>Class Method</ElementType>
+      <Moniker>TaskListItem</Moniker>
+      <Line>189</Line>
+      <Column>9</Column>
+      <EndLine>189</EndLine>
+      <EndColumn>55</EndColumn>
+      <Message>TODO if (!prmIsDefault(requestOrderHeader))</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>TaskListItem</DiagnosticType>
+      <Severity>Informational</Severity>
+      <Path>dynamics://Class/ATXBOMMatrixEngine/Method/run</Path>
+      <ElementType>Class Method</ElementType>
+      <Moniker>TaskListItem</Moniker>
+      <Line>1138</Line>
+      <Column>9</Column>
+      <EndLine>1138</EndLine>
+      <EndColumn>42</EndColumn>
+      <Message>TODO Validate bomtype released</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>TaskListItem</DiagnosticType>
+      <Severity>Informational</Severity>
+      <Path>dynamics://Class/ATXBOMMatrixEngine/Method/run</Path>
+      <ElementType>Class Method</ElementType>
+      <Moniker>TaskListItem</Moniker>
+      <Line>1240</Line>
+      <Column>13</Column>
+      <EndLine>1240</EndLine>
+      <EndColumn>73</EndColumn>
+      <Message>TODO. Miss implementation of size matrix and color matrix</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>TaskListItem</DiagnosticType>
+      <Severity>Informational</Severity>
+      <Path>dynamics://Class/ATXBOMVersionEngine</Path>
+      <ElementType>Class</ElementType>
+      <Moniker>TaskListItem</Moniker>
+      <Line>3</Line>
+      <Column>1</Column>
+      <EndLine>3</EndLine>
+      <EndColumn>77</EndColumn>
+      <Message>TODO Falta funcionalidad para actualizar listas de materiales de OV y OP</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>TaskListItem</DiagnosticType>
+      <Severity>Informational</Severity>
+      <Path>dynamics://Class/ATXBOMVersionEngine/Method/run</Path>
+      <ElementType>Class Method</ElementType>
+      <Moniker>TaskListItem</Moniker>
+      <Line>73</Line>
+      <Column>9</Column>
+      <EndLine>73</EndLine>
+      <EndColumn>36</EndColumn>
+      <Message>TODO this.validateBOM();</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>TaskListItem</DiagnosticType>
+      <Severity>Informational</Severity>
+      <Path>dynamics://Class/ATXBOMVersionEngine/Method/findVariantVersion</Path>
+      <ElementType>Class Method</ElementType>
+      <Moniker>TaskListItem</Moniker>
+      <Line>426</Line>
+      <Column>5</Column>
+      <EndLine>426</EndLine>
+      <EndColumn>34</EndColumn>
+      <Message>TODO Estos metodos sirven?</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>TaskListItem</DiagnosticType>
+      <Severity>Informational</Severity>
+      <Path>dynamics://Class/ATXBOMVersionVariants</Path>
+      <ElementType>Class</ElementType>
+      <Moniker>TaskListItem</Moniker>
+      <Line>1</Line>
+      <Column>1</Column>
+      <EndLine>1</EndLine>
+      <EndColumn>23</EndColumn>
+      <Message>TODO Eliminar clase</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>TaskListItem</DiagnosticType>
+      <Severity>Informational</Severity>
+      <Path>dynamics://Class/ATXBOMTemplateEngine/Method/insertOrUpdateBOMLine</Path>
+      <ElementType>Class Method</ElementType>
+      <Moniker>TaskListItem</Moniker>
+      <Line>115</Line>
+      <Column>13</Column>
+      <EndLine>115</EndLine>
+      <EndColumn>25</EndColumn>
+      <Message>TODO AGM No se debe de eliminar todo lo que ya esta configurado correctamente. Solo generar nuevos casos</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>TaskListItem</DiagnosticType>
+      <Severity>Informational</Severity>
+      <Path>dynamics://Class/ATXInventMovement/Method/removeSalesLine</Path>
+      <ElementType>Class Method</ElementType>
+      <Moniker>TaskListItem</Moniker>
+      <Line>348</Line>
+      <Column>13</Column>
+      <EndLine>348</EndLine>
+      <EndColumn>103</EndColumn>
+      <Message>TODO AGM 22/Nov original if (newSalesLine.SalesQty &amp;&amp; newSalesLine.SalesQty &gt; abs(qty))</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>TaskListItem</DiagnosticType>
+      <Severity>Informational</Severity>
+      <Path>dynamics://Class/ATXInventMovement/Method/removeSalesLine</Path>
+      <ElementType>Class Method</ElementType>
+      <Moniker>TaskListItem</Moniker>
+      <Line>351</Line>
+      <Column>17</Column>
+      <EndLine>351</EndLine>
+      <EndColumn>43</EndColumn>
+      <Message>TODO Delete OutputOrder</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>TaskListItem</DiagnosticType>
+      <Severity>Informational</Severity>
+      <Path>dynamics://Class/ATXGenerateProductPreProdTask/Method/run</Path>
+      <ElementType>Class Method</ElementType>
+      <Moniker>TaskListItem</Moniker>
+      <Line>36</Line>
+      <Column>9</Column>
+      <EndLine>36</EndLine>
+      <EndColumn>12</EndColumn>
+      <Message>TODO ATXGenerateTasks::RecalculteReqTaskDate(requetsOrderHeader.RequestOrderDate, requetsOrderHeader.RequestOrderId);</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>TaskListItem</DiagnosticType>
+      <Severity>Informational</Severity>
+      <Path>dynamics://Class/ATXPmfFormCtrl_BOMTemplateEdit/Method/fieldLookup</Path>
+      <ElementType>Class Method</ElementType>
+      <Moniker>TaskListItem</Moniker>
+      <Line>85</Line>
+      <Column>17</Column>
+      <EndLine>85</EndLine>
+      <EndColumn>72</EndColumn>
+      <Message>TODO LookupTableEngine_AT::lookupItem(_formControl);</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>TaskListItem</DiagnosticType>
+      <Severity>Informational</Severity>
+      <Path>dynamics://Class/ATXSalesBOMUpdate/Method/run</Path>
+      <ElementType>Class Method</ElementType>
+      <Moniker>TaskListItem</Moniker>
+      <Line>12</Line>
+      <Column>12</Column>
+      <EndLine>12</EndLine>
+      <EndColumn>84</EndColumn>
+      <Message>todo breackDownOrderEngine = new ATXBreakDownOrderEngine(_salesLine);</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>TaskListItem</DiagnosticType>
+      <Severity>Informational</Severity>
+      <Path>dynamics://Class/ATXSalesBOMUpdate/Method/main</Path>
+      <ElementType>Class Method</ElementType>
+      <Moniker>TaskListItem</Moniker>
+      <Line>30</Line>
+      <Column>13</Column>
+      <EndLine>30</EndLine>
+      <EndColumn>89</EndColumn>
+      <Message>TODO breackDownOrderEngine = new ATXBreakDownOrderEngine(_args.record());</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>TaskListItem</DiagnosticType>
+      <Severity>Informational</Severity>
+      <Path>dynamics://Class/ATXUnApproveTasks/Method/run</Path>
+      <ElementType>Class Method</ElementType>
+      <Moniker>TaskListItem</Moniker>
+      <Line>31</Line>
+      <Column>13</Column>
+      <EndLine>31</EndLine>
+      <EndColumn>74</EndColumn>
+      <Message>TODO productPreProdTask.DisapprovalDate = systemDateGet();</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>TaskListItem</DiagnosticType>
+      <Severity>Informational</Severity>
+      <Path>dynamics://Class/ATXUnApproveTasks/Method/run</Path>
+      <ElementType>Class Method</ElementType>
+      <Moniker>TaskListItem</Moniker>
+      <Line>32</Line>
+      <Column>13</Column>
+      <EndLine>32</EndLine>
+      <EndColumn>96</EndColumn>
+      <Message>TODO productPreProdTask.Disapprover     = HcmWorker::userId2Worker(curUserId());</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>TaskListItem</DiagnosticType>
+      <Severity>Informational</Severity>
+      <Path>dynamics://Class/ATXRequestOrderAuthorize</Path>
+      <ElementType>Class</ElementType>
+      <Moniker>TaskListItem</Moniker>
+      <Line>7</Line>
+      <Column>1</Column>
+      <EndLine>7</EndLine>
+      <EndColumn>43</EndColumn>
+      <Message>TODO Update header with style and qty?</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>TaskListItem</DiagnosticType>
+      <Severity>Informational</Severity>
+      <Path>dynamics://Class/ATXRequestOrderAuthorize</Path>
+      <ElementType>Class</ElementType>
+      <Moniker>TaskListItem</Moniker>
+      <Line>8</Line>
+      <Column>1</Column>
+      <EndLine>8</EndLine>
+      <EndColumn>20</EndColumn>
+      <Message>TODO Sample WIP</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>TaskListItem</DiagnosticType>
+      <Severity>Informational</Severity>
+      <Path>dynamics://Class/ATXRequestOrderAuthorize/Method/main</Path>
+      <ElementType>Class Method</ElementType>
+      <Moniker>TaskListItem</Moniker>
+      <Line>49</Line>
+      <Column>9</Column>
+      <EndLine>49</EndLine>
+      <EndColumn>44</EndColumn>
+      <Message>TODO Set BOM Generation in batch</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>TaskListItem</DiagnosticType>
+      <Severity>Informational</Severity>
+      <Path>dynamics://Class/ATXRequestOrderAuthorize/Method/createSalesLines</Path>
+      <ElementType>Class Method</ElementType>
+      <Moniker>TaskListItem</Moniker>
+      <Line>363</Line>
+      <Column>13</Column>
+      <EndLine>363</EndLine>
+      <EndColumn>46</EndColumn>
+      <Message>TODO Validar bloques de L.MAT?</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>TaskListItem</DiagnosticType>
+      <Severity>Informational</Severity>
+      <Path>dynamics://Class/ATXRequestOrderAuthorize/Method/createSalesLines</Path>
+      <ElementType>Class Method</ElementType>
+      <Moniker>TaskListItem</Moniker>
+      <Line>472</Line>
+      <Column>13</Column>
+      <EndLine>472</EndLine>
+      <EndColumn>64</EndColumn>
+      <Message>TODO</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>TaskListItem</DiagnosticType>
+      <Severity>Informational</Severity>
+      <Path>dynamics://Form/ATXBOMTemplateLine/Method/enableFields</Path>
+      <ElementType>Form Method</ElementType>
+      <Moniker>TaskListItem</Moniker>
+      <Line>61</Line>
+      <Column>9</Column>
+      <EndLine>61</EndLine>
+      <EndColumn>136</EndColumn>
+      <Message>TODO ATXBOMTemplateLine_ds.object(fieldNum(ATXBOMTemplateLine, ProjSetSubProdToConsumed)).allowEdit(ATXBOMTemplateLine.bomType == BOMType::PeggedSupply);</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>TaskListItem</DiagnosticType>
+      <Severity>Informational</Severity>
+      <Path>dynamics://Table/ATXRequestOrderHeader/Method/updateCustPurchaseOrder</Path>
+      <ElementType>Table Method</ElementType>
+      <Moniker>TaskListItem</Moniker>
+      <Line>467</Line>
+      <Column>17</Column>
+      <EndLine>467</EndLine>
+      <EndColumn>79</EndColumn>
+      <Message>TODO : prodTable.CustPurchaseOrder = this.CustPurchaseOrder;</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>TaskListItem</DiagnosticType>
+      <Severity>Informational</Severity>
+      <Path>dynamics://Table/ATXRequestOrderHeader/Method/updateCustPurchaseOrder</Path>
+      <ElementType>Table Method</ElementType>
+      <Moniker>TaskListItem</Moniker>
+      <Line>468</Line>
+      <Column>17</Column>
+      <EndLine>468</EndLine>
+      <EndColumn>93</EndColumn>
+      <Message>TODO : prodTable.modifiedField(fieldNum(ProdTable, CustPurchaseOrder_AT));</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>TaskListItem</DiagnosticType>
+      <Severity>Informational</Severity>
+      <Path>dynamics://Class/ATXProdJournalMulti/Method/newProdJournalTable</Path>
+      <ElementType>Class Method</ElementType>
+      <Moniker>TaskListItem</Moniker>
+      <Line>56</Line>
+      <Column>9</Column>
+      <EndLine>56</EndLine>
+      <EndColumn>100</EndColumn>
+      <Message>TODO ERROR? prodJournalTable.DetailSummary              = prodJournalName.DetailSummary;</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>TaskListItem</DiagnosticType>
+      <Severity>Informational</Severity>
+      <Path>dynamics://Class/ATXProdJournalMulti/Method/insertJournalRouteLineFromProdRoute</Path>
+      <ElementType>Class Method</ElementType>
+      <Moniker>TaskListItem</Moniker>
+      <Line>145</Line>
+      <Column>9</Column>
+      <EndLine>145</EndLine>
+      <EndColumn>119</EndColumn>
+      <Message>TODO ERROR? prodJournalRoute.DefaultDimension = prodJournalRoute.copyDimension(prodRoute.DefaultDimension);</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>TaskListItem</DiagnosticType>
+      <Severity>Informational</Severity>
+      <Path>dynamics://Class/ATXProdJournalTools/Method/newProdJournalTable</Path>
+      <ElementType>Class Method</ElementType>
+      <Moniker>TaskListItem</Moniker>
+      <Line>38</Line>
+      <Column>13</Column>
+      <EndLine>38</EndLine>
+      <EndColumn>104</EndColumn>
+      <Message>TODO ERROR? prodJournalTable.DetailSummary              = prodJournalName.DetailSummary;</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>TaskListItem</DiagnosticType>
+      <Severity>Informational</Severity>
+      <Path>dynamics://Class/ATXProdRouteMultiRegisterProd/Method/fillMultiRegister</Path>
+      <ElementType>Class Method</ElementType>
+      <Moniker>TaskListItem</Moniker>
+      <Line>391</Line>
+      <Column>17</Column>
+      <EndLine>391</EndLine>
+      <EndColumn>32</EndColumn>
+      <Message>TODO TESTING</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>TaskListItem</DiagnosticType>
+      <Severity>Informational</Severity>
+      <Path>dynamics://Class/ATXProdRouteMultiRegisterProd/Method/createInventJournalLines</Path>
+      <ElementType>Class Method</ElementType>
+      <Moniker>TaskListItem</Moniker>
+      <Line>1117</Line>
+      <Column>13</Column>
+      <EndLine>1117</EndLine>
+      <EndColumn>142</EndColumn>
+      <Message>TODO ERROR? inventJournalTransNew.LedgerDimension   = inventJournalTrans.inventTable().itemGroup().ATXLedgerDimensionMovement;</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>TaskListItem</DiagnosticType>
+      <Severity>Informational</Severity>
+      <Path>dynamics://Class/ATXProdRouteMultiRegisterProd/Method/createInventJournalLines</Path>
+      <ElementType>Class Method</ElementType>
+      <Moniker>TaskListItem</Moniker>
+      <Line>1170</Line>
+      <Column>13</Column>
+      <EndLine>1170</EndLine>
+      <EndColumn>141</EndColumn>
+      <Message>TODO ERROR?inventJournalTransNew.LedgerDimension   = inventJournalTrans.inventTable().itemGroup().ATXLedgerDimensionMovement;</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>TaskListItem</DiagnosticType>
+      <Severity>Informational</Severity>
+      <Path>dynamics://Class/ATXTools/Method/copyGridToDim</Path>
+      <ElementType>Class Method</ElementType>
+      <Moniker>TaskListItem</Moniker>
+      <Line>658</Line>
+      <Column>101</Column>
+      <EndLine>658</EndLine>
+      <EndColumn>121</EndColumn>
+      <Message>TODO PASAR METODO</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>ExternalReference</DiagnosticType>
+      <Severity>Warning</Severity>
+      <Path>dynamics://Reference/Microsoft.Commerce.Flighting.Common</Path>
+      <Moniker>AssemblyFileNotFound</Moniker>
+      <Message>Assembly 'Microsoft.Xbox.Experimentation.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=d91bba2b903dc20f' failed to load because it was not found.</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>Compile</DiagnosticType>
+      <Severity>Warning</Severity>
+      <Path>dynamics://Class/ATXProdJournalCheckPostProd_Extension</Path>
+      <ElementType>Class</ElementType>
+      <Moniker>EventHandlerInClassExtension</Moniker>
+      <Line>8</Line>
+      <Column>6</Column>
+      <EndLine>8</EndLine>
+      <EndColumn>98</EndColumn>
+      <Message>Adding event handlers in extension classes is not recommended, please use instead a regular X++ class for that purpose.</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>Compile</DiagnosticType>
+      <Severity>Warning</Severity>
+      <Path>dynamics://Class/EcoResProductMasterDimension_Extension</Path>
+      <ElementType>Class</ElementType>
+      <Moniker>EventHandlerInClassExtension</Moniker>
+      <Line>9</Line>
+      <Column>6</Column>
+      <EndLine>9</EndLine>
+      <EndColumn>125</EndColumn>
+      <Message>Adding event handlers in extension classes is not recommended, please use instead a regular X++ class for that purpose.</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>Compile</DiagnosticType>
+      <Severity>Warning</Severity>
+      <Path>dynamics://Class/EcoResProductMasterDimension_Extension</Path>
+      <ElementType>Class</ElementType>
+      <Moniker>EventHandlerInClassExtension</Moniker>
+      <Line>28</Line>
+      <Column>6</Column>
+      <EndLine>28</EndLine>
+      <EndColumn>126</EndColumn>
+      <Message>Adding event handlers in extension classes is not recommended, please use instead a regular X++ class for that purpose.</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>Compile</DiagnosticType>
+      <Severity>Warning</Severity>
+      <Path>dynamics://Class/SalesTable_Extension</Path>
+      <ElementType>Class</ElementType>
+      <Moniker>EventHandlerInClassExtension</Moniker>
+      <Line>45</Line>
+      <Column>6</Column>
+      <EndLine>45</EndLine>
+      <EndColumn>76</EndColumn>
+      <Message>Adding event handlers in extension classes is not recommended, please use instead a regular X++ class for that purpose.</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>Compile</DiagnosticType>
+      <Severity>Warning</Severity>
+      <Path>dynamics://Class/ATXProdCutPatternQtyUpdate/Method/runFromHeader</Path>
+      <ElementType>Class Method</ElementType>
+      <Moniker>TypeConversionLosesRange</Moniker>
+      <Line>60</Line>
+      <Column>13</Column>
+      <EndLine>60</EndLine>
+      <EndColumn>172</EndColumn>
+      <Message>The type conversion from 'int64' to 'int' loses range.</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>Compile</DiagnosticType>
+      <Severity>Warning</Severity>
+      <Path>dynamics://Table/ATXRequestOrderLine/Method/updateSalesPrice</Path>
+      <ElementType>Table Method</ElementType>
+      <Moniker>TableReferenceBeforeJoin</Moniker>
+      <Line>288</Line>
+      <Column>53</Column>
+      <EndLine>288</EndLine>
+      <EndColumn>67</EndColumn>
+      <Message>The table 'salesLineSplit' is  referenced before being joined. Move this reference after the table has been joined in the statement.</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>Compile</DiagnosticType>
+      <Severity>Warning</Severity>
+      <Path>dynamics://Table/ATXRequestOrderLine/Method/aosValidateInsert</Path>
+      <ElementType>Table Method</ElementType>
+      <Moniker>InternalUseOnlyMethodInaccessible</Moniker>
+      <Line>401</Line>
+      <Column>15</Column>
+      <EndLine>401</EndLine>
+      <EndColumn>22</EndColumn>
+      <Message>Method 'aosValidateInsert' or type 'Common' in which it is declared is marked InternalUseOnly and is not accessible from the current module 'ATXApparelAndTextile'.</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>Compile</DiagnosticType>
+      <Severity>Warning</Severity>
+      <Path>dynamics://Table/ATXProdCutSection/Method/aosValidateDelete</Path>
+      <ElementType>Table Method</ElementType>
+      <Moniker>InternalUseOnlyMethodInaccessible</Moniker>
+      <Line>134</Line>
+      <Column>15</Column>
+      <EndLine>134</EndLine>
+      <EndColumn>22</EndColumn>
+      <Message>Method 'aosValidateDelete' or type 'Common' in which it is declared is marked InternalUseOnly and is not accessible from the current module 'ATXApparelAndTextile'.</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>Compile</DiagnosticType>
+      <Severity>Warning</Severity>
+      <Path>dynamics://Class/ATXTools/Method/isWMSPalletIdActive</Path>
+      <ElementType>Class Method</ElementType>
+      <Moniker>IntrinsicArgIsMarkedAsObsolete</Moniker>
+      <Line>349</Line>
+      <Column>133</Column>
+      <EndLine>349</EndLine>
+      <EndColumn>165</EndColumn>
+      <Message>ReferencedObject is marked as Obsolete.  The 'InventDim::WMSPalletId' argument of the 'fieldNum' compile-time function specifying a table field is marked as obsolete.</Message>
+    </Diagnostic>
+    <Diagnostic>
+      <DiagnosticType>Compile</DiagnosticType>
+      <Severity>Warning</Severity>
+      <Path>dynamics://Class/ATXTools/Method/createProductVariants</Path>
+      <ElementType>Class Method</ElementType>
+      <Moniker>CastFromExtensibleEnum</Moniker>
+      <Line>691</Line>
+      <Column>23</Column>
+      <EndLine>691</EndLine>
+      <EndColumn>57</EndColumn>
+      <Message>Cast from extensible enum 'Extensible Enumeration(EcoResReleaseProductToCompany)' to 'int' potentially harmful and deprecated.</Message>
+    </Diagnostic>
+  </Items>
+  <Aliases />
+</Diagnostics>

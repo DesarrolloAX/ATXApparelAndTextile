@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXProdCutPatternQtyUpdate</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+class ATXProdCutPatternQtyUpdate
+{
+    ATXProdCutPattern prodCutPattern_AT;
+    ATXProdCutHeader  prodCutHeader_AT;
+
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>main</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name = "_args"></param>
+    public static void main(Args _args)
+    {
+        ATXProdCutPatternQtyUpdate instance = new ATXProdCutPatternQtyUpdate();
+        FormRun fr;
+
+        switch (_args.dataset())
+        {
+            case tableNum(ATXProdCutHeader):
+                instance.parmProdCutHeader_AT(_args.record());
+                instance.runFromHeader();
+                if (_args && _args.caller())
+                {
+                    fr = _args.caller();
+                
+                    fr.doResearch();
+                }
+                break;
+        }
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>runFromHeader</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    public void runFromHeader()
+    {
+        ATXProdCutHeader   cutHeader;
+        ATXProdCutSection  prodCutSectionUpd;
+        ATXProdCutPattern  prodCutPatternUpd;
+        ATXProdCutPatternBreakdown prodCutPatternBreakdown;
+        ATXCutQty cutQty;
+        
+        while select prodCutSectionUpd
+            where prodCutSectionUpd.ProdCutHeaderRecId == prodCutHeader_AT.RecId
+        {
+            while select prodCutPatternUpd
+                where prodCutPatternUpd.ProdCutSectionRecId == prodCutSectionUpd.RecId
+            {
+                cutQty = (select sum(CutQty) from ATXProdCutPatternBreakdown where ATXProdCutPatternBreakdown.ProdCutPatternRecId == prodCutPatternUpd.RecId).CutQty;
+                ttsbegin;
+                prodCutPatternUpd.selectForUpdate(true);
+                prodCutPatternUpd.ProdQty = cutQty * prodCutPatternUpd.CanvasQty;
+                prodCutPatternUpd.update();
+                ttscommit;
+            }
+
+            cutQty = (select sum(ProdQty) from ATXProdCutPattern where ATXProdCutPattern.ProdCutSectionRecId == prodCutSectionUpd.RecId).ProdQty;
+
+            ttsbegin;
+            prodCutSectionUpd.reread();
+            prodCutSectionUpd.selectForUpdate(true);
+            prodCutSectionUpd.NumberOfPatterns = (select count(RecId) from ATXProdCutPattern where ATXProdCutPattern.ProdCutSectionRecId == prodCutSectionUpd.RecId).RecId;
+            prodCutSectionUpd.CutQty = cutQty;
+            prodCutSectionUpd.update();
+            ttscommit;
+        }
+
+        // Update patterns
+        /*update_recordset prodCutPatternUpd
+            setting ProdQty = 1
+            where prodCutPatternUpd.ProdCutSectionRecId == prodCutSectionUpd.RecId;*/
+
+        Info("@ATXAT:NewLabel285");
+        
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmProdCutPattern_AT</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name = "_prodCutPattern_AT"></param>
+    /// <returns></returns>
+    public ATXProdCutPattern parmProdCutPattern_AT(ATXProdCutPattern _prodCutPattern_AT = prodCutPattern_AT)
+    {
+        prodCutPattern_AT = _prodCutPattern_AT;
+
+        return prodCutPattern_AT;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmProdCutHeader_AT</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name = "_prodCutHeader_AT"></param>
+    /// <returns></returns>
+    public ATXProdCutHeader parmProdCutHeader_AT(ATXProdCutHeader _prodCutHeader_AT = prodCutHeader_AT)
+    {
+        prodCutHeader_AT = _prodCutHeader_AT;
+
+        return prodCutHeader_AT;
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>

@@ -1,0 +1,429 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxForm xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="Microsoft.Dynamics.AX.Metadata.V6">
+	<Name>ATXProductPreProdTask</Name>
+	<SourceCode>
+		<Methods xmlns="">
+			<Method>
+				<Name>classDeclaration</Name>
+				<Source><![CDATA[
+[Form]
+public class ATXProductPreProdTask extends FormRun
+{
+    /// <summary>
+    /// Consulta de tareas de preproducción
+    /// </summary>
+
+    ATXSampleBookTable sampleBook;
+    InventTable inventTable;
+    HcmWorkerRecId workerId;
+    Name workerName;
+
+}
+]]></Source>
+			</Method>
+			<Method>
+				<Name>init</Name>
+				<Source><![CDATA[
+    public void init()
+    {
+        super();
+
+        if (element.args().parmEnum() == NoYes::Yes)
+        {
+            workerId = HcmWorkerLookup::currentWorker();
+            workerName = HcmWorker::find(workerId).name();
+            ATXProductPreProdTask_ds.query().dataSourceTable(tableNum(ATXProductPreProdTask)).addRange(fieldNum(ATXProductPreProdTask, AssignedTo)).value(workerName);
+            ATXProductPreProdTask_ds.query().dataSourceTable(tableNum(ATXProductPreProdTask)).addRange(fieldNum(ATXProductPreProdTask, AssignedTo)).value(queryValue(workerId));
+            ATXProductPreProdTask_ds.executeQuery();
+        }
+
+        switch (element.args().dataset())
+        {
+            case tableNum(ATXSampleBookTable):
+                sampleBook = element.args().record();
+                break;
+
+            case tableNum(InventTable):
+                inventTable = element.args().record();
+                break;
+        }
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+		<DataSources xmlns="">
+			<DataSource>
+				<Name>ATXProductPreProdTask</Name>
+				<Methods>
+					<Method>
+						<Name>executeQuery</Name>
+						<Source><![CDATA[
+        /// <summary>
+        ///
+        /// </summary>
+        public void executeQuery()
+        {
+            super();
+            if (workerId)
+            {
+                ATXProductPreProdTask_ds.query().dataSourceTable(tableNum(ATXProductPreProdTask)).addRange(fieldNum(ATXProductPreProdTask, AssignedTo)).value(workerName);
+            }
+        }
+
+]]></Source>
+					</Method>
+				</Methods>
+				<Fields />
+			</DataSource>
+		</DataSources>
+		<DataControls xmlns="">
+			<Control>
+				<Name>CreateFromTemplate</Name>
+				<Type>Button</Type>
+				<Methods>
+					<Method>
+						<Name>clicked</Name>
+						<Source><![CDATA[
+        /// <summary>
+        ///
+        /// </summary>
+        public void clicked()
+        {
+            ATXPreProdTaskTemplate template;
+            ATXProductPreProdTask productPreProdTask;
+            ATXPreProdTask preProdTask;
+            ATXSampleBookId sampleBookId;
+            ItemId itemId;
+
+            super();
+            switch (element.args().dataset())
+            {
+                case tableNum(ATXSampleBookTable):
+                    sampleBook = element.args().record();
+                    sampleBookId = sampleBook.SampleBookId;
+                    if (sampleBookId)
+                    {
+                        insert_recordset productPreProdTask (PreProdTaskId, SampleBookId, PreProdTaskType)
+                            select PreProdTaskId, sampleBookId, PreProdTaskType from template
+                            where template.PreProdTaskType == ATXPreProdTaskType::SampleBook
+                        ;
+
+                        update_recordset productPreProdTask
+                            setting AssignedTo = preProdTask.AssignedTo
+                            where productPreProdTask.SampleBookId == sampleBookId
+                            join preProdTask
+                            where preProdTask.PreProdTaskId == productPreProdTask.PreProdTaskId
+                        ;
+                        info("@ATXPLM:NewLabel17");
+                    }
+                    break;
+
+                case tableNum(InventTable):
+                    inventTable = element.args().record();
+                    itemId = inventTable.ItemId;
+                    if (itemId)
+                    {
+                        insert_recordset productPreProdTask (PreProdTaskId, ItemId, PreProdTaskType)
+                            select PreProdTaskId, itemId, PreProdTaskType from template
+                            where template.PreProdTaskType == ATXPreProdTaskType::Product
+                        ;
+
+                        update_recordset productPreProdTask
+                            setting AssignedTo = preProdTask.AssignedTo
+                            where productPreProdTask.ItemId == itemId
+                            join preProdTask
+                            where preProdTask.PreProdTaskId == productPreProdTask.PreProdTaskId
+                        ;
+                        info("@ATXPLM:NewLabel17");
+                    }
+                    break;
+            }
+
+        }
+
+]]></Source>
+					</Method>
+				</Methods>
+			</Control>
+		</DataControls>
+		<Members xmlns="" />
+	</SourceCode>
+	<DataSources>
+		<AxFormDataSource xmlns="">
+			<Name>ATXProductPreProdTask</Name>
+			<Table>ATXProductPreProdTask</Table>
+			<Fields>
+				<AxFormDataSourceField>
+					<DataField>Approved</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Approver</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>AssignedTo</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>DataAreaId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ItemId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>LineNumber_IT</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Partition</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>PlanDate</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>PreProdTaskId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>PreProdTaskType</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>RecId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>RequestOrderId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>SampleBookId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>TableId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>TransDate</DataField>
+				</AxFormDataSourceField>
+			</Fields>
+			<ReferencedDataSources />
+			<DataSourceLinks />
+			<DerivedDataSources />
+		</AxFormDataSource>
+	</DataSources>
+	<Design>
+		<Caption xmlns="">@ATXPLM:NewLabel7</Caption>
+		<Pattern xmlns="">SimpleList</Pattern>
+		<PatternVersion xmlns="">1.1</PatternVersion>
+		<Style xmlns="">SimpleList</Style>
+		<Controls xmlns="">
+			<AxFormControl xmlns=""
+				i:type="AxFormActionPaneControl">
+				<Name>FormActionPaneControl1</Name>
+				<Type>ActionPane</Type>
+				<FormControlExtension
+					i:nil="true" />
+				<Controls>
+					<AxFormControl xmlns=""
+						i:type="AxFormButtonGroupControl">
+						<Name>TemplateGroup</Name>
+						<Type>ButtonGroup</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<Controls>
+							<AxFormControl xmlns=""
+								i:type="AxFormButtonControl">
+								<Name>CreateFromTemplate</Name>
+								<Type>Button</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<AutoRefreshData>Yes</AutoRefreshData>
+								<Text>@ATXPLM:NewLabel16</Text>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormMenuFunctionButtonControl">
+								<Name>ATXApproveTasks</Name>
+								<Type>MenuFunctionButton</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataSource>ATXProductPreProdTask</DataSource>
+								<MenuItemName>ATXApproveTasks</MenuItemName>
+								<MenuItemType>Action</MenuItemType>
+								<MultiSelect>Yes</MultiSelect>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormMenuFunctionButtonControl">
+								<Name>ATXUnApproveTasks</Name>
+								<Type>MenuFunctionButton</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataSource>ATXProductPreProdTask</DataSource>
+								<MenuItemName>ATXUnApproveTasks</MenuItemName>
+								<MenuItemType>Action</MenuItemType>
+							</AxFormControl>
+						</Controls>
+						<Caption>@SYS316703</Caption>
+					</AxFormControl>
+				</Controls>
+			</AxFormControl>
+			<AxFormControl xmlns=""
+				i:type="AxFormGroupControl">
+				<Name>FormGroupControl1</Name>
+				<Pattern>CustomAndQuickFilters</Pattern>
+				<PatternVersion>1.1</PatternVersion>
+				<Type>Group</Type>
+				<WidthMode>SizeToAvailable</WidthMode>
+				<FormControlExtension
+					i:nil="true" />
+				<Controls>
+					<AxFormControl>
+						<Name>QuickFilterControl1</Name>
+						<FormControlExtension>
+							<Name>QuickFilterControl</Name>
+							<ExtensionComponents />
+							<ExtensionProperties>
+								<AxFormControlExtensionProperty>
+									<Name>targetControlName</Name>
+									<Type>String</Type>
+									<Value>FormGridControl1</Value>
+								</AxFormControlExtensionProperty>
+								<AxFormControlExtensionProperty>
+									<Name>placeholderText</Name>
+									<Type>String</Type>
+								</AxFormControlExtensionProperty>
+								<AxFormControlExtensionProperty>
+									<Name>defaultColumnName</Name>
+									<Type>String</Type>
+								</AxFormControlExtensionProperty>
+							</ExtensionProperties>
+						</FormControlExtension>
+					</AxFormControl>
+				</Controls>
+				<ArrangeMethod>HorizontalLeft</ArrangeMethod>
+				<FrameType>None</FrameType>
+				<Style>CustomFilter</Style>
+				<ViewEditMode>Edit</ViewEditMode>
+			</AxFormControl>
+			<AxFormControl xmlns=""
+				i:type="AxFormGridControl">
+				<Name>FormGridControl</Name>
+				<Type>Grid</Type>
+				<FormControlExtension
+					i:nil="true" />
+				<Controls>
+					<AxFormControl xmlns=""
+						i:type="AxFormGroupControl">
+						<Name>RefGroup</Name>
+						<Type>Group</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<Controls>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>RefGroup_SampleBookId</Name>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>SampleBookId</DataField>
+								<DataSource>ATXProductPreProdTask</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>RefGroup_RequestOrderId</Name>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>RequestOrderId</DataField>
+								<DataSource>ATXProductPreProdTask</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>RefGroup_ItemId</Name>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>ItemId</DataField>
+								<DataSource>ATXProductPreProdTask</DataSource>
+							</AxFormControl>
+						</Controls>
+						<DataGroup>Reference</DataGroup>
+						<DataSource>ATXProductPreProdTask</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormGroupControl">
+						<Name>FormGroupControl</Name>
+						<Type>Group</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<Controls>
+							<AxFormControl xmlns=""
+								i:type="AxFormIntegerControl">
+								<Name>FormGroupControl_LineNumber_IT</Name>
+								<Type>Integer</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>LineNumber_IT</DataField>
+								<DataSource>ATXProductPreProdTask</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>FormGroupControl_PreProdTaskId</Name>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>PreProdTaskId</DataField>
+								<DataSource>ATXProductPreProdTask</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormDateControl">
+								<Name>FormGroupControl_PlanDate</Name>
+								<Type>Date</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>PlanDate</DataField>
+								<DataSource>ATXProductPreProdTask</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormDateControl">
+								<Name>FormGroupControl_TransDate</Name>
+								<Type>Date</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>TransDate</DataField>
+								<DataSource>ATXProductPreProdTask</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormReferenceGroupControl">
+								<Name>FormGroupControl_AssignedTo</Name>
+								<Type>ReferenceGroup</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<Controls />
+								<DataSource>ATXProductPreProdTask</DataSource>
+								<ReferenceField>AssignedTo</ReferenceField>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormReferenceGroupControl">
+								<Name>FormGroupControl_Approver</Name>
+								<Type>ReferenceGroup</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<Controls />
+								<DataSource>ATXProductPreProdTask</DataSource>
+								<ReferenceField>Approver</ReferenceField>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormCheckBoxControl">
+								<Name>FormGroupControl_Approved</Name>
+								<Type>CheckBox</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>Approved</DataField>
+								<DataSource>ATXProductPreProdTask</DataSource>
+							</AxFormControl>
+						</Controls>
+						<DataGroup>General</DataGroup>
+						<DataSource>ATXProductPreProdTask</DataSource>
+					</AxFormControl>
+				</Controls>
+				<DataSource>ATXProductPreProdTask</DataSource>
+				<Style>Tabular</Style>
+			</AxFormControl>
+		</Controls>
+	</Design>
+	<Parts />
+</AxForm>

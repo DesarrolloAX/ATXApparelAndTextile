@@ -1,0 +1,1850 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxForm xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="Microsoft.Dynamics.AX.Metadata.V6">
+	<Name>ATXProductionFloorControl</Name>
+	<SourceCode>
+		<Methods xmlns="">
+			<Method>
+				<Name>classDeclaration</Name>
+				<Source><![CDATA[
+[Form]
+public class ATXProductionFloorControl extends FormRun
+{
+    ATXProdRouteMultiRegisterProd  prodRouteMultiRegister;
+
+
+}
+]]></Source>
+			</Method>
+			<Method>
+				<Name>personnelNumberIdModified</Name>
+				<Source><![CDATA[
+    void personnelNumberIdModified()
+    {
+        ;
+
+        personnelNumberIdEdit.text(prodRouteMultiRegister.parmHCMPersonnelNumberId(personnelNumberIdEdit.valueStr()));
+        element.clearValues(false);
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>init</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    public void init()
+    {
+        super();
+
+        prodRouteMultiRegister = new ATXProdRouteMultiRegisterProd();
+        
+        if (ATXProdParameters::find().SuggestPersonnelNumber)
+        {
+            personnelNumberIdEdit.text(DirPersonUserEx::currentWorkerPersonnelNumber());
+            personnelNumberIdEdit.modified();
+        }
+        element.updateDesign(InventDimFormDesignUpdate::Init);
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>updateDesign</Name>
+				<Source><![CDATA[
+    void updateDesign(InventDimFormDesignUpdate _mode)
+    {
+        ;
+
+        switch (_mode)
+        {
+            case InventDimFormDesignUpdate::Init          :
+                // Edit controls
+                RejectionCtrl.allowEdit(true);
+                RejectionCodeCtrl.allowEdit(false);
+
+                /*ItemIdTransferEdit.allowEdit(false);
+                ConfigIdTransferEdit.allowEdit(false);
+                InventSizeIdTransferEdit.allowEdit(false);
+                InventColorIdTransferEdit.allowEdit(false);
+                InventStyleIdTransferEdit.allowEdit(false);*/
+
+                TurnIdCtrl.allowEdit(false);
+                WrkctIdCtrl.allowEdit(false);
+                break;
+
+            case InventDimFormDesignUpdate::FieldChange:
+                prodIdEdit.text(prodRouteMultiRegister.parmProdId());
+                oprIdEdit.text(prodRouteMultiRegister.parmOprId());
+
+                RejectionCtrl.value(prodRouteMultiRegister.parmRejection());
+                RejectionCodeCtrl.text(prodRouteMultiRegister.parmRejectionCode());
+
+                
+                TurnIdCtrl.text(prodRouteMultiRegister.parmTurnId());
+                WrkctIdCtrl.text(prodRouteMultiRegister.parmWrkCtrId());
+
+                /*TransferCheckCtrl.value(prodRouteMultiRegister.parmTransferCheck());
+                ItemIdTransferEdit.text(prodRouteMultiRegister.parmItemIdTransfer());
+                ConfigIdTransferEdit.text(prodRouteMultiRegister.parmConfigIdTransfer());
+                InventSizeIdTransferEdit.text(prodRouteMultiRegister.parmInventSizeIdTransfer());
+                InventColorIdTransferEdit.text(prodRouteMultiRegister.parmInventColorIdTransfer());
+                InventStyleIdTransferEdit.text(prodRouteMultiRegister.parmInventStyleIdTransfer());*/
+
+                RejectionCtrl.allowEdit(true);
+                RejectionCodeCtrl.allowEdit(prodRouteMultiRegister.parmRejection());
+                RejectionCodeCtrl.mandatory(prodRouteMultiRegister.parmRejection());
+
+                /*ItemIdTransferEdit.allowEdit(prodRouteMultiRegister.parmTransferCheck());
+                ConfigIdTransferEdit.allowEdit(prodRouteMultiRegister.parmTransferCheck());
+                InventSizeIdTransferEdit.allowEdit(prodRouteMultiRegister.parmTransferCheck());
+                InventColorIdTransferEdit.allowEdit(prodRouteMultiRegister.parmTransferCheck());
+                InventStyleIdTransferEdit.allowEdit(prodRouteMultiRegister.parmTransferCheck());*/
+
+                TurnIdCtrl.allowEdit(true);
+                WrkctIdCtrl.allowEdit(true);
+                ProdCutId.allowEdit(prodRouteMultiRegister.parmRouteOprTable_AT().ValidateCutId);
+
+                element.redraw();
+                break;
+
+            default : throw error(strFmt("@SYS54195",funcName()));
+
+        }
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>clearValues</Name>
+				<Source><![CDATA[
+    public void clearValues(boolean allValues = true, boolean _personnelNumber = false)
+    {
+        if (allValues)
+        {
+            prodIdEdit.text("");
+            ProdCutId.text("");
+            RefComment.text("");
+            personnelNumberIdEdit.text("");
+            prodCustPurchOrder.text("");
+            prodRouteMultiRegister = new ATXProdRouteMultiRegisterProd();
+            prodRouteMultiRegister.parmRejection(false);
+            element.updateDesign(InventDimFormDesignUpdate::Init);
+        }
+
+        if (_personnelNumber)
+        {
+            prodIdEdit.text("");
+            ProdCutId.text("");
+            RefComment.text("");
+            prodCustPurchOrder.text("");
+            prodRouteMultiRegister = new ATXProdRouteMultiRegisterProd();
+            element.updateDesign(InventDimFormDesignUpdate::Init);
+        }
+
+        oprIdEdit.text("");
+        ProdCutId.text("");
+        RefComment.text("");
+        WMSLocationId.text("");
+        OprName.text("");
+        RejectionCtrl.value(false);
+        RejectionCodeCtrl.text("");
+        TurnIdCtrl.text("");
+        WrkctIdCtrl.text("");
+        SectionId.text("");
+        //element.cleartmpTable();
+        //BreakdownGridGroup_Qty.allowEdit(true);
+        BarCode.text("");
+        element.redraw();
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>prodIdModified</Name>
+				<Source><![CDATA[
+    void prodIdModified()
+    {
+        ;
+
+        prodIdEdit.text(prodRouteMultiRegister.parmProdId(prodIdEdit.valueStr()));
+        element.clearValues(false);
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>oprIdModified</Name>
+				<Source><![CDATA[
+    void oprIdModified()
+    {
+        ;
+
+        oprIdEdit.text(prodRouteMultiRegister.parmOprId(oprIdEdit.valueStr()));
+
+        // Clear CutId, RefComment
+        ProdCutId.text('');
+        prodRouteMultiRegister.parmCutId('');
+        RefComment.text('');
+        prodRouteMultiRegister.parmATXProdRefComment('');
+
+        element.updateData();
+        element.updateDesign(InventDimFormDesignUpdate::FieldChange);
+        //element.buttonDesign(true,true,true);
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>updateData</Name>
+				<Source><![CDATA[
+    private void updateData()
+    {
+        ATXProductionFloorControl.setTmpData(prodRouteMultiRegister.fillMultiRegister());
+        ATXProductionFloorControl_DS.executeQuery();
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>refCommentModified</Name>
+				<Source><![CDATA[
+    void refCommentModified()
+    {
+        ;
+
+        RefComment.text(prodRouteMultiRegister.parmATXProdRefComment(RefComment.valueStr()));
+        element.updateData();
+        element.updateDesign(InventDimFormDesignUpdate::FieldChange);
+        //element.buttonDesign(true,true,true);
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>rejectionModified</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    void rejectionModified(NoYesId _rejection)
+    {
+        prodRouteMultiRegister.parmRejection(_rejection);
+        element.updateDesign(InventDimFormDesignUpdate::FieldChange);
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>styleTransferEditModified</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    void styleTransferEditModified(EcoResStyleName _styleName)
+    {
+        prodRouteMultiRegister.parmInventStyleIdTransfer(_styleName);
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>turnIdModified</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    void turnIdModified(ATXTurnId _turnId)
+    {
+        ;
+
+        prodRouteMultiRegister.parmTurnId(_turnId);
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>wrkCtrIdModified</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    void wrkCtrIdModified(WrkCtrId _wrkctrid)
+    {
+        ;
+
+        prodRouteMultiRegister.parmWrkCtrId(_wrkctrid);
+        //element.buttonDesign(true, true,true);
+        element.updateDesign(InventDimFormDesignUpdate::FieldChange);
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>rejectionCodeModified</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    void rejectionCodeModified(ATXRejectionCodeId _rejCodeId)
+    {
+        prodRouteMultiRegister.parmRejectionCode(_rejCodeId);
+        element.updateDesign(InventDimFormDesignUpdate::FieldChange);
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+		<DataSources xmlns="">
+			<DataSource>
+				<Name>ATXProductionFloorControl</Name>
+				<Methods>
+					<Method>
+						<Name>stUpQty</Name>
+						<Source><![CDATA[
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns></returns>
+        display ATXCutQty stUpQty()
+        {
+            ATXProductionFloorControl   local;
+            Qty                         totalQty;
+
+
+            for(local = ATXProductionFloorControl_DS.getFirst();
+            local;
+            local = ATXProductionFloorControl_DS.getNext())
+            {
+                totalQty +=  local.QtySetUp;
+            }
+
+            return totalQty;
+        }
+
+]]></Source>
+					</Method>
+					<Method>
+						<Name>qtyPostPrev</Name>
+						<Source><![CDATA[
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns></returns>
+        display ATXQtyPostPrev qtyPostPrev()
+        {
+            ATXQtyBase          prevQty;
+            ProdRoute           prodRouteQry, 
+                                localProdRoute;
+            ProdJournalRoute    prodJournalRoute;
+            ProdJournalTable    prodJournalTable;
+            ;
+            
+            select firstOnly OprNum from prodRouteQry
+                where prodRouteQry.ProdId == prodIdEdit.text()
+                && prodRouteQry.OprId == oprIdEdit.text();
+
+            select firstOnly OprNum from localProdRoute
+                where localProdRoute.ProdId == prodIdEdit.text()
+                && localProdRoute.OprNumNext == prodRouteQry.OprNum;
+
+            select sum(QtyGood), sum(QtyError) from prodJournalroute
+                where prodJournalroute.ProdId     == prodIdEdit.text()
+                && prodJournalroute.OprNum     == localProdRoute.OprNum
+                && (prodJournalroute.ATXCutId == ProdCutId.text() || !ProdCutId.text())
+                exists join ProdJournalTable
+                where ProdJournalTable.JournalId == prodJournalroute.JournalId
+                && ProdJournalTable.Posted == NoYes::Yes;
+
+            return prodJournalroute.QtyGood;
+        }
+
+]]></Source>
+					</Method>
+					<Method>
+						<Name>qtyPostPrevError</Name>
+						<Source><![CDATA[
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns></returns>
+        display ATXQtyPostPrevError qtyPostPrevError()
+        {
+            ATXQtyBase          prevQty;
+            ProdRoute           prodRouteQry, 
+                                localProdRoute;
+            ProdJournalRoute    prodJournalRoute;
+            ProdJournalTable    prodJournalTable;
+            ;
+            
+            select firstOnly OprNum from prodRouteQry
+                where prodRouteQry.ProdId == prodIdEdit.text()
+                && prodRouteQry.OprId == oprIdEdit.text();
+
+            select firstOnly OprNum from localProdRoute
+                where localProdRoute.ProdId == prodIdEdit.text()
+                && localProdRoute.OprNumNext == prodRouteQry.OprNum;
+
+            select sum(QtyGood), sum(QtyError) from prodJournalroute
+                where prodJournalroute.ProdId     == prodIdEdit.text()
+                && prodJournalroute.OprNum     == localProdRoute.OprNum
+                && (prodJournalroute.ATXCutId == ProdCutId.text() || !ProdCutId.text())
+                exists join ProdJournalTable
+                where ProdJournalTable.JournalId == prodJournalroute.JournalId
+                && ProdJournalTable.Posted == NoYes::Yes;
+
+            return prodJournalroute.QtyError;
+        }
+
+]]></Source>
+					</Method>
+					<Method>
+						<Name>postedQty</Name>
+						<Source><![CDATA[
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns></returns>
+        display ATXQtyPosted postedQty()
+        {
+            ATXProductionFloorControl   local;
+            Qty                         totalQty;
+
+
+            for(local = ATXProductionFloorControl_DS.getFirst();
+            local;
+            local = ATXProductionFloorControl_DS.getNext())
+            {
+                totalQty +=  local.QtyPosted;
+            }
+
+            return totalQty;
+        }
+
+]]></Source>
+					</Method>
+					<Method>
+						<Name>toPostQty</Name>
+						<Source><![CDATA[
+        /// <summary>
+        /// Total quantity to post
+        /// </summary>
+        /// <returns></returns>
+        display ATXQtyBase toPostQty()
+        {
+            ATXProductionFloorControl   local;
+            ATXQtyBase                  totalQty;
+
+
+            for(local = ATXProductionFloorControl_DS.getFirst();
+            local;
+            local = ATXProductionFloorControl_DS.getNext())
+            {
+                totalQty +=  local.Qty;
+            }
+
+            return totalQty;
+        }
+
+]]></Source>
+					</Method>
+				</Methods>
+				<Fields />
+			</DataSource>
+		</DataSources>
+		<DataControls xmlns="">
+			<Control>
+				<Name>ShutDownCode</Name>
+				<Type>Button</Type>
+				<Methods>
+					<Method>
+						<Name>clicked</Name>
+						<Source><![CDATA[
+        /// <summary>
+        ///
+        /// </summary>
+        public void clicked()
+        {
+            FormRun formRun;
+            Args args = new Args();
+            ;
+            args.parmObject(prodRouteMultiRegister);
+            args.parmEnum(NoYes::Yes);
+
+            formRun = ClassFactory.formRunClass(args);
+            formRun.init();
+            formRun.run();
+            formRun.wait();
+            
+            if(formRun.closedOk())
+            {
+                prodRouteMultiRegister.insertShutDownCode();
+            }
+        }
+
+]]></Source>
+					</Method>
+				</Methods>
+			</Control>
+			<Control>
+				<Name>ReportAsFinish</Name>
+				<Type>Button</Type>
+				<Methods>
+					<Method>
+						<Name>clicked</Name>
+						<Source><![CDATA[
+        /// <summary>
+        ///
+        /// </summary>
+        public void clicked()
+        {
+            boolean ret = true;
+            
+            ATXProdCutSection prodCutSectionForValidate;
+        
+            select firstonly prodCutSectionForValidate
+                where prodCutSectionForValidate.ProdId == prodIdEdit.valueStr()
+                    && prodCutSectionForValidate.CutId == ProdCutId.valueStr();
+            
+            if (prodCutSectionForValidate.Finished == NoYes::No)
+            {
+                ttsBegin;
+                ret = prodRouteMultiRegister.canReportAsFinish(ATXProductionFloorControl_DS);
+                ttsCommit;
+
+                if (ret)
+                {
+                    element.clearValues();
+
+                    if (ATXProdParameters::find().SuggestPersonnelNumber)
+                    {
+                        personnelNumberIdEdit.text(DirPersonUserEx::currentWorkerPersonnelNumber());
+                        personnelNumberIdEdit.modified();
+                    }
+                    element.updateDesign(InventDimFormDesignUpdate::Init);
+                }
+            }
+            else
+            {
+                throw error("@ATXAT:NewLabel273");
+            }
+        }
+
+]]></Source>
+					</Method>
+				</Methods>
+			</Control>
+			<Control>
+				<Name>PersonnelNumberIdEdit</Name>
+				<Type>String</Type>
+				<Methods>
+					<Method>
+						<Name>modified</Name>
+						<Source><![CDATA[
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns></returns>
+        public boolean modified()
+        {
+            boolean ret;
+
+            ret = super();
+            if (ret)
+            {
+                element.personnelNumberIdModified();
+                if (!personnelNumberIdEdit.valueStr())
+                {
+                    this.setFocus();
+                    return false;
+                }
+            }
+
+            return ret;
+        }
+
+]]></Source>
+					</Method>
+					<Method>
+						<Name>paste</Name>
+						<Source><![CDATA[
+        /// <summary>
+        ///
+        /// </summary>
+        public void paste()
+        {
+            super();
+            this.modified();
+        }
+
+]]></Source>
+					</Method>
+				</Methods>
+			</Control>
+			<Control>
+				<Name>ProdCustPurchOrder</Name>
+				<Type>String</Type>
+				<Methods>
+					<Method>
+						<Name>lookup</Name>
+						<Source><![CDATA[
+        /// <summary>
+        ///
+        /// </summary>
+        public void lookup()
+        {
+            Query                   q = new Query();
+            QueryBuildDataSource    qbds;
+            SysTableLookup          lookup;
+    
+            qbds = q.addDataSource(tableNum(ProdTable));
+            qbds.addSelectionField(fieldNum(ProdTable, ProdId));
+            qbds.addSelectionField(fieldNum(ProdTable, ATXCustPurchaseOrder));
+            qbds.addSelectionField(fieldNum(ProdTable, ItemId));
+            qbds.addSelectionField(fieldNum(ProdTable, Name));
+            qbds.addSelectionField(fieldNum(ProdTable, ProdStatus));
+            qbds.addRange(fieldNum(ProdTable, ProdStatus)).value(queryValue(ProdStatus::StartedUp));
+    
+            lookup = SysTableLookup::newParameters(tableNum(ProdTable),this);
+    
+            lookup.parmQuery(q);
+    
+            lookup.addLookupfield(fieldNum(ProdTable, ATXCustPurchaseOrder));
+            lookup.addLookupfield(fieldNum(ProdTable, ProdId));
+            lookup.addLookupfield(fieldNum(ProdTable, ItemId));
+            lookup.addLookupfield(fieldNum(ProdTable, Name));
+            lookup.addLookupfield(fieldNum(ProdTable, ProdStatus));
+    
+            lookup.performFormLookup();
+        }
+
+]]></Source>
+					</Method>
+					<Method>
+						<Name>modified</Name>
+						<Source><![CDATA[
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns></returns>
+        public boolean modified()
+        {
+            boolean ret;
+            ProdTable modProdTable;
+        
+            ret = super();
+        
+            if (ret)
+            {
+                if (this.text())
+                {
+                    select firstonly modProdTable
+                        where  modProdTable.ATXCustPurchaseOrder == this.text()
+                            && modProdTable.ProdStatus           == ProdStatus::StartedUp;
+        
+                    if (!modProdTable)
+                    {
+                        warning(strFmt("@ATXAT:NewLabel234",this.text()));
+                    }
+                    else
+                    {
+                        prodIdEdit.text(modProdTable.ProdId);
+                        prodIdEdit.modified();
+                    }
+        
+                }
+        
+                if (!prodIdEdit.text())
+                {
+                    prodIdEdit.text("");
+                    this.text("");
+                    this.setFocus();
+                    return false;
+                }
+            }
+        
+            return ret;
+        }
+
+]]></Source>
+					</Method>
+					<Method>
+						<Name>paste</Name>
+						<Source><![CDATA[
+        /// <summary>
+        ///
+        /// </summary>
+        public void paste()
+        {
+            super();
+        
+            this.modified();
+        }
+
+]]></Source>
+					</Method>
+				</Methods>
+			</Control>
+			<Control>
+				<Name>ProdIdEdit</Name>
+				<Type>String</Type>
+				<Methods>
+					<Method>
+						<Name>modified</Name>
+						<Source><![CDATA[
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns></returns>
+        public boolean modified()
+        {
+            boolean ret;
+    
+            ret = super();
+            if (ret)
+            {
+                element.prodIdModified();
+                if (!prodIdEdit.valueStr())
+                {
+                    this.setFocus();
+                    return false;
+                }
+                else
+                {
+                    prodCustPurchOrder.text(ProdTable::find(this.text()).ATXCustPurchaseOrder);
+                }
+            }
+    
+            return ret;
+        }
+
+]]></Source>
+					</Method>
+					<Method>
+						<Name>paste</Name>
+						<Source><![CDATA[
+        /// <summary>
+        ///
+        /// </summary>
+        public void paste()
+        {
+            super();
+            this.modified();
+        }
+
+]]></Source>
+					</Method>
+					<Method>
+						<Name>lookup</Name>
+						<Source><![CDATA[
+        /// <summary>
+        ///
+        /// </summary>
+        public void lookup()
+        {
+            Query                   q = new Query();
+            QueryBuildDataSource    qbds;
+            SysTableLookup          lookup;
+        
+            qbds = q.addDataSource(tableNum(ProdTable));
+            qbds.addSelectionField(fieldNum(ProdTable, ProdId));
+            qbds.addSelectionField(fieldNum(ProdTable, ATXCustPurchaseOrder));
+            qbds.addSelectionField(fieldNum(ProdTable, ItemId));
+            qbds.addSelectionField(fieldNum(ProdTable, Name));
+            qbds.addSelectionField(fieldNum(ProdTable, ProdStatus));
+            qbds.addRange(fieldNum(ProdTable, ProdStatus)).value(queryValue(ProdStatus::StartedUp));
+        
+            lookup = SysTableLookup::newParameters(tableNum(ProdTable),this);
+        
+            lookup.parmQuery(q);
+            lookup.addSelectionField(fieldNum(ProdTable, ProdId));
+            lookup.addSelectionField(fieldNum(ProdTable, ATXCustPurchaseOrder));
+        
+            lookup.addLookupfield(fieldNum(ProdTable, ProdId),true);
+            lookup.addLookupfield(fieldNum(ProdTable, ATXCustPurchaseOrder));
+            lookup.addLookupfield(fieldNum(ProdTable, ItemId));
+            lookup.addLookupfield(fieldNum(ProdTable, Name));
+            lookup.addLookupfield(fieldNum(ProdTable, ProdStatus));
+        
+            lookup.performFormLookup();
+        }
+
+]]></Source>
+					</Method>
+				</Methods>
+			</Control>
+			<Control>
+				<Name>OprIdEdit</Name>
+				<Type>String</Type>
+				<Methods>
+					<Method>
+						<Name>lookup</Name>
+						<Source><![CDATA[
+        /// <summary>
+        ///
+        /// </summary>
+        public void lookup()
+        {
+            if (ATXProdRouteLookup::exist(prodRouteMultiRegister.parmProdId()))
+            {
+                ATXLookupTableEngine::lookupProdRoute(this, prodRouteMultiRegister.parmProdId());
+            }
+            else
+            {
+                super();
+            }
+        }
+
+]]></Source>
+					</Method>
+					<Method>
+						<Name>modified</Name>
+						<Source><![CDATA[
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns></returns>
+        public boolean modified()
+        {
+            boolean ret;
+        
+            ret = super();
+            if (ret)
+            {
+                element.oprIdModified();
+                OprName.text(RouteOprTable::find(this.text()).Name);
+            }
+        
+            return ret;
+        }
+
+]]></Source>
+					</Method>
+					<Method>
+						<Name>paste</Name>
+						<Source><![CDATA[
+        /// <summary>
+        ///
+        /// </summary>
+        public void paste()
+        {
+            super();
+            this.modified();
+        }
+
+]]></Source>
+					</Method>
+				</Methods>
+			</Control>
+			<Control>
+				<Name>OprName</Name>
+				<Type>String</Type>
+				<Methods>
+					<Method>
+						<Name>lookup</Name>
+						<Source><![CDATA[
+        /// <summary>
+        ///
+        /// </summary>
+        public void lookup()
+        {
+            if (ATXProdRouteLookup::exist(prodRouteMultiRegister.parmProdId()))
+            {
+                ATXLookupTableEngine::lookupProdRouteName(this, prodRouteMultiRegister.parmProdId());
+            }
+        }
+
+]]></Source>
+					</Method>
+					<Method>
+						<Name>modified</Name>
+						<Source><![CDATA[
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns></returns>
+        public boolean modified()
+        {
+            RouteOprTable routeOprTable;
+            boolean ret;
+        
+            ret = super();
+        
+            if (ret)
+            {
+                select firstonly routeOprTable
+                    where routeOprTable.name == this.text();
+                
+                if (routeOprTable)
+                {
+                    oprIdEdit.text(routeOprTable.OprId);
+                    oprIdEdit.modified();
+                }
+            }
+        
+            return ret;
+        }
+
+]]></Source>
+					</Method>
+					<Method>
+						<Name>paste</Name>
+						<Source><![CDATA[
+        /// <summary>
+        ///
+        /// </summary>
+        public void paste()
+        {
+            super();
+            this.modified();
+        }
+
+]]></Source>
+					</Method>
+				</Methods>
+			</Control>
+			<Control>
+				<Name>ProdCutId</Name>
+				<Type>String</Type>
+				<Methods>
+					<Method>
+						<Name>lookup</Name>
+						<Source><![CDATA[
+        /// <summary>
+        ///
+        /// </summary>
+        public void lookup()
+        {
+            Query q = new Query();
+            QueryBuildDataSource qbds, qbdsProd;
+    
+            SysTableLookup sysTableLookup;
+    
+            qbds = q.addDataSource(tableNum(ATXProdCutSection));
+            qbds.addSelectionField(fieldNum(ATXProdCutSection,CutId));
+            qbds.addSelectionField(fieldNum(ATXProdCutSection,ProdId));
+            qbds.addRange(fieldNum(ATXProdCutSection, Finished)).value(queryValue(NoYes::No));
+
+            qbdsProd = qbds.addDataSource(tableNum(ProdTable));
+            qbdsProd.addLink(fieldNum(ATXProdCutSection,ProdId),fieldNum(ProdTable,ProdId));
+            qbdsProd.addRange(fieldNum(ProdTable, ProdStatus)).value(queryValue(ProdStatus::StartedUp));
+            qbdsProd.addRange(fieldNum(ProdTable, ProdId)).value(prodIdEdit.text());
+    
+            sysTableLookup = SysTableLookup::newParameters(tableNum(ATXProdCutSection),this);
+            sysTableLookup.parmQuery(q);
+            sysTableLookup.addSelectionField(fieldNum(ATXProdCutSection, CutId));
+            sysTableLookup.addSelectionField(fieldNum(ATXProdCutSection, ProdId));
+            sysTableLookup.addLookupfield(fieldNum(ATXProdCutSection, CutId),true);
+            sysTableLookup.addLookupfield(fieldNum(ATXProdCutSection, ProdId));
+            sysTableLookup.addLookupfield(fieldNum(ATXProdCutSection, Section));
+            sysTableLookup.performFormLookup();
+        }
+
+]]></Source>
+					</Method>
+					<Method>
+						<Name>modified</Name>
+						<Source><![CDATA[
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns></returns>
+        public boolean modified()
+        {
+            ATXProdCutSection prodCutSection;
+            boolean ret;
+        
+            ret = super();
+        
+            if (ret)
+            {
+                select firstonly prodCutSection
+                    where prodCutSection.CutId == this.text();
+        
+                if (prodCutSection)
+                {
+                    prodRouteMultiRegister.parmCutId(prodCutSection.CutId);
+                    SectionId.text(prodCutSection.Section);
+                    element.updateData();
+                    element.updateDesign(InventDimFormDesignUpdate::FieldChange);
+                    //element.buttonDesign(true, true, true);
+                }
+                else
+                {
+                    warning("@ATXProdLabel_AT:NewLabel87");
+                    this.text("");
+                }
+        
+            }
+        
+            return ret;
+        }
+
+]]></Source>
+					</Method>
+					<Method>
+						<Name>paste</Name>
+						<Source><![CDATA[
+        /// <summary>
+        ///
+        /// </summary>
+        public void paste()
+        {
+            super();
+            this.modified();
+        }
+
+]]></Source>
+					</Method>
+				</Methods>
+			</Control>
+			<Control>
+				<Name>RefComment</Name>
+				<Type>String</Type>
+				<Methods>
+					<Method>
+						<Name>modified</Name>
+						<Source><![CDATA[
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns></returns>
+        public boolean modified()
+        {
+            boolean ret;
+        
+            ret = super();
+            if (ret)
+            {
+                element.refCommentModified();
+            }
+        
+                return ret;
+        }
+
+]]></Source>
+					</Method>
+				</Methods>
+			</Control>
+			<Control>
+				<Name>RejectionCtrl</Name>
+				<Type>CheckBox</Type>
+				<Methods>
+					<Method>
+						<Name>modified</Name>
+						<Source><![CDATA[
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns></returns>
+        public boolean modified()
+        {
+            boolean ret;
+
+            ret = super();
+
+            element.rejectionModified(this.checked());
+
+            return ret;
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /*public void paste()
+        {
+            super();
+            this.modified();
+        }*/
+
+]]></Source>
+					</Method>
+				</Methods>
+			</Control>
+			<Control>
+				<Name>RejectionCodeCtrl</Name>
+				<Type>String</Type>
+				<Methods>
+					<Method>
+						<Name>modified</Name>
+						<Source><![CDATA[
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns></returns>
+        public boolean modified()
+        {
+            boolean ret;
+        
+            ret = super();
+            element.rejectionCodeModified(this.text());
+        
+            return ret;
+        }
+
+]]></Source>
+					</Method>
+					<Method>
+						<Name>paste</Name>
+						<Source><![CDATA[
+        /// <summary>
+        ///
+        /// </summary>
+        public void paste()
+        {
+            super();
+            this.modified();
+        }
+
+]]></Source>
+					</Method>
+				</Methods>
+			</Control>
+			<Control>
+				<Name>TurnIdCtrl</Name>
+				<Type>String</Type>
+				<Methods>
+					<Method>
+						<Name>modified</Name>
+						<Source><![CDATA[
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns></returns>
+        public boolean modified()
+        {
+            boolean ret;
+    
+            ret = super();
+
+            if (ret)
+            {
+                element.styleTransferEditModified(this.valueStr());
+                element.turnIdModified(this.valueStr());
+                if (!this.valueStr())
+                {
+                    this.setFocus();
+                    return false;
+                }
+            }
+    
+            return ret;
+        }
+
+]]></Source>
+					</Method>
+				</Methods>
+			</Control>
+			<Control>
+				<Name>WrkctIdCtrl</Name>
+				<Type>String</Type>
+				<Methods>
+					<Method>
+						<Name>lookup</Name>
+						<Source><![CDATA[
+        /// <summary>
+        ///
+        /// </summary>
+        public void lookup()
+        {
+            ProdRouteJob                prodRouteJob;
+            WrkCtrResourceGroupResource wrkCtrResourceGroupResource;
+            WrkCtrResourceGroupRefRecId wrkCtrResourceGroupRefRecId;
+            Query                       q = new Query();
+            QueryBuildDataSource        qDS = q.addDataSource(tableNum(wrkCtrResourceGroupResource));
+            
+            SysTableLookup               SysTableLookup = SysTableLookup::newParameters(tableNum(wrkCtrResourceGroupResource),this);
+
+            select firstonly ResourceGroup from wrkCtrResourceGroupResource
+                exists join prodRouteJob
+                    where  prodRouteJob.OprNum == prodRouteMultiRegister.parmProdRoute().OprNum
+                        && prodRouteJob.WrkCtrId == wrkCtrResourceGroupResource.WrkCtrId;
+
+            qds.addRange(fieldNum(wrkCtrResourceGroupResource,ResourceGroup)).value(queryValue(wrkCtrResourceGroupResource.ResourceGroup));
+            SysTableLookup.addLookupfield(fieldNum(wrkCtrResourceGroupResource,WrkCtrId),true);
+            SysTableLookup.parmQuery(q);
+            SysTableLookup.performFormLookup();
+        }
+
+]]></Source>
+					</Method>
+					<Method>
+						<Name>modified</Name>
+						<Source><![CDATA[
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns></returns>
+        public boolean modified()
+        {
+            boolean ret;
+        
+            ret = super();
+
+            if (ret)
+            {
+                element.wrkCtrIdModified(this.valueStr());
+            }
+        
+            return ret;
+        }
+
+]]></Source>
+					</Method>
+				</Methods>
+			</Control>
+			<Control>
+				<Name>WMSLocationId</Name>
+				<Type>String</Type>
+				<Methods>
+					<Method>
+						<Name>lookup</Name>
+						<Source><![CDATA[
+        /// <summary>
+        ///
+        /// </summary>
+        public void lookup()
+        {
+            Query                       q = new Query();
+            QueryBuildDataSource        qDS = q.addDataSource(tableNum(WMSLocation));
+            WrkCtrId                    WrkCtrId;
+
+            SysTableLookup               SysTableLookup = SysTableLookup::newParameters(tableNum(WMSLocation),this);
+
+            qds.addRange(fieldNum(WMSLocation,InventLocationId)).value(ProdTable::find(prodIdEdit.valueStr()).inventDim().InventLocationId);
+            SysTableLookup.addLookupfield(fieldNum(WMSLocation,WMSLocationId),true);
+            SysTableLookup.addLookupfield(fieldNum(WMSLocation,InventLocationId));
+            SysTableLookup.parmQuery(q);
+            SysTableLookup.performFormLookup();
+        }
+
+]]></Source>
+					</Method>
+					<Method>
+						<Name>modified</Name>
+						<Source><![CDATA[
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns></returns>
+        public boolean modified()
+        {
+            boolean                   ret;
+            WMSLocationId             wmsLocationIdValue;
+            InventLocationId          inventLocationId;
+        
+            ret = super();
+            if (ret)
+            {
+                if (prodIdEdit.valueStr() && oprIdEdit.valueStr())
+                {
+                    inventLocationId = ProdTable::find(prodIdEdit.valueStr()).inventDim().InventLocationId;
+                    wmsLocationIdValue = this.text();
+                    if (WMSLocation::exist(wmsLocationIdValue,inventLocationId))
+                    {
+                        ttsbegin;
+                        while select forupdate ATXProductionFloorControl
+                        {
+                            ATXProductionFloorControl.WMSLocationId = wmsLocationIdValue;
+                            ATXProductionFloorControl.update();
+                        }
+                        ttscommit;
+                        ATXProductionFloorControl_DS.executeQuery();
+                    }
+                }
+            }
+        
+                return ret;
+        }
+
+]]></Source>
+					</Method>
+				</Methods>
+			</Control>
+		</DataControls>
+		<Members xmlns="" />
+	</SourceCode>
+	<DataSources>
+		<AxFormDataSource xmlns="">
+			<Name>ATXProductionFloorControl</Name>
+			<Table>ATXProductionFloorControl</Table>
+			<Fields>
+				<AxFormDataSourceField>
+					<DataField>BOMId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ConfigId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>DataAreaId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventColorId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventLocationId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventSizeId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventSizeIdTransfer</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventStyleId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ItemId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>OprId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>OprNum</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Partition</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ProdId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ProdQualityId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ProdReportedError</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ProdStandarPack</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Qty</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>QtyOrig</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>QtyPosted</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>QtyPreviousOpr</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>QtyPreviousOprError</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>QtySetUp</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>RecId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ReportedBySize</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>TableId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>TransDate</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>WMSLocationId</DataField>
+				</AxFormDataSourceField>
+			</Fields>
+			<ReferencedDataSources />
+			<DataSourceLinks />
+			<DerivedDataSources />
+		</AxFormDataSource>
+	</DataSources>
+	<Design>
+		<Caption xmlns="">@ATXAT:NewLabel207</Caption>
+		<Pattern xmlns="">SimpleDetails-FastTabsContainer</Pattern>
+		<PatternVersion xmlns="">1.4</PatternVersion>
+		<Controls xmlns="">
+			<AxFormControl xmlns=""
+				i:type="AxFormActionPaneControl">
+				<Name>FloorControlActionPane</Name>
+				<Type>ActionPane</Type>
+				<FormControlExtension
+					i:nil="true" />
+				<Controls>
+					<AxFormControl xmlns=""
+						i:type="AxFormButtonGroupControl">
+						<Name>ButtonGroup</Name>
+						<Type>ButtonGroup</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<Controls>
+							<AxFormControl xmlns=""
+								i:type="AxFormButtonControl">
+								<Name>ShutDownCode</Name>
+								<AutoDeclaration>Yes</AutoDeclaration>
+								<Enabled>No</Enabled>
+								<Type>Button</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<Text>@ATXAT:NewLabel248</Text>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormButtonControl">
+								<Name>ReportAsFinish</Name>
+								<AutoDeclaration>Yes</AutoDeclaration>
+								<Type>Button</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<Text>@ATXAT:NewLabel258</Text>
+							</AxFormControl>
+						</Controls>
+					</AxFormControl>
+				</Controls>
+			</AxFormControl>
+			<AxFormControl xmlns=""
+				i:type="AxFormTabControl">
+				<Name>FloorControlTab</Name>
+				<Type>Tab</Type>
+				<FormControlExtension
+					i:nil="true" />
+				<Controls>
+					<AxFormControl xmlns=""
+						i:type="AxFormTabPageControl">
+						<Name>FloorControlTabPage</Name>
+						<Pattern>Custom</Pattern>
+						<Type>TabPage</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<Controls>
+							<AxFormControl xmlns=""
+								i:type="AxFormGroupControl">
+								<Name>ProdGroup</Name>
+								<HeightMode>SizeToAvailable</HeightMode>
+								<Type>Group</Type>
+								<WidthMode>SizeToAvailable</WidthMode>
+								<FormControlExtension
+									i:nil="true" />
+								<Controls>
+									<AxFormControl xmlns=""
+										i:type="AxFormGroupControl">
+										<Name>ProductionGroup</Name>
+										<Type>Group</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<Controls>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>BarCode</Name>
+												<AutoDeclaration>Yes</AutoDeclaration>
+												<Skip>Yes</Skip>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<Label>@ATXAT:NewLabel208</Label>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>PersonnelNumberIdEdit</Name>
+												<AutoDeclaration>Yes</AutoDeclaration>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<ExtendedDataType>HcmPersonnelNumberId</ExtendedDataType>
+												<LabelPosition>Above</LabelPosition>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>ProdCustPurchOrder</Name>
+												<AutoDeclaration>Yes</AutoDeclaration>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<ExtendedDataType>CustPurchaseOrder</ExtendedDataType>
+												<LabelPosition>Above</LabelPosition>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>ProdIdEdit</Name>
+												<AutoDeclaration>Yes</AutoDeclaration>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<ExtendedDataType>ProdId</ExtendedDataType>
+												<LabelPosition>Above</LabelPosition>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>OprIdEdit</Name>
+												<AutoDeclaration>Yes</AutoDeclaration>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<ExtendedDataType>RouteOprId</ExtendedDataType>
+												<LabelPosition>Above</LabelPosition>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>OprName</Name>
+												<AutoDeclaration>Yes</AutoDeclaration>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<ExtendedDataType>RouteOprName</ExtendedDataType>
+												<LabelPosition>Above</LabelPosition>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>ProdCutId</Name>
+												<AutoDeclaration>Yes</AutoDeclaration>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<ExtendedDataType>ATXCutId</ExtendedDataType>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>RefComment</Name>
+												<AutoDeclaration>Yes</AutoDeclaration>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<ExtendedDataType>ATXProdRefComment</ExtendedDataType>
+												<LabelPosition>Above</LabelPosition>
+											</AxFormControl>
+										</Controls>
+										<Columns>8</Columns>
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormGroupControl">
+										<Name>RejectionGroup</Name>
+										<Type>Group</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<Controls>
+											<AxFormControl xmlns=""
+												i:type="AxFormCheckBoxControl">
+												<Name>RejectionCtrl</Name>
+												<AutoDeclaration>Yes</AutoDeclaration>
+												<Type>CheckBox</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<LabelPosition>Above</LabelPosition>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>RejectionCodeCtrl</Name>
+												<AutoDeclaration>Yes</AutoDeclaration>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<ExtendedDataType>ATXRejectionCodeId</ExtendedDataType>
+												<LabelPosition>Above</LabelPosition>
+											</AxFormControl>
+										</Controls>
+										<Columns>3</Columns>
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormGroupControl">
+										<Name>TransferGroup</Name>
+										<Type>Group</Type>
+										<Visible>No</Visible>
+										<FormControlExtension
+											i:nil="true" />
+										<Controls />
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormGroupControl">
+										<Name>TurnQtyGroup</Name>
+										<Type>Group</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<Controls>
+											<AxFormControl xmlns=""
+												i:type="AxFormGroupControl">
+												<Name>TurnGroup</Name>
+												<Type>Group</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<Controls>
+													<AxFormControl xmlns=""
+														i:type="AxFormStringControl">
+														<Name>TurnIdCtrl</Name>
+														<AutoDeclaration>Yes</AutoDeclaration>
+														<Type>String</Type>
+														<FormControlExtension
+															i:nil="true" />
+														<ExtendedDataType>ATXTurnId</ExtendedDataType>
+														<Mandatory>Yes</Mandatory>
+													</AxFormControl>
+													<AxFormControl xmlns=""
+														i:type="AxFormStringControl">
+														<Name>WrkctIdCtrl</Name>
+														<AutoDeclaration>Yes</AutoDeclaration>
+														<Type>String</Type>
+														<FormControlExtension
+															i:nil="true" />
+														<ExtendedDataType>WrkCtrIdBase</ExtendedDataType>
+														<Mandatory>Yes</Mandatory>
+													</AxFormControl>
+													<AxFormControl xmlns=""
+														i:type="AxFormStringControl">
+														<Name>WMSLocationId</Name>
+														<AutoDeclaration>Yes</AutoDeclaration>
+														<Type>String</Type>
+														<FormControlExtension
+															i:nil="true" />
+														<Label>@ATXAT:NewLabel211</Label>
+													</AxFormControl>
+												</Controls>
+												<Columns>3</Columns>
+												<DataSource>ATXProductionFloorControl</DataSource>
+												<FrameType>GroupedFieldsLabel</FrameType>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormGroupControl">
+												<Name>TotalGroup</Name>
+												<Type>Group</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<Controls>
+													<AxFormControl xmlns=""
+														i:type="AxFormRealControl">
+														<Name>stUpQty</Name>
+														<AutoDeclaration>Yes</AutoDeclaration>
+														<Type>Real</Type>
+														<FormControlExtension
+															i:nil="true" />
+														<DataMethod>stUpQty</DataMethod>
+														<DataSource>ATXProductionFloorControl</DataSource>
+													</AxFormControl>
+													<AxFormControl xmlns=""
+														i:type="AxFormRealControl">
+														<Name>PrevOprQty</Name>
+														<AutoDeclaration>Yes</AutoDeclaration>
+														<Type>Real</Type>
+														<FormControlExtension
+															i:nil="true" />
+														<DataMethod>qtyPostPrev</DataMethod>
+														<DataSource>ATXProductionFloorControl</DataSource>
+													</AxFormControl>
+													<AxFormControl xmlns=""
+														i:type="AxFormRealControl">
+														<Name>PrevOprQtyError</Name>
+														<Type>Real</Type>
+														<FormControlExtension
+															i:nil="true" />
+														<DataMethod>qtyPostPrevError</DataMethod>
+														<DataSource>ATXProductionFloorControl</DataSource>
+													</AxFormControl>
+													<AxFormControl xmlns=""
+														i:type="AxFormRealControl">
+														<Name>postedQty</Name>
+														<AutoDeclaration>Yes</AutoDeclaration>
+														<Type>Real</Type>
+														<FormControlExtension
+															i:nil="true" />
+														<DataMethod>postedQty</DataMethod>
+														<DataSource>ATXProductionFloorControl</DataSource>
+													</AxFormControl>
+													<AxFormControl xmlns=""
+														i:type="AxFormRealControl">
+														<Name>toPostQty</Name>
+														<AutoDeclaration>Yes</AutoDeclaration>
+														<Type>Real</Type>
+														<FormControlExtension
+															i:nil="true" />
+														<DataMethod>toPostQty</DataMethod>
+														<DataSource>ATXProductionFloorControl</DataSource>
+													</AxFormControl>
+													<AxFormControl xmlns=""
+														i:type="AxFormStringControl">
+														<Name>SectionId</Name>
+														<AllowEdit>No</AllowEdit>
+														<AutoDeclaration>Yes</AutoDeclaration>
+														<Type>String</Type>
+														<FormControlExtension
+															i:nil="true" />
+														<Label>@ATXAT:NewLabel166</Label>
+													</AxFormControl>
+												</Controls>
+												<Columns>6</Columns>
+												<FrameType>GroupedFieldsLabel</FrameType>
+											</AxFormControl>
+										</Controls>
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormGridControl">
+										<Name>BreakDownGrid</Name>
+										<Type>Grid</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<Controls>
+											<AxFormControl xmlns=""
+												i:type="AxFormGroupControl">
+												<Name>BreakdownGridGroup</Name>
+												<Type>Group</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<Controls>
+													<AxFormControl xmlns=""
+														i:type="AxFormStringControl">
+														<Name>BreakdownGridGroup_ConfigId</Name>
+														<Type>String</Type>
+														<FormControlExtension
+															i:nil="true" />
+														<DataField>ConfigId</DataField>
+														<DataSource>ATXProductionFloorControl</DataSource>
+													</AxFormControl>
+													<AxFormControl xmlns=""
+														i:type="AxFormStringControl">
+														<Name>BreakdownGridGroup_InventColorId</Name>
+														<Type>String</Type>
+														<FormControlExtension
+															i:nil="true" />
+														<DataField>InventColorId</DataField>
+														<DataSource>ATXProductionFloorControl</DataSource>
+													</AxFormControl>
+													<AxFormControl xmlns=""
+														i:type="AxFormStringControl">
+														<Name>BreakdownGridGroup_InventSizeId</Name>
+														<Type>String</Type>
+														<FormControlExtension
+															i:nil="true" />
+														<DataField>InventSizeId</DataField>
+														<DataSource>ATXProductionFloorControl</DataSource>
+													</AxFormControl>
+													<AxFormControl xmlns=""
+														i:type="AxFormStringControl">
+														<Name>BreakdownGridGroup_ProdQualityId</Name>
+														<Type>String</Type>
+														<FormControlExtension
+															i:nil="true" />
+														<DataField>ProdQualityId</DataField>
+														<DataSource>ATXProductionFloorControl</DataSource>
+													</AxFormControl>
+													<AxFormControl xmlns=""
+														i:type="AxFormStringControl">
+														<Name>BreakdownGridGroup_InventLocationId</Name>
+														<Type>String</Type>
+														<FormControlExtension
+															i:nil="true" />
+														<DataField>InventLocationId</DataField>
+														<DataSource>ATXProductionFloorControl</DataSource>
+													</AxFormControl>
+													<AxFormControl xmlns=""
+														i:type="AxFormStringControl">
+														<Name>BreakdownGridGroup_WMSLocationId</Name>
+														<Type>String</Type>
+														<FormControlExtension
+															i:nil="true" />
+														<DataField>WMSLocationId</DataField>
+														<DataSource>ATXProductionFloorControl</DataSource>
+													</AxFormControl>
+													<AxFormControl xmlns=""
+														i:type="AxFormRealControl">
+														<Name>BreakdownGridGroup_QtyOrig</Name>
+														<Type>Real</Type>
+														<FormControlExtension
+															i:nil="true" />
+														<DataField>QtyOrig</DataField>
+														<DataSource>ATXProductionFloorControl</DataSource>
+													</AxFormControl>
+													<AxFormControl xmlns=""
+														i:type="AxFormRealControl">
+														<Name>BreakdownGridGroup_QtySetUp</Name>
+														<Type>Real</Type>
+														<FormControlExtension
+															i:nil="true" />
+														<DataField>QtySetUp</DataField>
+														<DataSource>ATXProductionFloorControl</DataSource>
+													</AxFormControl>
+													<AxFormControl xmlns=""
+														i:type="AxFormRealControl">
+														<Name>BreakdownGridGroup_QtyPreviousOpr</Name>
+														<Type>Real</Type>
+														<FormControlExtension
+															i:nil="true" />
+														<DataField>QtyPreviousOpr</DataField>
+														<DataSource>ATXProductionFloorControl</DataSource>
+													</AxFormControl>
+													<AxFormControl xmlns=""
+														i:type="AxFormRealControl">
+														<Name>BreakdownGridGroup_QtyPreviousOprError</Name>
+														<Type>Real</Type>
+														<FormControlExtension
+															i:nil="true" />
+														<DataField>QtyPreviousOprError</DataField>
+														<DataSource>ATXProductionFloorControl</DataSource>
+													</AxFormControl>
+													<AxFormControl xmlns=""
+														i:type="AxFormRealControl">
+														<Name>BreakdownGridGroup_QtyPosted</Name>
+														<Type>Real</Type>
+														<FormControlExtension
+															i:nil="true" />
+														<DataField>QtyPosted</DataField>
+														<DataSource>ATXProductionFloorControl</DataSource>
+													</AxFormControl>
+													<AxFormControl xmlns=""
+														i:type="AxFormRealControl">
+														<Name>BreakdownGridGroup_ProdReportedError</Name>
+														<Type>Real</Type>
+														<FormControlExtension
+															i:nil="true" />
+														<DataField>ProdReportedError</DataField>
+														<DataSource>ATXProductionFloorControl</DataSource>
+													</AxFormControl>
+													<AxFormControl xmlns=""
+														i:type="AxFormRealControl">
+														<Name>BreakdownGridGroup_Qty</Name>
+														<Type>Real</Type>
+														<FormControlExtension
+															i:nil="true" />
+														<DataField>Qty</DataField>
+														<DataSource>ATXProductionFloorControl</DataSource>
+													</AxFormControl>
+													<AxFormControl xmlns=""
+														i:type="AxFormRealControl">
+														<Name>BreakdownGridGroup_difference</Name>
+														<Type>Real</Type>
+														<FormControlExtension
+															i:nil="true" />
+														<DataMethod>difference</DataMethod>
+														<DataSource>ATXProductionFloorControl</DataSource>
+													</AxFormControl>
+													<AxFormControl xmlns=""
+														i:type="AxFormRealControl">
+														<Name>BreakdownGridGroup_Percent</Name>
+														<Type>Real</Type>
+														<FormControlExtension
+															i:nil="true" />
+														<DataMethod>Percent</DataMethod>
+														<DataSource>ATXProductionFloorControl</DataSource>
+													</AxFormControl>
+													<AxFormControl xmlns=""
+														i:type="AxFormDateControl">
+														<Name>BreakdownGridGroup_TransDate</Name>
+														<Type>Date</Type>
+														<FormControlExtension
+															i:nil="true" />
+														<DataField>TransDate</DataField>
+														<DataSource>ATXProductionFloorControl</DataSource>
+													</AxFormControl>
+												</Controls>
+												<DataGroup>ReportAsFinish</DataGroup>
+												<DataSource>ATXProductionFloorControl</DataSource>
+											</AxFormControl>
+										</Controls>
+										<VisibleRows>10</VisibleRows>
+										<VisibleRowsMode>Fixed</VisibleRowsMode>
+									</AxFormControl>
+								</Controls>
+							</AxFormControl>
+						</Controls>
+						<Caption>@ATXAT:NewLabel207</Caption>
+					</AxFormControl>
+				</Controls>
+				<Style>FastTabs</Style>
+			</AxFormControl>
+		</Controls>
+	</Design>
+	<Parts />
+</AxForm>

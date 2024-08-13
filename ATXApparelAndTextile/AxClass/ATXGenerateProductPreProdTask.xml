@@ -1,0 +1,632 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXGenerateProductPreProdTask</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+class ATXGenerateProductPreProdTask
+{
+    ATXRequestOrderHeader requestOrderHeader;
+
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>main</Name>
+				<Source><![CDATA[
+    public static void main(Args _args)
+    {
+        ATXGenerateProductPreProdTask engine = new ATXGenerateProductPreProdTask();
+
+        engine.parmRequestOrderHeader(_args.record());
+        engine.run();
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>run</Name>
+				<Source><![CDATA[
+    private void run()
+    {
+        DialogButton                 dialogButton;
+
+        //Validate if exists records from the requsition in time and action query
+        if (!ATXProductPreProdTask::existByRequest(requestOrderHeader.RequestOrderId))
+        {
+            this.generateTasksFromNewRequest();
+        }
+        /*else
+        {
+            //Reqeust to the user confirm the process
+            dialogButton = Box::yesNo(strFmt("@ATXAT:NewLabel314", requetsOrderHeader.RequestOrderId), DialogButton::Yes, "@ATXApparelAndTextile_AT:NewLabel721");
+        
+            if(dialogButton == DialogButton::Yes)
+            {
+                //Add new lines
+                this.addNewLines();
+
+                //Delete Not Exists Lines
+                this.deleteLines();
+
+                //Recalculate Dates
+                // TODO ATXGenerateTasks::RecalculteReqTaskDate(requetsOrderHeader.RequestOrderDate, requetsOrderHeader.RequestOrderId);
+            }
+        }*/
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmRequestOrderHeader</Name>
+				<Source><![CDATA[
+    public ATXRequestOrderHeader parmRequestOrderHeader(ATXRequestOrderHeader _requestOrderHeader)
+    {
+        requestOrderHeader = _requestOrderHeader;
+
+        return requestOrderHeader;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>generateTasksFromNewRequest</Name>
+				<Source><![CDATA[
+    private void generateTasksFromNewRequest()
+    {
+        
+        ATXProductPreProdTask       productPreProdTask;
+        ATXPreProdTaskTemplate      preProdItemTemplateTable;
+        ATXRequestOrderUpdates      requestOrderUpdates;
+        ATXRequestOrderLine         requestOrderLine;
+        DialogButton                dialogButton;
+        TransDate                   planDate = requestOrderHeader.RequestOrderDate;
+
+        if (requestOrderHeader.RequestOrderType == ATXRequestOrderType::Sample)
+        {
+            throw Error("@ATXAT:NewLabel316");
+        }
+
+        dialogButton = Box::yesNo(strFmt("@ATXAT:NewLabel315", requestOrderHeader.RequestOrderDate), DialogButton::Yes, "@ATXAT:NewLabel313");
+        
+        if (dialogButton == DialogButton::Yes)
+        {
+            //get for last request order version
+            select firstonly requestOrderUpdates
+                order by requestOrderUpdateId desc
+                where requestOrderUpdates.RequestOrderId == requestOrderHeader.RequestOrderId;
+            
+            //get for first requet orderlines considering last version
+            select firstonly requestOrderLine
+                where requestOrderLine.RequestOrderUpdateId == requestOrderUpdates.requestOrderUpdateId
+                && requestOrderLine.RequestOrderId == requestOrderHeader.RequestOrderId;
+            
+
+            while select preProdItemTemplateTable
+                order by LineNumber_IT desc
+                //where preProdItemTemplateTable.ItemId == requestOrderLine.ItemId
+            {
+                planDate = planDate - preProdItemTemplateTable.Days;
+
+                productPreProdTask.clear();
+                productPreProdTask.initValue();
+                productPreProdTask.LineNumber_IT    = preProdItemTemplateTable.LineNumber_IT;
+                //productPreProdTask.TimeAndActionId   = NumberSeq::newGetNumFromCode("TA").num();
+                //productPreProdTask.Ordenation        = preProdItemTemplateTable.Ordenation;
+                productPreProdTask.ItemId            = requestOrderLine.ItemId;
+                productPreProdTask.PreProdTaskId     = preProdItemTemplateTable.PreProdTaskId;
+                productPreProdTask.PlanDate          = planDate;
+                productPreProdTask.RequestOrderId    = requestOrderHeader.RequestOrderId;
+                /*productPreProdTask.CustPurchaseOrder = requetsOrderHeader.CustPurchaseOrder;
+                productPreProdTask.LineOfBusinessId  = requetsOrderHeader.LineOfBusinessId;
+                productPreProdTask.InventColorId     = ATXTools::GetColorName(productPreProdTask.ItemId, requestOrderLine.Inventdim().InventColorId);
+                productPreProdTask.ConfigId          = requestOrderLine.Inventdim().configId ? ATXTools::GetConfigName(productPreProdTask.ItemId, requestOrderLine.Inventdim().configId) : InventTable::find(productPreProdTask.ItemId).itemName();
+                productPreProdTask.custRef           = requetsOrderHeader.CustRef;
+                productPreProdTask.RouteOprId        = preProdItemTemplateTable.RouteOprId;
+                productPreProdTask.DueDays           = productPreProdTask.PlanDate - ATXTools::GetMEXDate();*/
+                productPreProdTask.AssignedTo        = ATXPreProdTask::find(productPreProdTask.PreProdTaskId).AssignedTo;
+                /*productPreProdTask.WorkerName        = HcmWorker::find(productPreProdTask.AssignedTo).name();
+                productPreProdTask.Email             = HcmWorker::find(productPreProdTask.AssignedTo).email();
+                productPreProdTask.Days              = preProdItemTemplateTable.Days;
+                productPreProdTask.XFTY              = requetsOrderHeader.RequestOrderDate;
+                productPreProdTask.CutPlan           = preProdItemTemplateTable.CutPlan;*/
+                productPreProdTask.insert();
+            }
+
+            Info("@ATXAT:NewLabel95");
+        }
+    }
+/*
+    public static void GenerateTasksFromReqStatic(RequestOrderHeader_AT _requestOrderHeader)
+    {
+        ATXProductPreProdTask        productPreProdTask;
+        ATXPreProdTaskTemplate  preProdItemTemplateTable;
+        RequestOrderUpdates_AT       requestOrderUpdates;
+        RequestOrderLine_AT          requestOrderLine;
+        TransDate                    planDate = _requestOrderHeader.RequestOrderDate;
+
+        
+        //get for last request order version
+        select firstonly requestOrderUpdates
+            order by requestOrderUpdateId desc
+                where requestOrderUpdates.RequestOrderId == _requestOrderHeader.RequestOrderId;
+            
+        //get for first requet orderlines considering last version
+        select firstonly requestOrderLine
+            where requestOrderLine.RequestOrderUpdateId == requestOrderUpdates.requestOrderUpdateId
+                && requestOrderLine.RequestOrderId == _requestOrderHeader.RequestOrderId;
+            
+
+        while select preProdItemTemplateTable
+                order by Ordenation desc
+            where preProdItemTemplateTable.ItemId == requestOrderLine.ItemId
+        {
+            planDate = planDate - preProdItemTemplateTable.Days;
+
+            productPreProdTask.clear();
+            productPreProdTask.initValue();
+            productPreProdTask.TimeAndActionId   = NumberSeq::newGetNumFromCode("TA").num();
+            productPreProdTask.Ordenation        = preProdItemTemplateTable.Ordenation;
+            productPreProdTask.ItemId            = preProdItemTemplateTable.ItemId;
+            productPreProdTask.PreProdTaskId     = preProdItemTemplateTable.PreProdTaskId;
+            productPreProdTask.PlanDate          = planDate;
+            productPreProdTask.RequestOrderId    = _requestOrderHeader.RequestOrderId;
+            productPreProdTask.CustPurchaseOrder = _requestOrderHeader.CustPurchaseOrder;
+            productPreProdTask.LineOfBusinessId  = _requestOrderHeader.LineOfBusinessId;
+            productPreProdTask.InventColorId     = ATXTools::GetColorName(productPreProdTask.ItemId, requestOrderLine.Inventdim().InventColorId);
+            productPreProdTask.ConfigId          = requestOrderLine.Inventdim().configId ? ATXTools::GetConfigName(productPreProdTask.ItemId, requestOrderLine.Inventdim().configId) : InventTable::find(productPreProdTask.ItemId).itemName();
+            productPreProdTask.custRef           = _requestOrderHeader.CustRef;
+            productPreProdTask.RouteOprId        = preProdItemTemplateTable.RouteOprId;
+            productPreProdTask.DueDays           = productPreProdTask.PlanDate - ATXTools::GetMEXDate();
+            productPreProdTask.AssignedTo        = preProdItemTemplateTable.AssignedTo;
+            productPreProdTask.AssignedToName    = HcmWorker::find(preProdItemTemplateTable.AssignedTo).name();
+            productPreProdTask.WorkerName        = HcmWorker::find(productPreProdTask.AssignedTo).name();
+            productPreProdTask.Email             = HcmWorker::find(productPreProdTask.AssignedTo).email();
+            productPreProdTask.Days              = preProdItemTemplateTable.Days;
+            productPreProdTask.XFTY              = _requestOrderHeader.RequestOrderDate;
+            productPreProdTask.CutPlan           = preProdItemTemplateTable.CutPlan;
+            productPreProdTask.insert();
+        }
+    }
+
+    private void addNewLines()
+    {
+        ATXPreProdTaskTemplate  preProdItemTemplateTable;
+        ATXProductPreProdTask        productPreProdTask;
+        RequestOrderUpdates_AT       requestOrderUpdates;
+        RequestOrderLine_AT          requestOrderLine;
+        int                          CounterIn;
+        
+        
+        while select preProdItemTemplateTable
+            where preProdItemTemplateTable.ItemId == requetsOrderHeader.ItemId
+                notexists join productPreProdTask
+            where productPreProdTask.ItemId == preProdItemTemplateTable.ItemId
+                && productPreProdTask.Ordenation == preProdItemTemplateTable.Ordenation
+                && productPreProdTask.PreProdTaskId == preProdItemTemplateTable.PreProdTaskId
+                && productPreProdTask.AssignedTo    == preProdItemTemplateTable.AssignedTo
+                && productPreProdTask.Days    == preProdItemTemplateTable.Days
+                && productPreProdTask.RouteOprId    == preProdItemTemplateTable.RouteOprId
+                && productPreProdTask.RequestOrderId == requetsOrderHeader.RequestOrderId
+        {
+            productPreProdTask.clear();
+            productPreProdTask.initValue();
+            productPreProdTask.TimeAndActionId   = NumberSeq::newGetNumFromCode("TA").num();
+            productPreProdTask.Ordenation        = preProdItemTemplateTable.Ordenation;
+            productPreProdTask.ItemId            = preProdItemTemplateTable.ItemId;
+            productPreProdTask.PreProdTaskId     = preProdItemTemplateTable.PreProdTaskId;
+            productPreProdTask.PlanDate          = requetsOrderHeader.RequestOrderDate;
+            productPreProdTask.RequestOrderId    = requetsOrderHeader.RequestOrderId;
+            productPreProdTask.CustPurchaseOrder = requetsOrderHeader.CustPurchaseOrder;
+            productPreProdTask.LineOfBusinessId  = requetsOrderHeader.LineOfBusinessId;
+            productPreProdTask.InventColorId     = ATXTools::GetColorName(productPreProdTask.ItemId, requestOrderLine.Inventdim().InventColorId);
+            productPreProdTask.ConfigId          = requestOrderLine.Inventdim().configId ? ATXTools::GetConfigName(productPreProdTask.ItemId, requestOrderLine.Inventdim().configId) : InventTable::find(productPreProdTask.ItemId).itemName();
+            productPreProdTask.custRef           = requetsOrderHeader.CustRef;
+            productPreProdTask.RouteOprId        = preProdItemTemplateTable.RouteOprId;
+            productPreProdTask.DueDays           = productPreProdTask.PlanDate - ATXTools::GetMEXDate();
+            productPreProdTask.AssignedTo        = preProdItemTemplateTable.AssignedTo;
+            productPreProdTask.AssignedToName    = HcmWorker::find(preProdItemTemplateTable.AssignedTo).name();
+            productPreProdTask.WorkerName        = HcmWorker::find(productPreProdTask.AssignedTo).name();
+            productPreProdTask.Email             = HcmWorker::find(productPreProdTask.AssignedTo).email();
+            productPreProdTask.Days              = preProdItemTemplateTable.Days;
+            productPreProdTask.XFTY              = requetsOrderHeader.RequestOrderDate;
+            productPreProdTask.CutPlan           = preProdItemTemplateTable.CutPlan;
+            productPreProdTask.insert();
+            CounterIn++;
+        }
+ 
+        info(strfmt("@ATXApparelAndTextile_AT:NewLabel734", counterIn));
+    }
+
+    public static void addNewLinesStatic(RequestOrderHeader_AT _requestOrderHeader, RequestOrderLine_AT _requestOrderLine)
+    {
+        ATXPreProdTaskTemplate  preProdItemTemplateTable;
+        ATXProductPreProdTask        productPreProdTask;
+        RequestOrderUpdates_AT       requestOrderUpdates;
+        int                          CounterIn;
+        
+        
+        while select preProdItemTemplateTable
+            where preProdItemTemplateTable.ItemId == _requestOrderLine.ItemId
+                notexists join productPreProdTask
+            where productPreProdTask.ItemId == preProdItemTemplateTable.ItemId
+                && productPreProdTask.Ordenation == preProdItemTemplateTable.Ordenation
+                && productPreProdTask.PreProdTaskId == preProdItemTemplateTable.PreProdTaskId
+                && productPreProdTask.AssignedTo    == preProdItemTemplateTable.AssignedTo
+                && productPreProdTask.Days    == preProdItemTemplateTable.Days
+                && productPreProdTask.RouteOprId    == preProdItemTemplateTable.RouteOprId
+                && productPreProdTask.RequestOrderId == _requestOrderHeader.RequestOrderId
+        {
+            //Validate to not exists an approved task with the same name
+            if(ATXGenerateTasks::AllowInsertTaskId(_requestOrderLine.RequestOrderId, preProdItemTemplateTable.PreProdTaskId) == NoYes::Yes)
+            {
+                productPreProdTask.clear();
+                productPreProdTask.initValue();
+                productPreProdTask.TimeAndActionId   = NumberSeq::newGetNumFromCode("TA").num();
+                productPreProdTask.Ordenation        = preProdItemTemplateTable.Ordenation;
+                productPreProdTask.ItemId            = preProdItemTemplateTable.ItemId;
+                productPreProdTask.PreProdTaskId     = preProdItemTemplateTable.PreProdTaskId;
+                productPreProdTask.PlanDate          = _requestOrderHeader.RequestOrderDate;
+                productPreProdTask.RequestOrderId    = _requestOrderHeader.RequestOrderId;
+                productPreProdTask.CustPurchaseOrder = _requestOrderHeader.CustPurchaseOrder;
+                productPreProdTask.LineOfBusinessId  = _requestOrderHeader.LineOfBusinessId;
+                productPreProdTask.InventColorId     = ATXTools::GetColorName(productPreProdTask.ItemId, _requestOrderLine.Inventdim().InventColorId);
+                productPreProdTask.ConfigId          = _requestOrderLine.Inventdim().configId ? ATXTools::GetConfigName(productPreProdTask.ItemId, _requestOrderLine.Inventdim().configId) : InventTable::find(productPreProdTask.ItemId).itemName();
+                productPreProdTask.custRef           = _requestOrderHeader.CustRef;
+                productPreProdTask.RouteOprId        = preProdItemTemplateTable.RouteOprId;
+                productPreProdTask.DueDays           = productPreProdTask.PlanDate - ATXTools::GetMEXDate();
+                productPreProdTask.AssignedTo        = preProdItemTemplateTable.AssignedTo;
+                productPreProdTask.AssignedToName    = HcmWorker::find(preProdItemTemplateTable.AssignedTo).name();
+                productPreProdTask.WorkerName        = HcmWorker::find(productPreProdTask.AssignedTo).name();
+                productPreProdTask.Email             = HcmWorker::find(productPreProdTask.AssignedTo).email();
+                productPreProdTask.Days              = preProdItemTemplateTable.Days;
+                productPreProdTask.XFTY              = _requestOrderHeader.RequestOrderDate;
+                productPreProdTask.CutPlan           = preProdItemTemplateTable.CutPlan;
+                productPreProdTask.insert();
+            }
+        }
+
+    }
+
+    private void deleteLines()
+    {
+        ATXPreProdTaskTemplate  preProdItemTemplateTable;
+        ATXProductPreProdTask        productPreProdTask;
+        int                          CounterOut;
+        
+        ttsbegin;
+        while select forupdate productPreProdTask
+            where productPreProdTask.ItemId == requetsOrderHeader.ItemId
+                && productPreProdTask.RequestOrderId == requetsOrderHeader.RequestOrderId
+                && productPreProdTask.Approved == NoYEs::No
+                notexists join preProdItemTemplateTable
+            where preProdItemTemplateTable.ItemId == productPreProdTask.ItemId
+                && preProdItemTemplateTable.Ordenation == productPreProdTask.Ordenation
+                && preProdItemTemplateTable.PreProdTaskId == productPreProdTask.PreProdTaskId
+                && productPreProdTask.AssignedTo    == preProdItemTemplateTable.AssignedTo
+                && productPreProdTask.Days    == preProdItemTemplateTable.Days
+                && productPreProdTask.RouteOprId    == preProdItemTemplateTable.RouteOprId
+        {
+            productPreProdTask.delete();
+            CounterOut++;
+        }
+        ttscommit;
+
+        info(strfmt("@ATXApparelAndTextile_AT:NewLabel735", counterOut));
+    }
+
+    public static void deleteLinesStatic(RequestOrderHeader_AT _requestOrderHeader, RequestOrderLine_AT _requestOrderLine)
+    {
+        ATXPreProdTaskTemplate  preProdItemTemplateTable;
+        ATXProductPreProdTask        productPreProdTask;
+        int                          CounterOut;
+        
+        ttsbegin;
+        while select forupdate productPreProdTask
+            where productPreProdTask.ItemId == _requestOrderLine.ItemId
+                && productPreProdTask.RequestOrderId == _requestOrderHeader.RequestOrderId
+                && productPreProdTask.Approved == NoYEs::No
+                notexists join preProdItemTemplateTable
+            where preProdItemTemplateTable.ItemId == productPreProdTask.ItemId
+                && preProdItemTemplateTable.Ordenation == productPreProdTask.Ordenation
+                && preProdItemTemplateTable.PreProdTaskId == productPreProdTask.PreProdTaskId
+                && productPreProdTask.AssignedTo    == preProdItemTemplateTable.AssignedTo
+                && productPreProdTask.Days    == preProdItemTemplateTable.Days
+                && productPreProdTask.RouteOprId    == preProdItemTemplateTable.RouteOprId
+        {
+            productPreProdTask.delete();
+        }
+        ttscommit;
+    }
+
+    
+
+    public static void RecalculteReqTaskDate(TransDate _develiryDate, RequestOrderId_AT _requestOrderId)
+    {
+        ATXProductPreProdTask         productPreProdTask;
+        ATXPreProdTaskTemplate   preProdItemTemplateTable;
+        int                           counter;
+        TransDate                     planDate = _develiryDate;
+        
+        ttsbegin;
+
+        while select forupdate productPreProdTask
+            order by Ordenation desc
+                where productPreProdTask.RequestOrderId == _requestOrderId
+                    //&& productPreProdTask.Approved == NoYes::No
+        {
+            planDate = planDate - productPreProdTask.Days;
+                
+            productPreProdTask.PlanDate = planDate;
+            
+            if(productPreProdTask.Approved == NoYes::No)
+            {
+                productPreProdTask.DueDays  = productPreProdTask.PlanDate - ATXTools::GetMEXDate();
+            }
+
+            productPreProdTask.update();
+            counter++;
+        }
+        ttscommit;
+
+        info(strFmt("@ATXApparelAndTextile_AT:NewLabel729", counter));
+    }
+
+    public static void RecalculteReqTaskDateFromCustRef(TransDate _develiryDate, RequestOrderId_AT _requestOrderId)
+    {
+        ATXProductPreProdTask         productPreProdTask;
+        ATXPreProdTaskTemplate   preProdItemTemplateTable;
+        int                           counter;
+        TransDate                     planDate = _develiryDate;
+        
+        ttsbegin;
+
+        update_recordset productPreProdTask
+            setting XFTY = _develiryDate
+                where productPreProdTask.RequestOrderId == _requestOrderId;
+                
+
+        while select forupdate productPreProdTask
+            order by Ordenation desc
+                where productPreProdTask.RequestOrderId == _requestOrderId
+                    //&& productPreProdTask.Approved == NoYes::No
+        {
+            planDate = planDate - productPreProdTask.Days;
+                
+            productPreProdTask.PlanDate = planDate;
+            
+            if(productPreProdTask.Approved == NoYes::No)
+            {
+                productPreProdTask.DueDays  = productPreProdTask.PlanDate - ATXTools::GetMEXDate();
+            }
+
+            productPreProdTask.update();
+            counter++;
+        }
+        ttscommit;
+
+        info(strFmt("@ATXApparelAndTextile_AT:NewLabel729", counter));
+    }
+
+    public static void RecalculteTaskDateByOrdenation(RequestOrderId_AT _requestOrderId)
+    {
+        ATXProductPreProdTask         productPreProdTask;
+        ATXPreProdTaskTemplate   preProdItemTemplateTable;
+        int                           counter;
+        TransDate                     planDate = ATXGenerateTasks::getLastTaskDate(_requestOrderId);
+        
+        ttsbegin;
+        while select forupdate productPreProdTask
+            order by Ordenation desc
+                where productPreProdTask.RequestOrderId == _requestOrderId
+                    //&& productPreProdTask.Approved == NoYes::No
+        {
+            planDate = planDate - productPreProdTask.Days;
+
+            productPreProdTask.PlanDate = planDate;
+
+            if(productPreProdTask.Approved == NoYes::No)
+            {
+                productPreProdTask.DueDays  = productPreProdTask.PlanDate - ATXTools::GetMEXDate();
+            }
+
+            productPreProdTask.update();
+            counter++;
+        }
+        ttscommit;
+
+        info(strFmt("@ATXApparelAndTextile_AT:NewLabel729", counter));
+    }
+
+    public static TransDate getLastTaskDate(RequestOrderId_AT _requestOrderId)
+    {
+        ATXProductPreProdTask   productPreProdTask;
+
+        select firstonly productPreProdTask
+            order by Ordenation desc
+               where productPreProdTask.RequestOrderId == _requestOrderId
+                    && productPreProdTask.Approved == NoYes::No;
+
+        return productPreProdTask.PlanDate;
+    }
+
+    //
+
+    public static void GenerateTATasksFromItemChange(RequestOrderId_AT  _requestOrderId, ItemId _itemId)
+    {
+        ATXProductPreProdTask        productPreProdTask;
+        ATXPreProdTaskTemplate  preProdItemTemplateTable;
+        RequestOrderUpdates_AT       requestOrderUpdates;
+        RequestOrderLine_AT          requestOrderLine;
+        DialogButton                 dialogButton;
+        RequestOrderHeader_AT        requetsOrderHeader = RequestOrderHeader_AT::find(_requestOrderId);
+        TransDate                    planDate = requetsOrderHeader.RequestOrderDate;
+
+        
+        //If the item is the same, delete previoous item
+        ttsbegin;
+        delete_from productPreProdTask
+            where productPreProdTask.RequestOrderId == _requestOrderId
+                && productPreProdTask.Approved == Noyes::no;
+        ttscommit;
+
+        //Run start process
+        if(requetsOrderHeader.RequestOrderType == RequestOrderType_AT::Sample)
+        {
+            throw Error("@ATXApparelAndTextile_AT:NewLabel727");
+        }
+
+        dialogButton = Box::yesNo(strFmt("@ATXApparelAndTextile_AT:NewLabel722", requetsOrderHeader.RequestOrderDate), DialogButton::Yes, "@ATXApparelAndTextile_AT:NewLabel721");
+        
+        if(dialogButton == DialogButton::Yes)
+        {
+            //get for last request order version
+            select firstonly requestOrderUpdates
+                order by requestOrderUpdateId desc
+                    where requestOrderUpdates.RequestOrderId == requetsOrderHeader.RequestOrderId;
+            
+            //get for first requet orderlines considering last version
+            select firstonly requestOrderLine
+                where requestOrderLine.RequestOrderUpdateId == requestOrderUpdates.requestOrderUpdateId
+                    && requestOrderLine.RequestOrderId == requetsOrderHeader.RequestOrderId;
+            
+
+            while select preProdItemTemplateTable
+                    order by Ordenation desc
+                where preProdItemTemplateTable.ItemId == _itemId
+            {
+                //Validate to not exists an approved task with the same name
+                if(ATXGenerateTasks::AllowInsertTaskId(_requestOrderId, preProdItemTemplateTable.PreProdTaskId) == NoYes::Yes)
+                {
+                    planDate = planDate - preProdItemTemplateTable.Days;
+
+                    productPreProdTask.clear();
+                    productPreProdTask.initValue();
+                    productPreProdTask.TimeAndActionId   = NumberSeq::newGetNumFromCode("TA").num();
+                    productPreProdTask.Ordenation        = preProdItemTemplateTable.Ordenation;
+                    productPreProdTask.ItemId            = preProdItemTemplateTable.ItemId;
+                    productPreProdTask.PreProdTaskId     = preProdItemTemplateTable.PreProdTaskId;
+                    productPreProdTask.PlanDate          = planDate;
+                    productPreProdTask.RequestOrderId    = requetsOrderHeader.RequestOrderId;
+                    productPreProdTask.CustPurchaseOrder = requetsOrderHeader.CustPurchaseOrder;
+                    productPreProdTask.LineOfBusinessId  = requetsOrderHeader.LineOfBusinessId;
+                    productPreProdTask.InventColorId     = ATXTools::GetColorName(productPreProdTask.ItemId, requestOrderLine.Inventdim().InventColorId);
+                    productPreProdTask.ConfigId          = requestOrderLine.Inventdim().configId ? ATXTools::GetConfigName(productPreProdTask.ItemId, requestOrderLine.Inventdim().configId) : InventTable::find(productPreProdTask.ItemId).itemName();
+                    productPreProdTask.custRef           = requetsOrderHeader.CustRef;
+                    productPreProdTask.DueDays           = productPreProdTask.PlanDate - ATXTools::GetMEXDate();
+                    productPreProdTask.AssignedTo        = preProdItemTemplateTable.AssignedTo;
+                    productPreProdTask.AssignedToName    = HcmWorker::find(preProdItemTemplateTable.AssignedTo).name();
+                    productPreProdTask.WorkerName        = HcmWorker::find(productPreProdTask.AssignedTo).name();
+                    productPreProdTask.Email             = HcmWorker::find(productPreProdTask.AssignedTo).email();
+                    productPreProdTask.Days              = preProdItemTemplateTable.Days;
+                    productPreProdTask.XFTY              = requetsOrderHeader.RequestOrderDate;
+                    productPreProdTask.CutPlan           = preProdItemTemplateTable.CutPlan;
+                    productPreProdTask.insert();
+                }
+            }
+
+            ATXGenerateTasks::UpdateApprovedItems(_requestOrderId, requetsOrderHeader, requestOrderLine, _itemId);
+
+            Info("@ATXApparelAndTextile_AT:NewLabel725");
+        }
+    }
+
+    public static void UpdateApprovedItems(RequestOrderId_AT _requestOrderId, RequestOrderHeader_AT _requestOrderHeader, RequestOrderLine_AT  _requestOrderLine, ItemId _itemId)
+    {
+        ATXProductPreProdTask  productPreProdTask;
+
+        ttsbegin;
+        while select forupdate productPreProdTask
+            where productPreProdTask.RequestOrderId == _requestOrderId
+                && productPreProdTask.Approved == NoYes::Yes
+        {
+            productPreProdTask.ItemId           = _itemId;
+            productPreProdTask.LineOfBusinessId = _requestOrderHeader.LineOfBusinessId;
+            productPreProdTask.InventColorId    = ATXTools::GetColorName(_itemId, _requestOrderLine.Inventdim().InventColorId);
+            productPreProdTask.ConfigId         = _requestOrderLine.Inventdim().configId ? ATXTools::GetConfigName(_itemId, _requestOrderLine.Inventdim().configId) : InventTable::find(_itemId).itemName();
+            productPreProdTask.update();
+        }
+        ttscommit;
+
+    }
+
+    public static boolean AllowInsertTaskId(RequestOrderId_AT _requestOrderId, ATXPreProdTaskId _preProdTaskId)
+    {
+        ATXProductPreProdTask  productPreProdTask;
+        boolean                allowinsert = true;
+
+
+        select firstonly productPreProdTask
+            where productPreProdTask.RequestOrderId == _requestOrderId
+                && productPreProdTask.PreProdTaskId == _preProdTaskId;
+        //&& productPreProdTask.Approved == NoYes::Yes;
+
+        if(productPreProdTask.RecId)
+        {
+            allowinsert = false;
+        }
+
+        return allowinsert;
+    }
+
+    public static void UpdatePurchaseOrder(RequestOrderId_AT _requestOrderId, CustPurchaseOrder _custPurchaseOrder)
+    {
+        ATXProductPreProdTask   productPreProdTask;
+
+        ttsbegin;
+        while select forupdate productPreProdTask
+            where productPreProdTask.RequestOrderId == _requestOrderId
+        {
+            productPreProdTask.CustPurchaseOrder = _custPurchaseOrder;
+            productPreProdTask.Update();
+        }
+        ttscommit;
+    }
+
+    public static void UpdateCustRef(RequestOrderId_AT _requestOrderId, custRef _custRef)
+    {
+        ATXProductPreProdTask   productPreProdTask;
+
+        ttsbegin;
+        while select forupdate productPreProdTask
+            where productPreProdTask.RequestOrderId == _requestOrderId
+        {
+            productPreProdTask.CustRef = _custRef;
+            productPreProdTask.Update();
+        }
+        ttscommit;
+    }
+
+    public static void ChangeInventColorId(RequestOrderId_AT _requestOrderId, EcoResColorName _inventColorId)
+    {
+        ATXProductPreProdTask   productPreProdTask;
+
+        ttsbegin;
+        while select forupdate productPreProdTask
+            where productPreProdTask.RequestOrderId == _requestOrderId
+        {
+            productPreProdTask.InventColorId = ATXTools::GetColorName(productPreProdTask.ItemId, _inventColorId);
+            productPreProdTask.update();
+        }
+        ttscommit;
+    }
+
+    public static void ChangeConfigId(RequestOrderId_AT _requestOrderId, EcoResConfigurationName _coinfigId)
+    {
+        ATXProductPreProdTask   productPreProdTask;
+
+        ttsbegin;
+        while select forupdate productPreProdTask
+            where productPreProdTask.RequestOrderId == _requestOrderId
+        {
+            productPreProdTask.ConfigId = ATXTools::GetConfigName(productPreProdTask.ItemId, _coinfigId);
+            productPreProdTask.update();
+        }
+        ttscommit;
+    }
+    */
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>

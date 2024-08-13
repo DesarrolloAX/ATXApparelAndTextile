@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxTable xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXBranchTable</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+public class ATXBranchTable extends common
+{
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>find</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Select Branch record if exist
+    /// </summary>
+    /// <param name = "_branchId">BranchId to select</param>
+    /// <param name = "_forUpdate">True if need update</param>
+    /// <returns>Table instance</returns>
+    public static ATXBranchTable find(ATXBranchId _branchId,boolean _forUpdate = false)
+    {
+        ATXBranchTable branchTable;
+
+        branchTable.selectForUpdate(_forUpdate);
+
+        select firstonly branchTable
+            index BranchIdx
+            where branchTable.BranchId == _branchId;
+
+        return branchTable;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>exist</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Select BranchId record if exist
+    /// </summary>
+    /// <param name = "_branchId">BranchId to select</param>
+    /// <returns>True if found</returns>
+    public static boolean exist(ATXBranchId _branchId)
+    {
+        ATXBranchTable branchTable;
+
+        select firstonly branchTable
+            index BranchIdx
+            where branchTable.BranchId == _branchId;
+
+        return branchTable.RecId != 0;
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+	<DeveloperDocumentation>Storage for branch catalog</DeveloperDocumentation>
+	<FormRef>ATXBranchFormDisplay</FormRef>
+	<Label>@ATXApparelAndTextile_en_US:ATXL00023</Label>
+	<SubscriberAccessLevel>
+		<Read>Allow</Read>
+	</SubscriberAccessLevel>
+	<TitleField1>BranchId</TitleField1>
+	<TitleField2>Description</TitleField2>
+	<ClusteredIndex>BranchIdx</ClusteredIndex>
+	<CreateRecIdIndex>No</CreateRecIdIndex>
+	<PrimaryIndex>BranchIdx</PrimaryIndex>
+	<DeleteActions />
+	<FieldGroups>
+		<AxTableFieldGroup>
+			<Name>AutoReport</Name>
+			<Fields>
+				<AxTableFieldGroupField>
+					<DataField>BranchId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>Description</DataField>
+				</AxTableFieldGroupField>
+			</Fields>
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoLookup</Name>
+			<Fields>
+				<AxTableFieldGroupField>
+					<DataField>BranchId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>Description</DataField>
+				</AxTableFieldGroupField>
+			</Fields>
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoIdentification</Name>
+			<AutoPopulate>Yes</AutoPopulate>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoSummary</Name>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoBrowse</Name>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>Overview</Name>
+			<Label>@ATXApparelAndTextile_en_US:ATXL00009</Label>
+			<Fields>
+				<AxTableFieldGroupField>
+					<DataField>BranchId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>Description</DataField>
+				</AxTableFieldGroupField>
+			</Fields>
+		</AxTableFieldGroup>
+	</FieldGroups>
+	<Fields>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>BranchId</Name>
+			<ExtendedDataType>ATXBranchId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>Description</Name>
+			<ExtendedDataType>Description</ExtendedDataType>
+		</AxTableField>
+	</Fields>
+	<FullTextIndexes />
+	<Indexes>
+		<AxTableIndex>
+			<Name>BranchIdx</Name>
+			<AlternateKey>Yes</AlternateKey>
+			<Fields>
+				<AxTableIndexField>
+					<DataField>BranchId</DataField>
+				</AxTableIndexField>
+			</Fields>
+		</AxTableIndex>
+	</Indexes>
+	<Mappings />
+	<Relations />
+	<StateMachines />
+</AxTable>

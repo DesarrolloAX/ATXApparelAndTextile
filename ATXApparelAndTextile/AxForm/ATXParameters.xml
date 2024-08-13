@@ -1,0 +1,703 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxForm xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="Microsoft.Dynamics.AX.Metadata.V6">
+	<Name>ATXParameters</Name>
+	<SourceCode>
+		<Methods xmlns="">
+			<Method>
+				<Name>classDeclaration</Name>
+				<Source><![CDATA[
+[Form]
+public class ATXParameters extends FormRun
+{
+}
+]]></Source>
+			</Method>
+		</Methods>
+		<DataSources xmlns="" />
+		<DataControls xmlns="" />
+		<Members xmlns="" />
+	</SourceCode>
+	<DataSources>
+		<AxFormDataSource xmlns="">
+			<Name>ATXSalesParameters</Name>
+			<Table>ATXSalesParameters</Table>
+			<Fields>
+				<AxFormDataSourceField>
+					<DataField>DataAreaId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>GenerateRequestBOMBatch</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventLocationId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventSiteId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Key</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>NumberSequenceId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Partition</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>RecId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>RequestOrderType</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>SkipClosedSL</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>TableId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ValidatePrice</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>WMSLocationId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>WMSOrderForSales</DataField>
+				</AxFormDataSourceField>
+			</Fields>
+			<ReferencedDataSources />
+			<DataSourceLinks />
+			<DerivedDataSources />
+		</AxFormDataSource>
+		<AxFormDataSource xmlns="">
+			<Name>ATXProductParameters</Name>
+			<Table>ATXProductParameters</Table>
+			<Fields>
+				<AxFormDataSourceField>
+					<DataField>AddScrapToSalesBOMQty</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>DataAreaId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>DummyValue</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Key</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>LockBOMTemplate</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Partition</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>RecId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>TableId</DataField>
+				</AxFormDataSourceField>
+			</Fields>
+			<ReferencedDataSources />
+			<DataSourceLinks />
+			<DerivedDataSources />
+		</AxFormDataSource>
+		<AxFormDataSource xmlns="">
+			<Name>ATXProdParameters</Name>
+			<Table>ATXProdParameters</Table>
+			<Fields>
+				<AxFormDataSourceField>
+					<DataField>BOMRouteApprover</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>BOMVersionApproved</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>CreateBOMStyles</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>DataAreaId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Key</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Partition</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>RecId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ReqCalcScheduleItem</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>TableId</DataField>
+				</AxFormDataSourceField>
+			</Fields>
+			<ReferencedDataSources />
+			<DataSourceLinks />
+			<DerivedDataSources />
+		</AxFormDataSource>
+		<AxFormDataSource xmlns="">
+			<Name>ATXApparelAndTextileParameters</Name>
+			<Table>ATXApparelAndTextileParameters</Table>
+			<Fields>
+				<AxFormDataSourceField>
+					<DataField>Active</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>DataAreaId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Key</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Partition</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>RecId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>TableId</DataField>
+				</AxFormDataSourceField>
+			</Fields>
+			<ReferencedDataSources />
+			<DataSourceLinks />
+			<DerivedDataSources />
+		</AxFormDataSource>
+	</DataSources>
+	<Design>
+		<Caption xmlns="">@ATXApparelAndTextile_en_US:ATXL00130</Caption>
+		<Pattern xmlns="">TableOfContents</Pattern>
+		<PatternVersion xmlns="">1.1</PatternVersion>
+		<Style xmlns="">TableOfContents</Style>
+		<Controls xmlns="">
+			<AxFormControl xmlns=""
+				i:type="AxFormTabControl">
+				<Name>ParametersTab</Name>
+				<Type>Tab</Type>
+				<FormControlExtension
+					i:nil="true" />
+				<Controls>
+					<AxFormControl xmlns=""
+						i:type="AxFormTabPageControl">
+						<Name>Activation</Name>
+						<Type>TabPage</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<Controls>
+							<AxFormControl xmlns=""
+								i:type="AxFormGroupControl">
+								<Name>ActivationTittleGroup</Name>
+								<Skip>Yes</Skip>
+								<Type>Group</Type>
+								<WidthMode>SizeToAvailable</WidthMode>
+								<FormControlExtension
+									i:nil="true" />
+								<Controls>
+									<AxFormControl xmlns=""
+										i:type="AxFormStaticTextControl">
+										<Name>ActivationTittle</Name>
+										<Skip>Yes</Skip>
+										<Type>StaticText</Type>
+										<WidthMode>SizeToAvailable</WidthMode>
+										<FormControlExtension
+											i:nil="true" />
+										<Style>MainInstruction</Style>
+										<Text>@ATXAT:NewLabel2</Text>
+									</AxFormControl>
+								</Controls>
+								<AllowUserSetup>No</AllowUserSetup>
+								<FrameType>None</FrameType>
+								<Style>TOCTitleContainer</Style>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormGroupControl">
+								<Name>TOCActivation</Name>
+								<HeightMode>SizeToAvailable</HeightMode>
+								<Pattern>FieldsFieldGroups</Pattern>
+								<PatternVersion>1.1</PatternVersion>
+								<Type>Group</Type>
+								<WidthMode>SizeToAvailable</WidthMode>
+								<FormControlExtension
+									i:nil="true" />
+								<Controls>
+									<AxFormControl xmlns=""
+										i:type="AxFormGroupControl">
+										<Name>ActivationGeneralGroup</Name>
+										<Type>Group</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<Controls>
+											<AxFormControl xmlns=""
+												i:type="AxFormCheckBoxControl">
+												<Name>ActivationGeneralGroup_Active</Name>
+												<Type>CheckBox</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>Active</DataField>
+												<DataSource>ATXApparelAndTextileParameters</DataSource>
+											</AxFormControl>
+										</Controls>
+										<DataGroup>General</DataGroup>
+										<DataSource>ATXApparelAndTextileParameters</DataSource>
+									</AxFormControl>
+								</Controls>
+								<ColumnsMode>Fill</ColumnsMode>
+								<FrameType>None</FrameType>
+								<Style>TOCTopicSimple</Style>
+							</AxFormControl>
+						</Controls>
+						<Caption>@ATXAT:NewLabel10</Caption>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormTabPageControl">
+						<Name>ProductPage</Name>
+						<Type>TabPage</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<Controls>
+							<AxFormControl xmlns=""
+								i:type="AxFormGroupControl">
+								<Name>ProductTittleGroup</Name>
+								<Skip>Yes</Skip>
+								<Type>Group</Type>
+								<WidthMode>SizeToAvailable</WidthMode>
+								<FormControlExtension
+									i:nil="true" />
+								<Controls>
+									<AxFormControl xmlns=""
+										i:type="AxFormStaticTextControl">
+										<Name>ProductTittle</Name>
+										<Skip>Yes</Skip>
+										<Type>StaticText</Type>
+										<WidthMode>SizeToAvailable</WidthMode>
+										<FormControlExtension
+											i:nil="true" />
+										<Style>MainInstruction</Style>
+										<Text>@ATXAT:NewLabel10</Text>
+									</AxFormControl>
+								</Controls>
+								<AllowUserSetup>No</AllowUserSetup>
+								<FrameType>None</FrameType>
+								<Style>TOCTitleContainer</Style>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormGroupControl">
+								<Name>TOCProduct</Name>
+								<HeightMode>SizeToAvailable</HeightMode>
+								<Pattern>FieldsFieldGroups</Pattern>
+								<PatternVersion>1.1</PatternVersion>
+								<Type>Group</Type>
+								<WidthMode>SizeToAvailable</WidthMode>
+								<FormControlExtension
+									i:nil="true" />
+								<Controls>
+									<AxFormControl xmlns=""
+										i:type="AxFormGroupControl">
+										<Name>ProductGeneralGroup</Name>
+										<Type>Group</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<Controls>
+											<AxFormControl xmlns=""
+												i:type="AxFormCheckBoxControl">
+												<Name>ProductGeneralGroup_AddScrapToSalesBOMQty</Name>
+												<Type>CheckBox</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>AddScrapToSalesBOMQty</DataField>
+												<DataSource>ATXProductParameters</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormCheckBoxControl">
+												<Name>ProductGeneralGroup_LockBOMTemplate</Name>
+												<Type>CheckBox</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>LockBOMTemplate</DataField>
+												<DataSource>ATXProductParameters</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormIntegerControl">
+												<Name>ProductGeneralGroup_Key</Name>
+												<Type>Integer</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>Key</DataField>
+												<DataSource>ATXProductParameters</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>ProductGeneralGroup_DummyValue</Name>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>DummyValue</DataField>
+												<DataSource>ATXProductParameters</DataSource>
+											</AxFormControl>
+										</Controls>
+										<DataGroup>General</DataGroup>
+										<DataSource>ATXProductParameters</DataSource>
+									</AxFormControl>
+								</Controls>
+								<ColumnsMode>Fill</ColumnsMode>
+								<FrameType>None</FrameType>
+								<Style>TOCTopicSimple</Style>
+							</AxFormControl>
+						</Controls>
+						<Caption>@ATXAT:NewLabel10</Caption>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormTabPageControl">
+						<Name>SalesTablePage</Name>
+						<Type>TabPage</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<Controls>
+							<AxFormControl xmlns=""
+								i:type="AxFormGroupControl">
+								<Name>ParametersTittleGroup</Name>
+								<Skip>Yes</Skip>
+								<Type>Group</Type>
+								<WidthMode>SizeToAvailable</WidthMode>
+								<FormControlExtension
+									i:nil="true" />
+								<Controls>
+									<AxFormControl xmlns=""
+										i:type="AxFormStaticTextControl">
+										<Name>Tittle</Name>
+										<Skip>Yes</Skip>
+										<Type>StaticText</Type>
+										<WidthMode>SizeToAvailable</WidthMode>
+										<FormControlExtension
+											i:nil="true" />
+										<Style>MainInstruction</Style>
+										<Text>@ATXApparelAndTextile_en_US:ATXL00129</Text>
+									</AxFormControl>
+								</Controls>
+								<AllowUserSetup>No</AllowUserSetup>
+								<FrameType>None</FrameType>
+								<Style>TOCTitleContainer</Style>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormGroupControl">
+								<Name>TOCTemplate</Name>
+								<HeightMode>SizeToAvailable</HeightMode>
+								<Pattern>FieldsFieldGroups</Pattern>
+								<PatternVersion>1.1</PatternVersion>
+								<Type>Group</Type>
+								<WidthMode>SizeToAvailable</WidthMode>
+								<FormControlExtension
+									i:nil="true" />
+								<Controls>
+									<AxFormControl xmlns=""
+										i:type="AxFormGroupControl">
+										<Name>FormGroupControlRequestOrder</Name>
+										<Type>Group</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<Controls>
+											<AxFormControl xmlns=""
+												i:type="AxFormReferenceGroupControl">
+												<Name>FormGroupControlRequestOrder_NumberSequenceId</Name>
+												<Type>ReferenceGroup</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<Controls />
+												<DataSource>ATXSalesParameters</DataSource>
+												<ReferenceField>NumberSequenceId</ReferenceField>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormComboBoxControl">
+												<Name>FormGroupControlRequestOrder_RequestOrderType</Name>
+												<Type>ComboBox</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>RequestOrderType</DataField>
+												<DataSource>ATXSalesParameters</DataSource>
+												<Items />
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>FormGroupControlRequestOrder_InventSiteId</Name>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>InventSiteId</DataField>
+												<DataSource>ATXSalesParameters</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>FormGroupControlRequestOrder_InventLocationId</Name>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>InventLocationId</DataField>
+												<DataSource>ATXSalesParameters</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>FormGroupControlRequestOrder_WMSLocationId</Name>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>WMSLocationId</DataField>
+												<DataSource>ATXSalesParameters</DataSource>
+											</AxFormControl>
+										</Controls>
+										<DataGroup>Overview</DataGroup>
+										<DataSource>ATXSalesParameters</DataSource>
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormGroupControl">
+										<Name>RequestOrder</Name>
+										<Type>Group</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<Controls>
+											<AxFormControl xmlns=""
+												i:type="AxFormCheckBoxControl">
+												<Name>RequestOrder_ValidatePrice</Name>
+												<Type>CheckBox</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>ValidatePrice</DataField>
+												<DataSource>ATXSalesParameters</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormCheckBoxControl">
+												<Name>RequestOrder_GenerateRequestBOMBatch</Name>
+												<Type>CheckBox</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>GenerateRequestBOMBatch</DataField>
+												<DataSource>ATXSalesParameters</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormCheckBoxControl">
+												<Name>RequestOrder_WMSOrderForSales</Name>
+												<Type>CheckBox</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>WMSOrderForSales</DataField>
+												<DataSource>ATXSalesParameters</DataSource>
+											</AxFormControl>
+										</Controls>
+										<DataGroup>RequestOrder</DataGroup>
+										<DataSource>ATXSalesParameters</DataSource>
+									</AxFormControl>
+								</Controls>
+								<ColumnsMode>Fill</ColumnsMode>
+								<FrameType>None</FrameType>
+								<Style>TOCTopicSimple</Style>
+							</AxFormControl>
+						</Controls>
+						<Caption>@ATXAT:NewLabel84</Caption>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormTabPageControl">
+						<Name>ProductionPage</Name>
+						<Type>TabPage</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<Controls>
+							<AxFormControl xmlns=""
+								i:type="AxFormGroupControl">
+								<Name>ProductionTittleGroup</Name>
+								<Skip>Yes</Skip>
+								<Type>Group</Type>
+								<WidthMode>SizeToAvailable</WidthMode>
+								<FormControlExtension
+									i:nil="true" />
+								<Controls>
+									<AxFormControl xmlns=""
+										i:type="AxFormStaticTextControl">
+										<Name>ProductionTittle</Name>
+										<Skip>Yes</Skip>
+										<Type>StaticText</Type>
+										<WidthMode>SizeToAvailable</WidthMode>
+										<FormControlExtension
+											i:nil="true" />
+										<Style>MainInstruction</Style>
+										<Text>@ATXAT:NewLabel8</Text>
+									</AxFormControl>
+								</Controls>
+								<AllowUserSetup>No</AllowUserSetup>
+								<FrameType>None</FrameType>
+								<Style>TOCTitleContainer</Style>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormGroupControl">
+								<Name>TOCProduction</Name>
+								<HeightMode>SizeToAvailable</HeightMode>
+								<Pattern>FieldsFieldGroups</Pattern>
+								<PatternVersion>1.1</PatternVersion>
+								<Type>Group</Type>
+								<WidthMode>SizeToAvailable</WidthMode>
+								<FormControlExtension
+									i:nil="true" />
+								<Controls>
+									<AxFormControl xmlns=""
+										i:type="AxFormGroupControl">
+										<Name>ProductionRequestGroup</Name>
+										<Type>Group</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<Controls>
+											<AxFormControl xmlns=""
+												i:type="AxFormCheckBoxControl">
+												<Name>ProductionRequestGroup_CreateBOMStyles</Name>
+												<Type>CheckBox</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>CreateBOMStyles</DataField>
+												<DataSource>ATXProdParameters</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormCheckBoxControl">
+												<Name>ProductionRequestGroup_ReqCalcScheduleItem</Name>
+												<Type>CheckBox</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>ReqCalcScheduleItem</DataField>
+												<DataSource>ATXProdParameters</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormCheckBoxControl">
+												<Name>ProductionRequestGroup_BOMVersionApproved</Name>
+												<Type>CheckBox</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>BOMVersionApproved</DataField>
+												<DataSource>ATXProdParameters</DataSource>
+											</AxFormControl>
+											<AxFormControl xmlns=""
+												i:type="AxFormReferenceGroupControl">
+												<Name>ProductionRequestGroup_BOMRouteApprover</Name>
+												<Type>ReferenceGroup</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<Controls />
+												<DataSource>ATXProdParameters</DataSource>
+												<ReferenceField>BOMRouteApprover</ReferenceField>
+											</AxFormControl>
+										</Controls>
+										<DataGroup>Request</DataGroup>
+										<DataSource>ATXProdParameters</DataSource>
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormGroupControl">
+										<Name>Prod</Name>
+										<Type>Group</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<Controls>
+											<AxFormControl xmlns=""
+												i:type="AxFormCheckBoxControl">
+												<Name>Prod_ActivateCutControls</Name>
+												<Type>CheckBox</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>ActivateCutControls</DataField>
+												<DataSource>ATXProdParameters</DataSource>
+											</AxFormControl>
+										</Controls>
+										<DataGroup>Overview</DataGroup>
+										<DataSource>ATXProdParameters</DataSource>
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormGroupControl">
+										<Name>YieldFormGroupControl</Name>
+										<Type>Group</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<Controls>
+											<AxFormControl xmlns=""
+												i:type="AxFormRealControl">
+												<Name>YieldFormGroupControl_YieldPercent</Name>
+												<Type>Real</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>YieldPercent</DataField>
+												<DataSource>ATXProdParameters</DataSource>
+											</AxFormControl>
+										</Controls>
+										<DataGroup>Yield</DataGroup>
+										<DataSource>ATXProdParameters</DataSource>
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormGroupControl">
+										<Name>ProdValidations</Name>
+										<Type>Group</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<Controls>
+											<AxFormControl xmlns=""
+												i:type="AxFormCheckBoxControl">
+												<Name>ProdValidations_ValidateQtyOnPreviousOperation</Name>
+												<Type>CheckBox</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>ValidateQtyOnPreviousOperation</DataField>
+												<DataSource>ATXProdParameters</DataSource>
+											</AxFormControl>
+										</Controls>
+										<DataGroup>FloorControlValidations</DataGroup>
+										<DataSource>ATXProdParameters</DataSource>
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormGroupControl">
+										<Name>ShopFloorFormGroupControl</Name>
+										<Type>Group</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<Controls>
+											<AxFormControl xmlns=""
+												i:type="AxFormCheckBoxControl">
+												<Name>ShopFloorFormGroupControl_ValidateGoodErrorQty</Name>
+												<Type>CheckBox</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>ValidateGoodErrorQty</DataField>
+												<DataSource>ATXProdParameters</DataSource>
+											</AxFormControl>
+										</Controls>
+										<DataGroup>ShopFloor</DataGroup>
+										<DataSource>ATXProdParameters</DataSource>
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormGroupControl">
+										<Name>LastRouteOprGroup</Name>
+										<Type>Group</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<Controls>
+											<AxFormControl xmlns=""
+												i:type="AxFormStringControl">
+												<Name>LastRouteOprGroup_LastOperationJournalName</Name>
+												<Type>String</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>LastOperationJournalName</DataField>
+												<DataSource>ATXProdParameters</DataSource>
+											</AxFormControl>
+										</Controls>
+										<DataGroup>LastRouteOpr</DataGroup>
+										<DataSource>ATXProdParameters</DataSource>
+									</AxFormControl>
+								</Controls>
+								<ColumnsMode>Fill</ColumnsMode>
+								<FrameType>None</FrameType>
+								<Style>TOCTopicSimple</Style>
+							</AxFormControl>
+						</Controls>
+						<Caption>@ATXAT:NewLabel8</Caption>
+					</AxFormControl>
+				</Controls>
+				<Style>VerticalTabs</Style>
+			</AxFormControl>
+		</Controls>
+	</Design>
+	<Parts />
+</AxForm>

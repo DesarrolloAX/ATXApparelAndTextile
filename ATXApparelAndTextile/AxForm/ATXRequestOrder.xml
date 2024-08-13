@@ -1,0 +1,2285 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxForm xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="Microsoft.Dynamics.AX.Metadata.V6">
+	<Name>ATXRequestOrder</Name>
+	<SourceCode>
+		<Methods xmlns="">
+			<Method>
+				<Name>classDeclaration</Name>
+				<Source><![CDATA[
+[Form]
+public class ATXRequestOrder extends FormRun
+{
+    ATXInventDimCtrl_Frm_ProductDim    inventDimCtrl_Frm_ProductDim;
+
+}
+]]></Source>
+			</Method>
+			<Method>
+				<Name>updateDesign</Name>
+				<Source><![CDATA[
+    void updateDesign(InventDimFormDesignUpdate _mode)
+    {
+        InventDimParm   inventDimParmEnabled;
+
+        switch (_mode)
+        {
+            case InventDimFormDesignUpdate::Init          :
+            if (!inventDimCtrl_Frm_ProductDim)
+                {
+                    inventDimCtrl_Frm_ProductDim  = ATXInventDimCtrl_Frm_ProductDim::newFromForm(element);
+                    inventDimCtrl_Frm_ProductDim.parmSkipOnHandLookUp(true);
+                }
+            case InventDimFormDesignUpdate::LinkActive    :
+            //Fall through
+            case InventDimFormDesignUpdate::Active        :
+            //Fall through
+            case InventDimFormDesignUpdate::FieldChange   :
+            if (ATXRequestOrderLine.ItemId)
+                {
+                    inventDimParmEnabled = InventDimParm::activeDimFlag(
+                    InventDimGroupSetup::newItemId(ATXRequestOrderLine.ItemId));
+                }
+                else
+                {
+                    inventDimParmEnabled.clearProductDimensions();
+                }
+
+                inventDimCtrl_Frm_ProductDim.parmDimParmEnabled(inventDimParmEnabled);
+                InventDim.clearNotSelectedDim(inventDimParmEnabled);
+                inventDimCtrl_Frm_ProductDim.formSetControls(true);
+                break;
+
+            default :
+                throw error(strfmt("@PDS1294",funcname()));
+        }
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>init</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    public void init()
+    {
+        super();
+
+        element.updateDesign(InventDimFormDesignUpdate::Init);
+        ATXRequestOrderHeader_DS.query().dataSourceTable(tablenum(ATXRequestOrderHeader)).addOrderByField(fieldNum(ATXRequestOrderHeader, RequestOrderId),SortOrder::Descending);
+
+        if (!ATXRequestOrderUsers::find(curUserId()))
+        {
+            UpdateQtyToSalesLine.visible(false);
+            ATXRequestOrderHeader_DS.object(fieldNum(ATXRequestOrderHeader, SkipBOMValidation)).allowEdit(false);
+        }
+        else
+        {
+            ATXRequestOrderHeader_DS.object(fieldNum(ATXRequestOrderHeader, SkipBOMValidation)).allowEdit(true);
+        }
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>inventDimSetupObject</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    Object inventDimSetupObject()
+    {
+        return inventDimCtrl_Frm_ProductDim;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>itemId</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    ItemId itemId()
+    {
+        ;
+
+        return ATXRequestOrderLine.ItemId;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>refreshHeaderDSFromCaller</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    public void refreshHeaderDSFromCaller()
+    {
+        ATXRequestOrderHeader_ds.research(true);
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+		<DataSources xmlns="">
+			<DataSource>
+				<Name>ATXRequestOrderHeader</Name>
+				<Methods>
+					<Method>
+						<Name>active</Name>
+						<Source><![CDATA[
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns></returns>
+        public int active()
+        {
+            int ret;
+        
+            ret = super();
+            if (ATXRequestOrderHeader.RequestOrderStatus == ATXRequestOrderStatus::Loaded)
+            {
+                ATXRequestOrderHeader_DS.allowEdit(true);
+                ATXRequestOrderLine_ds.allowEdit(true);
+                InventDim_ds.allowEdit(true);
+            }
+            else
+            {
+                ATXRequestOrderHeader_DS.allowEdit(false);
+                if (!ATXRequestOrderUsers::find(curUserId()))
+                {
+                    ATXRequestOrderLine_ds.allowEdit(false);
+                }
+                InventDim_ds.allowEdit(false);
+            }
+        
+            return ret;
+        }
+
+]]></Source>
+					</Method>
+				</Methods>
+				<Fields />
+			</DataSource>
+			<DataSource>
+				<Name>ATXRequestOrderLine</Name>
+				<Methods>
+					<Method>
+						<Name>linkActive</Name>
+						<Source><![CDATA[
+        /// <summary>
+        ///
+        /// </summary>
+        public void linkActive()
+        {
+            super();
+            element.updateDesign(InventDimFormDesignUpdate::LinkActive);
+        }
+
+]]></Source>
+					</Method>
+					<Method>
+						<Name>active</Name>
+						<Source><![CDATA[
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns></returns>
+        public int active()
+        {
+            int ret;
+        
+            ret = super();
+            //element.lock();
+            element.updateDesign(InventDimFormDesignUpdate::Active);
+            //element.unLock();
+        
+            return ret;
+        }
+
+]]></Source>
+					</Method>
+					<Method>
+						<Name>write</Name>
+						<Source><![CDATA[
+        /// <summary>
+        ///
+        /// </summary>
+        public void write()
+        {
+            ATXRequestOrderLine.InventDimId = InventDim::findOrCreate(inventDim).InventDimId;
+
+            super();
+
+            if (ATXRequestOrderLine.InventDimId != inventDim.InventDimId)
+            {
+                inventDim.data(InventDim::find(ATXRequestOrderLine.InventDimId));
+                inventDim_ds.setCurrent();
+            }
+        }
+
+]]></Source>
+					</Method>
+					<Method>
+						<Name>validateWrite</Name>
+						<Source><![CDATA[
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns></returns>
+        public boolean validateWrite()
+        {
+            boolean ret;
+        
+            ret = super();
+            ATXRequestOrderLine.InventDimId = InventDim::findOrCreate(inventDim).InventDimId;
+
+            return ret;
+        }
+
+]]></Source>
+					</Method>
+				</Methods>
+				<Fields>
+					<Field>
+						<DataField>ItemId</DataField>
+						<Methods>
+							<Method>
+								<Name>modified</Name>
+								<Source><![CDATA[
+            /// <summary>
+            ///
+            /// </summary>
+            public void modified()
+            {
+                InventDim   inventDimNewLine;
+
+                super();
+                
+                inventDimNewLine                    = InventDim::find(InventDim::inventDimIdBlank());
+                inventDimNewLine.InventSiteId       = ATXRequestOrderHeader.InventSiteId;
+                inventDimNewLine.InventLocationId   = ATXRequestOrderHeader.InventLocationId;
+                inventDimNewLine.wMSLocationId      = InventLocation::find(ATXrequestOrderHeader.InventLocationId).WMSlocationIdDefaultIssue;
+                inventDimNewLine                    = InventDim::findOrCreate(inventDimNewLine);
+                ATXRequestOrderLine.InventDimId     = inventDimNewLine.inventDimId;
+                inventDim.data(inventDimNewLine);
+                ATXRequestOrderHeader.ItemId        = ATXRequestOrderLine.ItemId;
+                element.updateDesign(InventDimFormDesignUpdate::FieldChange);
+            }
+
+]]></Source>
+							</Method>
+						</Methods>
+					</Field>
+				</Fields>
+			</DataSource>
+			<DataSource>
+				<Name>InventDim</Name>
+				<Methods>
+					<Method>
+						<Name>write</Name>
+						<Source><![CDATA[
+        /// <summary>
+        ///
+        /// </summary>
+        public void write()
+        {
+            //super();
+        }
+
+]]></Source>
+					</Method>
+				</Methods>
+				<Fields>
+					<Field>
+						<DataField>configId</DataField>
+						<Methods>
+							<Method>
+								<Name>lookup</Name>
+								<Source><![CDATA[
+            /// <summary>
+            ///
+            /// </summary>
+            /// <param name = "_formControl"></param>
+            /// <param name = "_filterStr"></param>
+            public void lookup(FormControl _formControl, str _filterStr)
+            {
+                ATXLookupTableEngine::lookUpByParameters(_formControl, 'ProductDimensionConfigLookup_AT', 'Name', ['ItemId'], [ATXRequestOrderLine.ItemId], ['Name', 'Description']);
+            }
+
+]]></Source>
+							</Method>
+						</Methods>
+					</Field>
+				</Fields>
+			</DataSource>
+		</DataSources>
+		<DataControls xmlns="">
+			<Control>
+				<Name>UpdateQtyToSalesLine</Name>
+				<Type>Button</Type>
+				<Methods>
+					<Method>
+						<Name>clicked</Name>
+						<Source><![CDATA[
+        /// <summary>
+        ///
+        /// </summary>
+        public void clicked()
+        {
+            SalesTable salesTableQry;
+            SalesLine salesLineUpd;
+            ATXBreakdownOrderLine breakdownOrderLineUpd;
+            InventDim inventDimQry;
+
+            super();
+
+            // Look for SalesLine
+            if (ATXRequestOrderHeader.RequestOrderStatus == ATXRequestOrderStatus::Authorized)
+            {
+                salesTableQry = SalesTable::find(ATXRequestOrderHeader.SalesId);
+                if (salesTableQry)
+                {
+                    select firstonly salesLineUpd
+                        where salesLineUpd.SalesId == salesTableQry.SalesId
+                        && salesLineUpd.ItemId == ATXRequestOrderLine.ItemId
+                        ;
+
+                    select firstonly breakdownOrderLineUpd
+                        where breakdownOrderLineUpd.InventTransId == salesLineUpd.InventTransId
+                        && breakdownOrderLineUpd.InventSizeId == ATXRequestOrderLine.inventDim().InventSizeId
+                        ;
+
+                    if (breakdownOrderLineUpd)
+                    {
+                        ttsbegin;
+                        breakdownOrderLineUpd.selectForUpdate(true);
+                        breakdownOrderLineUpd.QtyOrig = ATXRequestOrderLine.QtyOrig;
+                        breakdownOrderLineUpd.Qty = ATXRequestOrderLine.RequestQty;
+                        breakdownOrderLineUpd.update();
+                        ttscommit;
+                    }
+                }
+            }
+        }
+
+]]></Source>
+					</Method>
+				</Methods>
+			</Control>
+		</DataControls>
+		<Members xmlns="" />
+	</SourceCode>
+	<AllowPreLoading>No</AllowPreLoading>
+	<DataSources>
+		<AxFormDataSource xmlns="">
+			<Name>ATXRequestOrderHeader</Name>
+			<Table>ATXRequestOrderHeader</Table>
+			<Fields>
+				<AxFormDataSourceField>
+					<DataField>AuthDate</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>BranchId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>CO</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Comments</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>CPO</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>CreatedBy</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>CreatedDateTime</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>CurrencyCode</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>CustAccount</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>CustClassId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>CustPlanNumber</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>CustPurchaseOrder</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>CustRef</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>CustRefOld</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>DataAreaId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>DestinationPlaceId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>DlvModeId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Finiched</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventLocationId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventSiteId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventTransRefId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventTransType</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>IssueDate</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ItemDivisionId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ItemId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>LineOfBusinessId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ModifiedBy</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ModifiedDateTime</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Partition</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>PlanNumber</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>PPK</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>PreviousRequestOrderId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ProdIdLink</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ProdPoolId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>QtyOv</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>RecId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>RequestOrderCancelDate</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>RequestOrderCreated</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>RequestOrderDate</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>RequestOrderGroupId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>RequestOrderId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>RequestOrderStatus</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>RequestOrderType</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ReviewedOrderDate</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>SalesDlvTermId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>SalesId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>SampleTypeId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>SeasonId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ShipmentOrderDate</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>SkipBOMValidation</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>TableId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>UPC</DataField>
+				</AxFormDataSourceField>
+			</Fields>
+			<ReferencedDataSources />
+			<AllowCreate>No</AllowCreate>
+			<Index>RequestOrderIdx</Index>
+			<DataSourceLinks />
+			<DerivedDataSources />
+		</AxFormDataSource>
+		<AxFormDataSource xmlns="">
+			<Name>ATXRequestOrderUpdates</Name>
+			<Table>ATXRequestOrderUpdates</Table>
+			<Fields>
+				<AxFormDataSourceField>
+					<DataField>DataAreaId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Partition</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>RecId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>RequestOrderDate</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>RequestOrderId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>RequestOrderUpdateId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>TableId</DataField>
+				</AxFormDataSourceField>
+			</Fields>
+			<ReferencedDataSources />
+			<JoinSource>ATXRequestOrderHeader</JoinSource>
+			<StartPosition>Last</StartPosition>
+			<DataSourceLinks />
+			<DerivedDataSources />
+		</AxFormDataSource>
+		<AxFormDataSource xmlns="">
+			<Name>ATXRequestOrderLine</Name>
+			<Table>ATXRequestOrderLine</Table>
+			<Fields>
+				<AxFormDataSourceField>
+					<DataField>BranchId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>DataAreaId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>DestinationPlaceId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>DlvModeId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventDimId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventTransIdOrigin</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventTransOriginId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ItemDivisionId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ItemId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>LineAmount</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>LineAmountOrig</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>LineDisc</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>LineNum</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>LinePercent</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Partition</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>QtyOrig</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>RecId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>RequestOrderCancelDate</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>RequestOrderDate</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>RequestOrderId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>RequestOrderUpdateId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>RequestQty</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ReviewedOrderDate</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>SalesPrice</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>SeasonId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>TableId</DataField>
+				</AxFormDataSourceField>
+			</Fields>
+			<ReferencedDataSources />
+			<JoinSource>ATXRequestOrderUpdates</JoinSource>
+			<DataSourceLinks />
+			<DerivedDataSources />
+		</AxFormDataSource>
+		<AxFormDataSource xmlns="">
+			<Name>InventDim</Name>
+			<Table>InventDim</Table>
+			<Fields>
+				<AxFormDataSourceField>
+					<DataField>configId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>CreatedDateTime</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>DataAreaId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>inventBatchId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventColorId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventDimension1</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventDimension10</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventDimension2</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventDimension3</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventDimension4</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventDimension5</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventDimension6</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventDimension7</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventDimension8</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventDimension9</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>inventDimId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventGtdId_RU</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventLocationId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventOwnerId_RU</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventProfileId_RU</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>inventSerialId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventSiteId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventSizeId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventStatusId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventStyleId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>LicensePlateId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ModifiedBy</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ModifiedDateTime</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Partition</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>RecId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>SHA1HashHex</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>TableId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>wMSLocationId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>wMSPalletId</DataField>
+				</AxFormDataSourceField>
+			</Fields>
+			<ReferencedDataSources />
+			<JoinSource>ATXRequestOrderLine</JoinSource>
+			<LinkType>InnerJoin</LinkType>
+			<DataSourceLinks />
+			<DerivedDataSources />
+		</AxFormDataSource>
+	</DataSources>
+	<Design>
+		<Caption xmlns="">@ATXAT:NewLabel9</Caption>
+		<Pattern xmlns="">DetailsTransaction</Pattern>
+		<PatternVersion xmlns="">1.4</PatternVersion>
+		<Style xmlns="">DetailsFormTransaction</Style>
+		<Controls xmlns="">
+			<AxFormControl xmlns=""
+				i:type="AxFormActionPaneControl">
+				<Name>AplicationBar</Name>
+				<Type>ActionPane</Type>
+				<FormControlExtension
+					i:nil="true" />
+				<Controls>
+					<AxFormControl xmlns=""
+						i:type="AxFormActionPaneTabControl">
+						<Name>Request</Name>
+						<Type>ActionPaneTab</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<Controls>
+							<AxFormControl xmlns=""
+								i:type="AxFormButtonGroupControl">
+								<Name>NewRequest</Name>
+								<Type>ButtonGroup</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<Controls>
+									<AxFormControl xmlns=""
+										i:type="AxFormMenuFunctionButtonControl">
+										<Name>ATXRequestOrderCreate</Name>
+										<Type>MenuFunctionButton</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<MenuItemName>ATXRequestOrderCreate</MenuItemName>
+										<MenuItemType>Action</MenuItemType>
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormMenuFunctionButtonControl">
+										<Name>ATXRequestOrderUpload</Name>
+										<Type>MenuFunctionButton</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<MenuItemName>ATXRequestOrderUpload</MenuItemName>
+										<MenuItemType>Action</MenuItemType>
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormMenuFunctionButtonControl">
+										<Name>ATXRequestOrderCopy</Name>
+										<Type>MenuFunctionButton</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<DataSource>ATXRequestOrderHeader</DataSource>
+										<MenuItemName>ATXRequestOrderCopy</MenuItemName>
+										<MenuItemType>Action</MenuItemType>
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormMenuFunctionButtonControl">
+										<Name>ATXRequestOrderNewVersion</Name>
+										<Type>MenuFunctionButton</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<DataSource>ATXRequestOrderHeader</DataSource>
+										<MenuItemName>ATXRequestOrderNewVersion</MenuItemName>
+										<MenuItemType>Action</MenuItemType>
+									</AxFormControl>
+								</Controls>
+								<Caption>@SYS2055</Caption>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormButtonGroupControl">
+								<Name>FunctionsRequest</Name>
+								<Type>ButtonGroup</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<Controls>
+									<AxFormControl xmlns=""
+										i:type="AxFormMenuFunctionButtonControl">
+										<Name>ATXRequestOrderAuthorize</Name>
+										<Type>MenuFunctionButton</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<DataSource>ATXRequestOrderHeader</DataSource>
+										<MenuItemName>ATXRequestOrderAuthorize</MenuItemName>
+										<MenuItemType>Action</MenuItemType>
+										<MultiSelect>Yes</MultiSelect>
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormMenuFunctionButtonControl">
+										<Name>ATXRequestOrderCancel</Name>
+										<Type>MenuFunctionButton</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<MenuItemName>ATXRequestOrderCancel</MenuItemName>
+										<MenuItemType>Action</MenuItemType>
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormMenuFunctionButtonControl">
+										<Name>ATXRequestOrderUpdateCustRef</Name>
+										<Type>MenuFunctionButton</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<MenuItemName>ATXRequestOrderUpdateCustRef</MenuItemName>
+										<MenuItemType>Action</MenuItemType>
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormMenuFunctionButtonControl">
+										<Name>ATXGenerateProductPreProdTask</Name>
+										<Type>MenuFunctionButton</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<DataSource>ATXRequestOrderHeader</DataSource>
+										<MenuItemName>ATXGenerateProductPreProdTask</MenuItemName>
+										<MenuItemType>Action</MenuItemType>
+									</AxFormControl>
+								</Controls>
+								<Caption>@SYS81103</Caption>
+							</AxFormControl>
+						</Controls>
+						<Caption>@ATXAT:NewLabel5</Caption>
+					</AxFormControl>
+				</Controls>
+				<DataSource>ATXRequestOrderHeader</DataSource>
+			</AxFormControl>
+			<AxFormControl xmlns=""
+				i:type="AxFormGroupControl">
+				<Name>NavigationList</Name>
+				<HeightMode>SizeToAvailable</HeightMode>
+				<Type>Group</Type>
+				<Visible>No</Visible>
+				<FormControlExtension
+					i:nil="true" />
+				<Controls>
+					<AxFormControl>
+						<Name>QuickFilterControl2</Name>
+						<WidthMode>SizeToAvailable</WidthMode>
+						<FormControlExtension>
+							<Name>QuickFilterControl</Name>
+							<ExtensionComponents />
+							<ExtensionProperties>
+								<AxFormControlExtensionProperty>
+									<Name>targetControlName</Name>
+									<Type>String</Type>
+									<Value>NavigationListGrid</Value>
+								</AxFormControlExtensionProperty>
+								<AxFormControlExtensionProperty>
+									<Name>placeholderText</Name>
+									<Type>String</Type>
+								</AxFormControlExtensionProperty>
+								<AxFormControlExtensionProperty>
+									<Name>defaultColumnName</Name>
+									<Type>String</Type>
+								</AxFormControlExtensionProperty>
+							</ExtensionProperties>
+						</FormControlExtension>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormGridControl">
+						<Name>NavigationListGrid</Name>
+						<AllowEdit>No</AllowEdit>
+						<Type>Grid</Type>
+						<WidthMode>SizeToContent</WidthMode>
+						<FormControlExtension
+							i:nil="true" />
+						<Controls>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>NavigationListGrid_RequestOrderId</Name>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>RequestOrderId</DataField>
+								<DataSource>ATXRequestOrderHeader</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormComboBoxControl">
+								<Name>NavigationListGrid_RequestOrderType</Name>
+								<Type>ComboBox</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>RequestOrderType</DataField>
+								<DataSource>ATXRequestOrderHeader</DataSource>
+								<Items />
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormComboBoxControl">
+								<Name>NavigationListGrid_RequestOrderStatus</Name>
+								<Type>ComboBox</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>RequestOrderStatus</DataField>
+								<DataSource>ATXRequestOrderHeader</DataSource>
+								<Items />
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>NavigationListGrid_SalesId</Name>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>SalesId</DataField>
+								<DataSource>ATXRequestOrderHeader</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>NavigationListGrid_CustAccount</Name>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>CustAccount</DataField>
+								<DataSource>ATXRequestOrderHeader</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>NavigationListGrid_LineOfBusinessId</Name>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>LineOfBusinessId</DataField>
+								<DataSource>ATXRequestOrderHeader</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>NavigationListGrid_CustPurchaseOrder</Name>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>CustPurchaseOrder</DataField>
+								<DataSource>ATXRequestOrderHeader</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>NavigationListGrid_CustRef</Name>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>CustRef</DataField>
+								<DataSource>ATXRequestOrderHeader</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>NavigationListGrid_ProdPoolId</Name>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>ProdPoolId</DataField>
+								<DataSource>ATXRequestOrderHeader</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>NavigationListGrid_SeasonId</Name>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>SeasonId</DataField>
+								<DataSource>ATXRequestOrderHeader</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>NavigationListGrid_SampleTypeId</Name>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>SampleTypeId</DataField>
+								<DataSource>ATXRequestOrderHeader</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormDateControl">
+								<Name>NavigationListGrid_AuthDate</Name>
+								<Type>Date</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>AuthDate</DataField>
+								<DataSource>ATXRequestOrderHeader</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormDateControl">
+								<Name>NavigationListGrid_RequestOrderDate</Name>
+								<Type>Date</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>RequestOrderDate</DataField>
+								<DataSource>ATXRequestOrderHeader</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormDateControl">
+								<Name>NavigationListGrid_RequestOrderCancelDate</Name>
+								<Type>Date</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>RequestOrderCancelDate</DataField>
+								<DataSource>ATXRequestOrderHeader</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>NavigationListGrid_ItemId</Name>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>ItemId</DataField>
+								<DataSource>ATXRequestOrderHeader</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormRealControl">
+								<Name>NavigationListGrid_QtyOv</Name>
+								<Type>Real</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>QtyOv</DataField>
+								<DataSource>ATXRequestOrderHeader</DataSource>
+							</AxFormControl>
+						</Controls>
+						<DataGroup>Overview</DataGroup>
+						<DataSource>ATXRequestOrderHeader</DataSource>
+						<MultiSelect>No</MultiSelect>
+						<ShowRowLabels>No</ShowRowLabels>
+						<Style>List</Style>
+					</AxFormControl>
+				</Controls>
+				<FrameType>None</FrameType>
+				<Style>SidePanel</Style>
+			</AxFormControl>
+			<AxFormControl xmlns=""
+				i:type="AxFormTabControl">
+				<Name>MainTab</Name>
+				<Type>Tab</Type>
+				<FormControlExtension
+					i:nil="true" />
+				<Controls>
+					<AxFormControl xmlns=""
+						i:type="AxFormTabPageControl">
+						<Name>TabPageDetails</Name>
+						<Type>TabPage</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<Controls>
+							<AxFormControl xmlns=""
+								i:type="AxFormGroupControl">
+								<Name>HeaderInfo</Name>
+								<Type>Group</Type>
+								<WidthMode>SizeToAvailable</WidthMode>
+								<FormControlExtension
+									i:nil="true" />
+								<Controls>
+									<AxFormControl xmlns=""
+										i:type="AxFormStringControl">
+										<Name>HeaderTitle</Name>
+										<AlignControl>No</AlignControl>
+										<AutoDeclaration>Yes</AutoDeclaration>
+										<ElementPosition>1073741822</ElementPosition>
+										<FilterExpression>%1</FilterExpression>
+										<Skip>Yes</Skip>
+										<Type>String</Type>
+										<VerticalSpacing>-1</VerticalSpacing>
+										<WidthMode>SizeToAvailable</WidthMode>
+										<FormControlExtension
+											i:nil="true" />
+										<Border>None</Border>
+										<ColorScheme>WindowsPalette</ColorScheme>
+										<DataSource>ATXRequestOrderHeader</DataSource>
+										<FontSize>11</FontSize>
+										<ForegroundColor>DynTitleGreen</ForegroundColor>
+										<Label>@ATXAT:NewLabel9</Label>
+										<ShowLabel>No</ShowLabel>
+										<Style>TitleField</Style>
+										<ViewEditMode>View</ViewEditMode>
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormGroupControl">
+										<Name>EntityStatus</Name>
+										<ExtendedStyle>entityStatus</ExtendedStyle>
+										<Type>Group</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<Controls>
+											<AxFormControl xmlns=""
+												i:type="AxFormComboBoxControl">
+												<Name>RequestOrderStatus</Name>
+												<ElementPosition>1610612733</ElementPosition>
+												<FilterExpression>%1</FilterExpression>
+												<HeightMode>Auto</HeightMode>
+												<Left>0</Left>
+												<LeftMode>RightEdge</LeftMode>
+												<Skip>Yes</Skip>
+												<Type>ComboBox</Type>
+												<VerticalSpacing>-1</VerticalSpacing>
+												<WidthMode>Auto</WidthMode>
+												<FormControlExtension
+													i:nil="true" />
+												<DataField>RequestOrderStatus</DataField>
+												<DataSource>ATXRequestOrderHeader</DataSource>
+												<ShowLabel>No</ShowLabel>
+												<ViewEditMode>View</ViewEditMode>
+												<Items />
+											</AxFormControl>
+										</Controls>
+										<ArrangeMethod>HorizontalRight</ArrangeMethod>
+										<Breakable>No</Breakable>
+										<FrameType>None</FrameType>
+										<ViewEditMode>View</ViewEditMode>
+									</AxFormControl>
+								</Controls>
+								<ArrangeMethod>HorizontalLeft</ArrangeMethod>
+								<FrameType>None</FrameType>
+								<Style>DetailTitleContainer</Style>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormTabControl">
+								<Name>DetailsTab</Name>
+								<Type>Tab</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<Controls>
+									<AxFormControl xmlns=""
+										i:type="AxFormTabPageControl">
+										<Name>LineView</Name>
+										<Type>TabPage</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<Controls>
+											<AxFormControl xmlns=""
+												i:type="AxFormTabControl">
+												<Name>LineViewTab</Name>
+												<Type>Tab</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<Controls>
+													<AxFormControl xmlns=""
+														i:type="AxFormTabPageControl">
+														<Name>LineViewHeader</Name>
+														<Pattern>FieldsFieldGroups</Pattern>
+														<PatternVersion>1.1</PatternVersion>
+														<Type>TabPage</Type>
+														<FormControlExtension
+															i:nil="true" />
+														<Controls>
+															<AxFormControl xmlns=""
+																i:type="AxFormGroupControl">
+																<Name>HeaderOverviewGroup</Name>
+																<Type>Group</Type>
+																<FormControlExtension
+																	i:nil="true" />
+																<Controls>
+																	<AxFormControl xmlns=""
+																		i:type="AxFormStringControl">
+																		<Name>HeaderOverviewGroup_RequestOrderId</Name>
+																		<Type>String</Type>
+																		<FormControlExtension
+																			i:nil="true" />
+																		<DataField>RequestOrderId</DataField>
+																		<DataSource>ATXRequestOrderHeader</DataSource>
+																	</AxFormControl>
+																	<AxFormControl xmlns=""
+																		i:type="AxFormComboBoxControl">
+																		<Name>HeaderOverviewGroup_RequestOrderType</Name>
+																		<Type>ComboBox</Type>
+																		<FormControlExtension
+																			i:nil="true" />
+																		<DataField>RequestOrderType</DataField>
+																		<DataSource>ATXRequestOrderHeader</DataSource>
+																		<Items />
+																	</AxFormControl>
+																	<AxFormControl xmlns=""
+																		i:type="AxFormComboBoxControl">
+																		<Name>HeaderOverviewGroup_RequestOrderStatus</Name>
+																		<Type>ComboBox</Type>
+																		<FormControlExtension
+																			i:nil="true" />
+																		<DataField>RequestOrderStatus</DataField>
+																		<DataSource>ATXRequestOrderHeader</DataSource>
+																		<Items />
+																	</AxFormControl>
+																	<AxFormControl xmlns=""
+																		i:type="AxFormStringControl">
+																		<Name>HeaderOverviewGroup_SalesId</Name>
+																		<Type>String</Type>
+																		<FormControlExtension
+																			i:nil="true" />
+																		<DataField>SalesId</DataField>
+																		<DataSource>ATXRequestOrderHeader</DataSource>
+																	</AxFormControl>
+																	<AxFormControl xmlns=""
+																		i:type="AxFormStringControl">
+																		<Name>HeaderOverviewGroup_CustAccount</Name>
+																		<Type>String</Type>
+																		<FormControlExtension
+																			i:nil="true" />
+																		<DataField>CustAccount</DataField>
+																		<DataSource>ATXRequestOrderHeader</DataSource>
+																	</AxFormControl>
+																	<AxFormControl xmlns=""
+																		i:type="AxFormStringControl">
+																		<Name>HeaderOverviewGroup_LineOfBusinessId</Name>
+																		<Type>String</Type>
+																		<FormControlExtension
+																			i:nil="true" />
+																		<DataField>LineOfBusinessId</DataField>
+																		<DataSource>ATXRequestOrderHeader</DataSource>
+																	</AxFormControl>
+																	<AxFormControl xmlns=""
+																		i:type="AxFormStringControl">
+																		<Name>HeaderOverviewGroup_CustPurchaseOrder</Name>
+																		<Type>String</Type>
+																		<FormControlExtension
+																			i:nil="true" />
+																		<DataField>CustPurchaseOrder</DataField>
+																		<DataSource>ATXRequestOrderHeader</DataSource>
+																	</AxFormControl>
+																	<AxFormControl xmlns=""
+																		i:type="AxFormStringControl">
+																		<Name>HeaderOverviewGroup_CustRef</Name>
+																		<Type>String</Type>
+																		<FormControlExtension
+																			i:nil="true" />
+																		<DataField>CustRef</DataField>
+																		<DataSource>ATXRequestOrderHeader</DataSource>
+																	</AxFormControl>
+																	<AxFormControl xmlns=""
+																		i:type="AxFormStringControl">
+																		<Name>HeaderOverviewGroup_ProdPoolId</Name>
+																		<Type>String</Type>
+																		<FormControlExtension
+																			i:nil="true" />
+																		<DataField>ProdPoolId</DataField>
+																		<DataSource>ATXRequestOrderHeader</DataSource>
+																	</AxFormControl>
+																	<AxFormControl xmlns=""
+																		i:type="AxFormStringControl">
+																		<Name>HeaderOverviewGroup_SeasonId</Name>
+																		<Type>String</Type>
+																		<FormControlExtension
+																			i:nil="true" />
+																		<DataField>SeasonId</DataField>
+																		<DataSource>ATXRequestOrderHeader</DataSource>
+																	</AxFormControl>
+																	<AxFormControl xmlns=""
+																		i:type="AxFormStringControl">
+																		<Name>HeaderOverviewGroup_SampleTypeId</Name>
+																		<Type>String</Type>
+																		<FormControlExtension
+																			i:nil="true" />
+																		<DataField>SampleTypeId</DataField>
+																		<DataSource>ATXRequestOrderHeader</DataSource>
+																	</AxFormControl>
+																	<AxFormControl xmlns=""
+																		i:type="AxFormDateControl">
+																		<Name>HeaderOverviewGroup_AuthDate</Name>
+																		<Type>Date</Type>
+																		<FormControlExtension
+																			i:nil="true" />
+																		<DataField>AuthDate</DataField>
+																		<DataSource>ATXRequestOrderHeader</DataSource>
+																	</AxFormControl>
+																	<AxFormControl xmlns=""
+																		i:type="AxFormDateControl">
+																		<Name>HeaderOverviewGroup_RequestOrderDate</Name>
+																		<Type>Date</Type>
+																		<FormControlExtension
+																			i:nil="true" />
+																		<DataField>RequestOrderDate</DataField>
+																		<DataSource>ATXRequestOrderHeader</DataSource>
+																	</AxFormControl>
+																	<AxFormControl xmlns=""
+																		i:type="AxFormDateControl">
+																		<Name>HeaderOverviewGroup_RequestOrderCancelDate</Name>
+																		<Type>Date</Type>
+																		<FormControlExtension
+																			i:nil="true" />
+																		<DataField>RequestOrderCancelDate</DataField>
+																		<DataSource>ATXRequestOrderHeader</DataSource>
+																	</AxFormControl>
+																	<AxFormControl xmlns=""
+																		i:type="AxFormStringControl">
+																		<Name>HeaderOverviewGroup_ItemId</Name>
+																		<Type>String</Type>
+																		<FormControlExtension
+																			i:nil="true" />
+																		<DataField>ItemId</DataField>
+																		<DataSource>ATXRequestOrderHeader</DataSource>
+																	</AxFormControl>
+																	<AxFormControl xmlns=""
+																		i:type="AxFormRealControl">
+																		<Name>HeaderOverviewGroup_QtyOv</Name>
+																		<Type>Real</Type>
+																		<FormControlExtension
+																			i:nil="true" />
+																		<DataField>QtyOv</DataField>
+																		<DataSource>ATXRequestOrderHeader</DataSource>
+																	</AxFormControl>
+																</Controls>
+																<DataGroup>Overview</DataGroup>
+																<DataSource>ATXRequestOrderHeader</DataSource>
+															</AxFormControl>
+														</Controls>
+														<ColumnsMode>Fill</ColumnsMode>
+														<Caption>@ATXAT:NewLabel9</Caption>
+													</AxFormControl>
+													<AxFormControl xmlns=""
+														i:type="AxFormTabPageControl">
+														<Name>LineViewLines</Name>
+														<HeightMode>SizeToAvailable</HeightMode>
+														<Type>TabPage</Type>
+														<FormControlExtension
+															i:nil="true" />
+														<Controls>
+															<AxFormControl xmlns=""
+																i:type="AxFormActionPaneControl">
+																<Name>RequestOrderLineActionPane</Name>
+																<Type>ActionPane</Type>
+																<FormControlExtension
+																	i:nil="true" />
+																<Controls>
+																	<AxFormControl xmlns=""
+																		i:type="AxFormButtonGroupControl">
+																		<Name>RequestOrderLineGroup</Name>
+																		<Type>ButtonGroup</Type>
+																		<FormControlExtension
+																			i:nil="true" />
+																		<Controls>
+																			<AxFormControl xmlns=""
+																				i:type="AxFormCommandButtonControl">
+																				<Name>RequestOrderLineCommandNew</Name>
+																				<Type>CommandButton</Type>
+																				<FormControlExtension
+																					i:nil="true" />
+																				<Command>New</Command>
+																			</AxFormControl>
+																			<AxFormControl xmlns=""
+																				i:type="AxFormCommandButtonControl">
+																				<Name>RequestOrderLineCommandDelete</Name>
+																				<Type>CommandButton</Type>
+																				<FormControlExtension
+																					i:nil="true" />
+																				<Command>DeleteRecord</Command>
+																			</AxFormControl>
+																			<AxFormControl xmlns=""
+																				i:type="AxFormButtonControl">
+																				<Name>UpdateQtyToSalesLine</Name>
+																				<AutoDeclaration>Yes</AutoDeclaration>
+																				<Type>Button</Type>
+																				<FormControlExtension
+																					i:nil="true" />
+																				<Text>@ATXApparelAndTextile_en_US:ATXL00092</Text>
+																			</AxFormControl>
+																		</Controls>
+																		<DataSource>ATXRequestOrderLine</DataSource>
+																	</AxFormControl>
+																</Controls>
+																<DataSource>ATXRequestOrderLine</DataSource>
+																<Style>Strip</Style>
+															</AxFormControl>
+															<AxFormControl xmlns=""
+																i:type="AxFormGridControl">
+																<Name>LinesGrid</Name>
+																<Type>Grid</Type>
+																<FormControlExtension
+																	i:nil="true" />
+																<Controls>
+																	<AxFormControl xmlns=""
+																		i:type="AxFormStringControl">
+																		<Name>ATXRequestOrderLine_ItemId</Name>
+																		<Type>String</Type>
+																		<FormControlExtension
+																			i:nil="true" />
+																		<DataField>ItemId</DataField>
+																		<DataSource>ATXRequestOrderLine</DataSource>
+																	</AxFormControl>
+																	<AxFormControl xmlns=""
+																		i:type="AxFormStringControl">
+																		<Name>DisplayItemName</Name>
+																		<Type>String</Type>
+																		<FormControlExtension
+																			i:nil="true" />
+																		<DataMethod>displayItemName</DataMethod>
+																		<DataSource>ATXRequestOrderLine</DataSource>
+																	</AxFormControl>
+																	<AxFormControl xmlns=""
+																		i:type="AxFormStringControl">
+																		<Name>ATXRequestOrderLine_SeasonId</Name>
+																		<Type>String</Type>
+																		<FormControlExtension
+																			i:nil="true" />
+																		<DataField>SeasonId</DataField>
+																		<DataSource>ATXRequestOrderLine</DataSource>
+																	</AxFormControl>
+																	<AxFormControl xmlns=""
+																		i:type="AxFormStringControl">
+																		<Name>ATXRequestOrderLine_DestinationPlaceId</Name>
+																		<Type>String</Type>
+																		<FormControlExtension
+																			i:nil="true" />
+																		<DataField>DestinationPlaceId</DataField>
+																		<DataSource>ATXRequestOrderLine</DataSource>
+																	</AxFormControl>
+																	<AxFormControl xmlns=""
+																		i:type="AxFormStringControl">
+																		<Name>ATXRequestOrderLine_ItemDivisionId</Name>
+																		<Type>String</Type>
+																		<FormControlExtension
+																			i:nil="true" />
+																		<DataField>ItemDivisionId</DataField>
+																		<DataSource>ATXRequestOrderLine</DataSource>
+																	</AxFormControl>
+																	<AxFormControl xmlns=""
+																		i:type="AxFormGroupControl">
+																		<Name>DinventDimension</Name>
+																		<Type>Group</Type>
+																		<FormControlExtension
+																			i:nil="true" />
+																		<Controls>
+																			<AxFormControl xmlns=""
+																				i:type="AxFormStringControl">
+																				<Name>InventDim_configId</Name>
+																				<Type>String</Type>
+																				<FormControlExtension
+																					i:nil="true" />
+																				<DataField>configId</DataField>
+																				<DataSource>InventDim</DataSource>
+																			</AxFormControl>
+																			<AxFormControl xmlns=""
+																				i:type="AxFormStringControl">
+																				<Name>InventDim_InventSizeId</Name>
+																				<Type>String</Type>
+																				<FormControlExtension
+																					i:nil="true" />
+																				<DataField>InventSizeId</DataField>
+																				<DataSource>InventDim</DataSource>
+																			</AxFormControl>
+																			<AxFormControl xmlns=""
+																				i:type="AxFormStringControl">
+																				<Name>InventDim_InventColorId</Name>
+																				<Type>String</Type>
+																				<FormControlExtension
+																					i:nil="true" />
+																				<DataField>InventColorId</DataField>
+																				<DataSource>InventDim</DataSource>
+																			</AxFormControl>
+																			<AxFormControl xmlns=""
+																				i:type="AxFormStringControl">
+																				<Name>InventDim_InventStyleId</Name>
+																				<Type>String</Type>
+																				<FormControlExtension
+																					i:nil="true" />
+																				<DataField>InventStyleId</DataField>
+																				<DataSource>InventDim</DataSource>
+																			</AxFormControl>
+																		</Controls>
+																	</AxFormControl>
+																	<AxFormControl xmlns=""
+																		i:type="AxFormRealControl">
+																		<Name>ATXRequestOrderLine_QtyOrig</Name>
+																		<Type>Real</Type>
+																		<FormControlExtension
+																			i:nil="true" />
+																		<DataField>QtyOrig</DataField>
+																		<DataSource>ATXRequestOrderLine</DataSource>
+																	</AxFormControl>
+																	<AxFormControl xmlns=""
+																		i:type="AxFormRealControl">
+																		<Name>ATXRequestOrderLine_RequestQty</Name>
+																		<Type>Real</Type>
+																		<FormControlExtension
+																			i:nil="true" />
+																		<DataField>RequestQty</DataField>
+																		<DataSource>ATXRequestOrderLine</DataSource>
+																	</AxFormControl>
+																	<AxFormControl xmlns=""
+																		i:type="AxFormRealControl">
+																		<Name>ATXRequestOrderLine_SalesPrice</Name>
+																		<Type>Real</Type>
+																		<FormControlExtension
+																			i:nil="true" />
+																		<DataField>SalesPrice</DataField>
+																		<DataSource>ATXRequestOrderLine</DataSource>
+																	</AxFormControl>
+																	<AxFormControl xmlns=""
+																		i:type="AxFormRealControl">
+																		<Name>ATXRequestOrderLine_LineAmountOrig</Name>
+																		<Type>Real</Type>
+																		<FormControlExtension
+																			i:nil="true" />
+																		<DataField>LineAmountOrig</DataField>
+																		<DataSource>ATXRequestOrderLine</DataSource>
+																	</AxFormControl>
+																	<AxFormControl xmlns=""
+																		i:type="AxFormRealControl">
+																		<Name>ATXRequestOrderLine_LineAmount</Name>
+																		<Type>Real</Type>
+																		<FormControlExtension
+																			i:nil="true" />
+																		<DataField>LineAmount</DataField>
+																		<DataSource>ATXRequestOrderLine</DataSource>
+																	</AxFormControl>
+																	<AxFormControl xmlns=""
+																		i:type="AxFormDateControl">
+																		<Name>ATXRequestOrderLine_RequestOrderDate</Name>
+																		<Type>Date</Type>
+																		<FormControlExtension
+																			i:nil="true" />
+																		<DataField>RequestOrderDate</DataField>
+																		<DataSource>ATXRequestOrderLine</DataSource>
+																	</AxFormControl>
+																	<AxFormControl xmlns=""
+																		i:type="AxFormDateControl">
+																		<Name>ATXRequestOrderLine_RequestOrderCancelDate</Name>
+																		<Type>Date</Type>
+																		<FormControlExtension
+																			i:nil="true" />
+																		<DataField>RequestOrderCancelDate</DataField>
+																		<DataSource>ATXRequestOrderLine</DataSource>
+																	</AxFormControl>
+																	<AxFormControl xmlns=""
+																		i:type="AxFormDateControl">
+																		<Name>ATXRequestOrderLine_ReviewedOrderDate</Name>
+																		<Type>Date</Type>
+																		<FormControlExtension
+																			i:nil="true" />
+																		<DataField>ReviewedOrderDate</DataField>
+																		<DataSource>ATXRequestOrderLine</DataSource>
+																	</AxFormControl>
+																</Controls>
+																<DataSource>ATXRequestOrderLine</DataSource>
+																<Style>Tabular</Style>
+																<VisibleRows>5</VisibleRows>
+																<VisibleRowsMode>Fixed</VisibleRowsMode>
+															</AxFormControl>
+														</Controls>
+														<Caption>@ATXAT:NewLabel83</Caption>
+														<FastTabExpanded>Always</FastTabExpanded>
+													</AxFormControl>
+													<AxFormControl xmlns=""
+														i:type="AxFormTabPageControl">
+														<Name>LineViewDetails</Name>
+														<Type>TabPage</Type>
+														<FormControlExtension
+															i:nil="true" />
+														<Controls>
+															<AxFormControl xmlns=""
+																i:type="AxFormTabControl">
+																<Name>LineDetailsTab</Name>
+																<Type>Tab</Type>
+																<FormControlExtension
+																	i:nil="true" />
+																<Controls>
+																	<AxFormControl xmlns=""
+																		i:type="AxFormTabPageControl">
+																		<Name>Product</Name>
+																		<Pattern>FieldsFieldGroups</Pattern>
+																		<PatternVersion>1.1</PatternVersion>
+																		<Type>TabPage</Type>
+																		<FormControlExtension
+																			i:nil="true" />
+																		<Controls>
+																			<AxFormControl xmlns=""
+																				i:type="AxFormGroupControl">
+																				<Name>FormGroupControl1</Name>
+																				<Type>Group</Type>
+																				<FormControlExtension
+																					i:nil="true" />
+																				<Controls>
+																					<AxFormControl xmlns=""
+																						i:type="AxFormStringControl">
+																						<Name>FormGroupControl1_ItemId</Name>
+																						<Type>String</Type>
+																						<FormControlExtension
+																							i:nil="true" />
+																						<DataField>ItemId</DataField>
+																						<DataSource>ATXRequestOrderLine</DataSource>
+																					</AxFormControl>
+																					<AxFormControl xmlns=""
+																						i:type="AxFormRealControl">
+																						<Name>FormGroupControl1_LineNum</Name>
+																						<Type>Real</Type>
+																						<FormControlExtension
+																							i:nil="true" />
+																						<DataField>LineNum</DataField>
+																						<DataSource>ATXRequestOrderLine</DataSource>
+																					</AxFormControl>
+																					<AxFormControl xmlns=""
+																						i:type="AxFormRealControl">
+																						<Name>FormGroupControl1_QtyOrig</Name>
+																						<Type>Real</Type>
+																						<FormControlExtension
+																							i:nil="true" />
+																						<DataField>QtyOrig</DataField>
+																						<DataSource>ATXRequestOrderLine</DataSource>
+																					</AxFormControl>
+																					<AxFormControl xmlns=""
+																						i:type="AxFormRealControl">
+																						<Name>FormGroupControl1_RequestQty</Name>
+																						<Type>Real</Type>
+																						<FormControlExtension
+																							i:nil="true" />
+																						<DataField>RequestQty</DataField>
+																						<DataSource>ATXRequestOrderLine</DataSource>
+																					</AxFormControl>
+																					<AxFormControl xmlns=""
+																						i:type="AxFormRealControl">
+																						<Name>FormGroupControl1_SalesPrice</Name>
+																						<Type>Real</Type>
+																						<FormControlExtension
+																							i:nil="true" />
+																						<DataField>SalesPrice</DataField>
+																						<DataSource>ATXRequestOrderLine</DataSource>
+																					</AxFormControl>
+																					<AxFormControl xmlns=""
+																						i:type="AxFormRealControl">
+																						<Name>FormGroupControl1_LineAmountOrig</Name>
+																						<Type>Real</Type>
+																						<FormControlExtension
+																							i:nil="true" />
+																						<DataField>LineAmountOrig</DataField>
+																						<DataSource>ATXRequestOrderLine</DataSource>
+																					</AxFormControl>
+																					<AxFormControl xmlns=""
+																						i:type="AxFormRealControl">
+																						<Name>FormGroupControl1_LineAmount</Name>
+																						<Type>Real</Type>
+																						<FormControlExtension
+																							i:nil="true" />
+																						<DataField>LineAmount</DataField>
+																						<DataSource>ATXRequestOrderLine</DataSource>
+																					</AxFormControl>
+																					<AxFormControl xmlns=""
+																						i:type="AxFormDateControl">
+																						<Name>FormGroupControl1_RequestOrderDate</Name>
+																						<Type>Date</Type>
+																						<FormControlExtension
+																							i:nil="true" />
+																						<DataField>RequestOrderDate</DataField>
+																						<DataSource>ATXRequestOrderLine</DataSource>
+																					</AxFormControl>
+																					<AxFormControl xmlns=""
+																						i:type="AxFormDateControl">
+																						<Name>FormGroupControl1_RequestOrderCancelDate</Name>
+																						<Type>Date</Type>
+																						<FormControlExtension
+																							i:nil="true" />
+																						<DataField>RequestOrderCancelDate</DataField>
+																						<DataSource>ATXRequestOrderLine</DataSource>
+																					</AxFormControl>
+																					<AxFormControl xmlns=""
+																						i:type="AxFormDateControl">
+																						<Name>FormGroupControl1_ReviewedOrderDate</Name>
+																						<Type>Date</Type>
+																						<FormControlExtension
+																							i:nil="true" />
+																						<DataField>ReviewedOrderDate</DataField>
+																						<DataSource>ATXRequestOrderLine</DataSource>
+																					</AxFormControl>
+																				</Controls>
+																				<DataGroup>Overview</DataGroup>
+																				<DataSource>ATXRequestOrderLine</DataSource>
+																			</AxFormControl>
+																		</Controls>
+																		<ColumnsMode>Fill</ColumnsMode>
+																	</AxFormControl>
+																</Controls>
+															</AxFormControl>
+														</Controls>
+														<Caption>@SYS23823</Caption>
+													</AxFormControl>
+												</Controls>
+												<Style>FastTabs</Style>
+											</AxFormControl>
+										</Controls>
+										<PanelStyle>DetailsLine</PanelStyle>
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormTabPageControl">
+										<Name>HeaderView</Name>
+										<Type>TabPage</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<Controls>
+											<AxFormControl xmlns=""
+												i:type="AxFormTabControl">
+												<Name>HeaderDetailsTab</Name>
+												<Type>Tab</Type>
+												<FormControlExtension
+													i:nil="true" />
+												<Controls>
+													<AxFormControl xmlns=""
+														i:type="AxFormTabPageControl">
+														<Name>OverviewHeaderTabPage</Name>
+														<Pattern>FieldsFieldGroups</Pattern>
+														<PatternVersion>1.1</PatternVersion>
+														<Type>TabPage</Type>
+														<FormControlExtension
+															i:nil="true" />
+														<Controls>
+															<AxFormControl xmlns=""
+																i:type="AxFormGroupControl">
+																<Name>CustGroupHeader</Name>
+																<Type>Group</Type>
+																<FormControlExtension
+																	i:nil="true" />
+																<Controls>
+																	<AxFormControl xmlns=""
+																		i:type="AxFormStringControl">
+																		<Name>CustGroupHeader_CustAccount</Name>
+																		<Type>String</Type>
+																		<FormControlExtension
+																			i:nil="true" />
+																		<DataField>CustAccount</DataField>
+																		<DataSource>ATXRequestOrderHeader</DataSource>
+																	</AxFormControl>
+																	<AxFormControl xmlns=""
+																		i:type="AxFormStringControl">
+																		<Name>CustGroupHeader_CurrencyCode</Name>
+																		<Type>String</Type>
+																		<FormControlExtension
+																			i:nil="true" />
+																		<DataField>CurrencyCode</DataField>
+																		<DataSource>ATXRequestOrderHeader</DataSource>
+																	</AxFormControl>
+																	<AxFormControl xmlns=""
+																		i:type="AxFormStringControl">
+																		<Name>CustGroupHeader_CustPurchaseOrder</Name>
+																		<Type>String</Type>
+																		<FormControlExtension
+																			i:nil="true" />
+																		<DataField>CustPurchaseOrder</DataField>
+																		<DataSource>ATXRequestOrderHeader</DataSource>
+																	</AxFormControl>
+																	<AxFormControl xmlns=""
+																		i:type="AxFormStringControl">
+																		<Name>CustGroupHeader_CustRef</Name>
+																		<Type>String</Type>
+																		<FormControlExtension
+																			i:nil="true" />
+																		<DataField>CustRef</DataField>
+																		<DataSource>ATXRequestOrderHeader</DataSource>
+																	</AxFormControl>
+																	<AxFormControl xmlns=""
+																		i:type="AxFormStringControl">
+																		<Name>CustGroupHeader_DlvModeId</Name>
+																		<Type>String</Type>
+																		<FormControlExtension
+																			i:nil="true" />
+																		<DataField>DlvModeId</DataField>
+																		<DataSource>ATXRequestOrderHeader</DataSource>
+																	</AxFormControl>
+																	<AxFormControl xmlns=""
+																		i:type="AxFormStringControl">
+																		<Name>CustGroupHeader_SalesDlvTermId</Name>
+																		<Type>String</Type>
+																		<FormControlExtension
+																			i:nil="true" />
+																		<DataField>SalesDlvTermId</DataField>
+																		<DataSource>ATXRequestOrderHeader</DataSource>
+																	</AxFormControl>
+																	<AxFormControl xmlns=""
+																		i:type="AxFormStringControl">
+																		<Name>CustGroupHeader_ItemDivisionId</Name>
+																		<Type>String</Type>
+																		<FormControlExtension
+																			i:nil="true" />
+																		<DataField>ItemDivisionId</DataField>
+																		<DataSource>ATXRequestOrderHeader</DataSource>
+																	</AxFormControl>
+																	<AxFormControl xmlns=""
+																		i:type="AxFormStringControl">
+																		<Name>CustGroupHeader_Comments</Name>
+																		<Type>String</Type>
+																		<FormControlExtension
+																			i:nil="true" />
+																		<DataField>Comments</DataField>
+																		<DataSource>ATXRequestOrderHeader</DataSource>
+																	</AxFormControl>
+																	<AxFormControl xmlns=""
+																		i:type="AxFormCheckBoxControl">
+																		<Name>CustGroupHeader_SkipBOMValidation</Name>
+																		<Type>CheckBox</Type>
+																		<FormControlExtension
+																			i:nil="true" />
+																		<DataField>SkipBOMValidation</DataField>
+																		<DataSource>ATXRequestOrderHeader</DataSource>
+																	</AxFormControl>
+																</Controls>
+																<DataGroup>CustGroup</DataGroup>
+																<DataSource>ATXRequestOrderHeader</DataSource>
+															</AxFormControl>
+															<AxFormControl xmlns=""
+																i:type="AxFormGroupControl">
+																<Name>DatesGroupHeader</Name>
+																<Type>Group</Type>
+																<FormControlExtension
+																	i:nil="true" />
+																<Controls>
+																	<AxFormControl xmlns=""
+																		i:type="AxFormDateControl">
+																		<Name>DatesGroupHeader_RequestOrderDate</Name>
+																		<Type>Date</Type>
+																		<FormControlExtension
+																			i:nil="true" />
+																		<DataField>RequestOrderDate</DataField>
+																		<DataSource>ATXRequestOrderHeader</DataSource>
+																	</AxFormControl>
+																	<AxFormControl xmlns=""
+																		i:type="AxFormDateControl">
+																		<Name>DatesGroupHeader_RequestOrderCancelDate</Name>
+																		<Type>Date</Type>
+																		<FormControlExtension
+																			i:nil="true" />
+																		<DataField>RequestOrderCancelDate</DataField>
+																		<DataSource>ATXRequestOrderHeader</DataSource>
+																	</AxFormControl>
+																	<AxFormControl xmlns=""
+																		i:type="AxFormDateControl">
+																		<Name>DatesGroupHeader_ReviewedOrderDate</Name>
+																		<Type>Date</Type>
+																		<FormControlExtension
+																			i:nil="true" />
+																		<DataField>ReviewedOrderDate</DataField>
+																		<DataSource>ATXRequestOrderHeader</DataSource>
+																	</AxFormControl>
+																</Controls>
+																<DataGroup>DatesGroup</DataGroup>
+																<DataSource>ATXRequestOrderHeader</DataSource>
+															</AxFormControl>
+															<AxFormControl xmlns=""
+																i:type="AxFormGroupControl">
+																<Name>InventDimGroupHeader</Name>
+																<Type>Group</Type>
+																<FormControlExtension
+																	i:nil="true" />
+																<Controls>
+																	<AxFormControl xmlns=""
+																		i:type="AxFormStringControl">
+																		<Name>InventDimGroupHeader_InventSiteId</Name>
+																		<Type>String</Type>
+																		<FormControlExtension
+																			i:nil="true" />
+																		<DataField>InventSiteId</DataField>
+																		<DataSource>ATXRequestOrderHeader</DataSource>
+																	</AxFormControl>
+																	<AxFormControl xmlns=""
+																		i:type="AxFormStringControl">
+																		<Name>InventDimGroupHeader_InventLocationId</Name>
+																		<Type>String</Type>
+																		<FormControlExtension
+																			i:nil="true" />
+																		<DataField>InventLocationId</DataField>
+																		<DataSource>ATXRequestOrderHeader</DataSource>
+																	</AxFormControl>
+																</Controls>
+																<DataGroup>InventDimGroup</DataGroup>
+																<DataSource>ATXRequestOrderHeader</DataSource>
+															</AxFormControl>
+															<AxFormControl xmlns=""
+																i:type="AxFormGroupControl">
+																<Name>FilterGroupHeader</Name>
+																<Type>Group</Type>
+																<FormControlExtension
+																	i:nil="true" />
+																<Controls>
+																	<AxFormControl xmlns=""
+																		i:type="AxFormStringControl">
+																		<Name>FilterGroupHeader_SeasonId</Name>
+																		<Type>String</Type>
+																		<FormControlExtension
+																			i:nil="true" />
+																		<DataField>SeasonId</DataField>
+																		<DataSource>ATXRequestOrderHeader</DataSource>
+																	</AxFormControl>
+																	<AxFormControl xmlns=""
+																		i:type="AxFormStringControl">
+																		<Name>FilterGroupHeader_BranchId</Name>
+																		<Type>String</Type>
+																		<FormControlExtension
+																			i:nil="true" />
+																		<DataField>BranchId</DataField>
+																		<DataSource>ATXRequestOrderHeader</DataSource>
+																	</AxFormControl>
+																	<AxFormControl xmlns=""
+																		i:type="AxFormStringControl">
+																		<Name>FilterGroupHeader_RequestOrderGroupId</Name>
+																		<Type>String</Type>
+																		<FormControlExtension
+																			i:nil="true" />
+																		<DataField>RequestOrderGroupId</DataField>
+																		<DataSource>ATXRequestOrderHeader</DataSource>
+																	</AxFormControl>
+																	<AxFormControl xmlns=""
+																		i:type="AxFormStringControl">
+																		<Name>FilterGroupHeader_ProdPoolId</Name>
+																		<Type>String</Type>
+																		<FormControlExtension
+																			i:nil="true" />
+																		<DataField>ProdPoolId</DataField>
+																		<DataSource>ATXRequestOrderHeader</DataSource>
+																	</AxFormControl>
+																	<AxFormControl xmlns=""
+																		i:type="AxFormStringControl">
+																		<Name>FilterGroupHeader_DestinationPlaceId</Name>
+																		<Type>String</Type>
+																		<FormControlExtension
+																			i:nil="true" />
+																		<DataField>DestinationPlaceId</DataField>
+																		<DataSource>ATXRequestOrderHeader</DataSource>
+																	</AxFormControl>
+																	<AxFormControl xmlns=""
+																		i:type="AxFormStringControl">
+																		<Name>FilterGroupHeader_SampleTypeId</Name>
+																		<Type>String</Type>
+																		<FormControlExtension
+																			i:nil="true" />
+																		<DataField>SampleTypeId</DataField>
+																		<DataSource>ATXRequestOrderHeader</DataSource>
+																	</AxFormControl>
+																</Controls>
+																<DataGroup>FilterGroup</DataGroup>
+																<DataSource>ATXRequestOrderHeader</DataSource>
+															</AxFormControl>
+														</Controls>
+														<ColumnsMode>Fill</ColumnsMode>
+														<Caption>@ATXAT:NewLabel9</Caption>
+													</AxFormControl>
+													<AxFormControl xmlns=""
+														i:type="AxFormTabPageControl">
+														<Name>VersionsTab</Name>
+														<Pattern>ToolbarList</Pattern>
+														<PatternVersion>1.2</PatternVersion>
+														<Type>TabPage</Type>
+														<FormControlExtension
+															i:nil="true" />
+														<Controls>
+															<AxFormControl xmlns=""
+																i:type="AxFormActionPaneControl">
+																<Name>FormActionPaneControl1</Name>
+																<Type>ActionPane</Type>
+																<Visible>No</Visible>
+																<FormControlExtension
+																	i:nil="true" />
+																<Controls>
+																	<AxFormControl xmlns=""
+																		i:type="AxFormButtonGroupControl">
+																		<Name>FormButtonGroupControl1</Name>
+																		<Type>ButtonGroup</Type>
+																		<FormControlExtension
+																			i:nil="true" />
+																		<Controls />
+																	</AxFormControl>
+																</Controls>
+																<DataSource>ATXRequestOrderUpdates</DataSource>
+																<Style>Strip</Style>
+															</AxFormControl>
+															<AxFormControl xmlns=""
+																i:type="AxFormGridControl">
+																<Name>VersionGrid</Name>
+																<Type>Grid</Type>
+																<FormControlExtension
+																	i:nil="true" />
+																<Controls>
+																	<AxFormControl xmlns=""
+																		i:type="AxFormIntegerControl">
+																		<Name>VersionGrid_RequestOrderUpdateId</Name>
+																		<Type>Integer</Type>
+																		<FormControlExtension
+																			i:nil="true" />
+																		<DataField>RequestOrderUpdateId</DataField>
+																		<DataSource>ATXRequestOrderUpdates</DataSource>
+																	</AxFormControl>
+																</Controls>
+																<DataGroup>Overview</DataGroup>
+																<DataSource>ATXRequestOrderUpdates</DataSource>
+															</AxFormControl>
+														</Controls>
+														<Caption>@ATXAT:NewLabel76</Caption>
+													</AxFormControl>
+												</Controls>
+												<Style>FastTabs</Style>
+											</AxFormControl>
+										</Controls>
+										<PanelStyle>DetailsHeader</PanelStyle>
+									</AxFormControl>
+								</Controls>
+								<ShowTabs>No</ShowTabs>
+							</AxFormControl>
+						</Controls>
+						<PanelStyle>Details</PanelStyle>
+						<Style>DetailsFormDetails</Style>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormTabPageControl">
+						<Name>TabPageGrid</Name>
+						<Type>TabPage</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<Controls>
+							<AxFormControl xmlns=""
+								i:type="AxFormGroupControl">
+								<Name>CustomFilterGroup</Name>
+								<Pattern>CustomAndQuickFilters</Pattern>
+								<PatternVersion>1.1</PatternVersion>
+								<Type>Group</Type>
+								<WidthMode>SizeToAvailable</WidthMode>
+								<FormControlExtension
+									i:nil="true" />
+								<Controls>
+									<AxFormControl>
+										<Name>QuickFilterGridHeader</Name>
+										<FormControlExtension>
+											<Name>QuickFilterControl</Name>
+											<ExtensionComponents />
+											<ExtensionProperties>
+												<AxFormControlExtensionProperty>
+													<Name>targetControlName</Name>
+													<Type>String</Type>
+													<Value>HeaderGrid</Value>
+												</AxFormControlExtensionProperty>
+												<AxFormControlExtensionProperty>
+													<Name>placeholderText</Name>
+													<Type>String</Type>
+												</AxFormControlExtensionProperty>
+												<AxFormControlExtensionProperty>
+													<Name>defaultColumnName</Name>
+													<Type>String</Type>
+												</AxFormControlExtensionProperty>
+											</ExtensionProperties>
+										</FormControlExtension>
+									</AxFormControl>
+								</Controls>
+								<ArrangeMethod>HorizontalLeft</ArrangeMethod>
+								<FrameType>None</FrameType>
+								<Style>CustomFilter</Style>
+								<ViewEditMode>Edit</ViewEditMode>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormGridControl">
+								<Name>HeaderGrid</Name>
+								<Type>Grid</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<Controls>
+									<AxFormControl xmlns=""
+										i:type="AxFormStringControl">
+										<Name>HeaderGrid_RequestOrderId</Name>
+										<Type>String</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<DataField>RequestOrderId</DataField>
+										<DataSource>ATXRequestOrderHeader</DataSource>
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormComboBoxControl">
+										<Name>HeaderGrid_RequestOrderType</Name>
+										<Type>ComboBox</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<DataField>RequestOrderType</DataField>
+										<DataSource>ATXRequestOrderHeader</DataSource>
+										<Items />
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormComboBoxControl">
+										<Name>HeaderGrid_RequestOrderStatus</Name>
+										<Type>ComboBox</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<DataField>RequestOrderStatus</DataField>
+										<DataSource>ATXRequestOrderHeader</DataSource>
+										<Items />
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormStringControl">
+										<Name>HeaderGrid_SalesId</Name>
+										<Type>String</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<DataField>SalesId</DataField>
+										<DataSource>ATXRequestOrderHeader</DataSource>
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormStringControl">
+										<Name>HeaderGrid_CustAccount</Name>
+										<Type>String</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<DataField>CustAccount</DataField>
+										<DataSource>ATXRequestOrderHeader</DataSource>
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormStringControl">
+										<Name>HeaderGrid_LineOfBusinessId</Name>
+										<Type>String</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<DataField>LineOfBusinessId</DataField>
+										<DataSource>ATXRequestOrderHeader</DataSource>
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormStringControl">
+										<Name>HeaderGrid_CustPurchaseOrder</Name>
+										<Type>String</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<DataField>CustPurchaseOrder</DataField>
+										<DataSource>ATXRequestOrderHeader</DataSource>
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormStringControl">
+										<Name>HeaderGrid_CustRef</Name>
+										<Type>String</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<DataField>CustRef</DataField>
+										<DataSource>ATXRequestOrderHeader</DataSource>
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormStringControl">
+										<Name>HeaderGrid_ProdPoolId</Name>
+										<Type>String</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<DataField>ProdPoolId</DataField>
+										<DataSource>ATXRequestOrderHeader</DataSource>
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormStringControl">
+										<Name>HeaderGrid_SeasonId</Name>
+										<Type>String</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<DataField>SeasonId</DataField>
+										<DataSource>ATXRequestOrderHeader</DataSource>
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormStringControl">
+										<Name>HeaderGrid_SampleTypeId</Name>
+										<Type>String</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<DataField>SampleTypeId</DataField>
+										<DataSource>ATXRequestOrderHeader</DataSource>
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormDateControl">
+										<Name>HeaderGrid_AuthDate</Name>
+										<Type>Date</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<DataField>AuthDate</DataField>
+										<DataSource>ATXRequestOrderHeader</DataSource>
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormDateControl">
+										<Name>HeaderGrid_RequestOrderDate</Name>
+										<Type>Date</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<DataField>RequestOrderDate</DataField>
+										<DataSource>ATXRequestOrderHeader</DataSource>
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormDateControl">
+										<Name>HeaderGrid_RequestOrderCancelDate</Name>
+										<Type>Date</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<DataField>RequestOrderCancelDate</DataField>
+										<DataSource>ATXRequestOrderHeader</DataSource>
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormStringControl">
+										<Name>HeaderGrid_ItemId</Name>
+										<Type>String</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<DataField>ItemId</DataField>
+										<DataSource>ATXRequestOrderHeader</DataSource>
+									</AxFormControl>
+									<AxFormControl xmlns=""
+										i:type="AxFormRealControl">
+										<Name>HeaderGrid_QtyOv</Name>
+										<Type>Real</Type>
+										<FormControlExtension
+											i:nil="true" />
+										<DataField>QtyOv</DataField>
+										<DataSource>ATXRequestOrderHeader</DataSource>
+									</AxFormControl>
+								</Controls>
+								<DataGroup>Overview</DataGroup>
+								<DataSource>ATXRequestOrderHeader</DataSource>
+								<DefaultAction>GridDefaultAction</DefaultAction>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormCommandButtonControl">
+								<Name>GridDefaultAction</Name>
+								<Type>CommandButton</Type>
+								<Visible>No</Visible>
+								<FormControlExtension
+									i:nil="true" />
+								<Command>DetailsView</Command>
+							</AxFormControl>
+						</Controls>
+						<PanelStyle>Grid</PanelStyle>
+						<Style>DetailsFormGrid</Style>
+					</AxFormControl>
+				</Controls>
+				<ArrangeMethod>Vertical</ArrangeMethod>
+				<ShowTabs>No</ShowTabs>
+			</AxFormControl>
+		</Controls>
+	</Design>
+	<Parts />
+</AxForm>

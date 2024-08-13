@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXBOMVersion_Extension</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+[ExtensionOf(tableStr(BOMVersion))]
+final class ATXBOMVersion_Extension
+{
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>ATXfindByItemBOMId</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Search first BOMVersion by Product master and BOM ID
+    /// </summary>
+    /// <param name = "_itemId">Product master</param>
+    /// <param name = "_bomId">BOM ID</param>
+    /// <param name = "_forupdate">Update?</param>
+    /// <returns></returns>
+    static BOMVersion ATXfindByItemBOMId(ItemId  _itemId, BOMId _bomId, boolean _forupdate = false)
+    {
+        BOMVersion bomVersion;
+
+        if (!_itemId || !_bomId)
+        {
+            return bomVersion;
+        }
+
+        bomVersion.selectForUpdate(_forUpdate);
+        select firstonly bomVersion
+            where bomVersion.ItemId == _itemId
+            && bomVersion.BOMId     == _bomId
+            ;
+
+        return bomVersion;
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>

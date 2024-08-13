@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxMenu xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="Microsoft.Dynamics.AX.Metadata.V1">
+	<Name>ATXApparelAndTextile</Name>
+	<Label>@ATXAT:NewLabel1</Label>
+	<Elements>
+		<AxMenuElement xmlns=""
+			i:type="AxMenuElementSubMenu">
+			<Name>FloorControl</Name>
+			<Label>@ATXAT:NewLabel207</Label>
+			<Elements>
+				<AxMenuElement xmlns=""
+					i:type="AxMenuElementMenuItem">
+					<Name>ATXProductionFloorControl</Name>
+					<MenuItemName>ATXProductionFloorControl</MenuItemName>
+				</AxMenuElement>
+				<AxMenuElement xmlns=""
+					i:type="AxMenuElementMenuItem">
+					<Name>ATXProdCutPackagesProgress</Name>
+					<MenuItemName>ATXProdCutPackagesProgress</MenuItemName>
+				</AxMenuElement>
+				<AxMenuElement xmlns=""
+					i:type="AxMenuElementSeparator">
+					<Name>Separator1</Name>
+				</AxMenuElement>
+				<AxMenuElement xmlns=""
+					i:type="AxMenuElementMenuItem">
+					<Name>ATXTurnTable</Name>
+					<MenuItemName>ATXTurnTable</MenuItemName>
+				</AxMenuElement>
+			</Elements>
+		</AxMenuElement>
+		<AxMenuElement xmlns=""
+			i:type="AxMenuElementSubMenu">
+			<Name>CustomerOrders</Name>
+			<Label>@ATXAT:NewLabel3</Label>
+			<Elements>
+				<AxMenuElement xmlns=""
+					i:type="AxMenuElementMenuItem">
+					<Name>ATXRequestOrder</Name>
+					<MenuItemName>ATXRequestOrder</MenuItemName>
+				</AxMenuElement>
+				<AxMenuElement xmlns=""
+					i:type="AxMenuElementMenuItem">
+					<Name>ATXSeasonFormDisplay</Name>
+					<MenuItemName>ATXSeasonFormDisplay</MenuItemName>
+				</AxMenuElement>
+				<AxMenuElement xmlns=""
+					i:type="AxMenuElementMenuItem">
+					<Name>ATXBrandTable</Name>
+					<MenuItemName>ATXBrandTable</MenuItemName>
+				</AxMenuElement>
+				<AxMenuElement xmlns=""
+					i:type="AxMenuElementMenuItem">
+					<Name>ATXBranchFormDisplay</Name>
+					<MenuItemName>ATXBranchFormDisplay</MenuItemName>
+				</AxMenuElement>
+				<AxMenuElement xmlns=""
+					i:type="AxMenuElementMenuItem">
+					<Name>ATXItemDivisionFormDisplay</Name>
+					<MenuItemName>ATXItemDivisionFormDisplay</MenuItemName>
+				</AxMenuElement>
+				<AxMenuElement xmlns=""
+					i:type="AxMenuElementMenuItem">
+					<Name>ATXDestinationPlaceForm</Name>
+					<MenuItemName>ATXDestinationPlaceForm</MenuItemName>
+				</AxMenuElement>
+				<AxMenuElement xmlns=""
+					i:type="AxMenuElementMenuItem">
+					<Name>ATXProductOvercut</Name>
+					<MenuItemName>ATXProductOvercut</MenuItemName>
+				</AxMenuElement>
+				<AxMenuElement xmlns=""
+					i:type="AxMenuElementMenuItem">
+					<Name>ATXItemDimGrids</Name>
+					<MenuItemName>ATXItemDimGrids</MenuItemName>
+				</AxMenuElement>
+			</Elements>
+		</AxMenuElement>
+		<AxMenuElement xmlns=""
+			i:type="AxMenuElementSubMenu">
+			<Name>Setup</Name>
+			<Label>@ATXAT:NewLabel2</Label>
+			<Elements>
+				<AxMenuElement xmlns=""
+					i:type="AxMenuElementMenuItem">
+					<Name>ATXParameters</Name>
+					<MenuItemName>ATXParameters</MenuItemName>
+				</AxMenuElement>
+				<AxMenuElement xmlns=""
+					i:type="AxMenuElementMenuItem">
+					<Name>ATXProdPoolSetup</Name>
+					<MenuItemName>ATXProdPoolSetup</MenuItemName>
+				</AxMenuElement>
+			</Elements>
+		</AxMenuElement>
+		<AxMenuElement xmlns=""
+			i:type="AxMenuElementSubMenu">
+			<Name>ProductionControl</Name>
+			<Label>@ATXAT:NewLabel245</Label>
+			<Elements>
+				<AxMenuElement xmlns=""
+					i:type="AxMenuElementMenuItem">
+					<Name>ATXRouteOprTable</Name>
+					<MenuItemName>ATXRouteOprTable</MenuItemName>
+				</AxMenuElement>
+			</Elements>
+		</AxMenuElement>
+	</Elements>
+</AxMenu>

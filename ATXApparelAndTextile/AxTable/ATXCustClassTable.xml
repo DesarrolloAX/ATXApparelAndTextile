@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxTable xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXCustClassTable</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+public class ATXCustClassTable extends common
+{
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>displayData</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Display full name
+    /// </summary>
+    /// <returns>String Name</returns>
+    display Description255 displayData()
+    {
+        return strFmt('%1|%2|%3', this.Name, this.Dept, this.DeptName);
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>find</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Lookup for parameter class record
+    /// </summary>
+    /// <param name = "_custClassId">Id customer class</param>
+    /// <param name = "_forUpdate">Only if update needed</param>
+    /// <returns>Table instance</returns>
+    static ATXCustClassTable find(ATXCustClassId _custClassId, boolean _forUpdate = false)
+    {
+        ATXCustClassTable   custClassTable;
+
+        custClassTable.selectForUpdate(true);
+
+        select firstOnly custClassTable
+            index CustClassIdx
+            where custClassTable.CustClassId  == _custClassId;
+
+        return custClassTable;
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+	<Label>@ATXAT:NewLabel82</Label>
+	<SubscriberAccessLevel>
+		<Read>Allow</Read>
+	</SubscriberAccessLevel>
+	<ClusteredIndex>CustClassIdx</ClusteredIndex>
+	<PrimaryIndex>CustClassIdx</PrimaryIndex>
+	<DeleteActions />
+	<FieldGroups>
+		<AxTableFieldGroup>
+			<Name>AutoReport</Name>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoLookup</Name>
+			<Fields>
+				<AxTableFieldGroupField>
+					<DataField>CustClassId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>DeptName</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>Dept</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>Name</DataField>
+				</AxTableFieldGroupField>
+			</Fields>
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoIdentification</Name>
+			<AutoPopulate>Yes</AutoPopulate>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoSummary</Name>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoBrowse</Name>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>Overview</Name>
+			<Label>@ATXApparelAndTextile_en_US:ATXL00009</Label>
+			<Fields>
+				<AxTableFieldGroupField>
+					<DataField>CustClassId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>DeptName</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>Dept</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>Name</DataField>
+				</AxTableFieldGroupField>
+			</Fields>
+		</AxTableFieldGroup>
+	</FieldGroups>
+	<Fields>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>Name</Name>
+			<ExtendedDataType>Name</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>DeptName</Name>
+			<ExtendedDataType>Name</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>Dept</Name>
+			<ExtendedDataType>Name</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>CustClassId</Name>
+			<ExtendedDataType>ATXCustClassId</ExtendedDataType>
+		</AxTableField>
+	</Fields>
+	<FullTextIndexes />
+	<Indexes>
+		<AxTableIndex>
+			<Name>CustClassIdx</Name>
+			<AlternateKey>Yes</AlternateKey>
+			<Fields>
+				<AxTableIndexField>
+					<DataField>CustClassId</DataField>
+				</AxTableIndexField>
+			</Fields>
+		</AxTableIndex>
+	</Indexes>
+	<Mappings />
+	<Relations />
+	<StateMachines />
+</AxTable>

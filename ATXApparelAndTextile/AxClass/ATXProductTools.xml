@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXProductTools</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+class ATXProductTools
+{
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>existsConfiguration</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Check if configuration is already created in product dimension variants
+    /// </summary>
+    /// <param name = "_inventTable"></param>
+    /// <param name = "_configId"></param>
+    /// <returns></returns>
+    static boolean existsConfiguration(InventTable _inventTable, EcoResConfigurationName _configId)
+    {
+        InventDimCombination    inventDimCombination;
+        InventDim               inventDimComb;
+        boolean ret = true;
+
+        if (_configId && _inventTable.configActive())
+        {
+            select firstonly inventDimCombination
+                where inventDimCombination.ItemId   == _inventTable.ItemId
+                join inventDimComb
+                where inventDimComb.inventDimId     == inventDimCombination.inventDimId
+                && inventDimComb.configId       == _configId;
+            if (!inventDimCombination)
+            {
+                ret = checkFailed(strFmt("@ATXApparelAndTextile_en_US:ATXL00109", _configId, _inventTable.ItemId));
+            }
+        }
+        return ret;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>isBatchTrackingDimensionActive</Name>
+				<Source><![CDATA[
+    static boolean isBatchTrackingDimensionActive(ItemId _itemId)
+    {
+        RefRecId                                productDimensionAttribute;
+        EcoResTrackingDimensionGroupFldSetup    ecoResTrackingDimensionGroupFldSetup;
+
+        ;
+
+        return ecoResTrackingDimensionGroupFldSetup::findByDimensionGroupFieldId(InventTable::find(_itemId).trackingDimensionGroup(), fieldNum(InventDim, InventBatchId)).IsActive;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>isSerialTrackingDimensionActive</Name>
+				<Source><![CDATA[
+    static boolean isSerialTrackingDimensionActive(ItemId _itemId)
+    {
+        RefRecId                                productDimensionAttribute;
+        EcoResTrackingDimensionGroupFldSetup    ecoResTrackingDimensionGroupFldSetup;
+
+        ;
+
+        return ecoResTrackingDimensionGroupFldSetup::findByDimensionGroupFieldId(InventTable::find(_itemId).trackingDimensionGroup(), fieldNum(InventDim, InventSerialId)).IsActive;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>existsSize</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Check if size is already created in product dimension variants
+    /// </summary>
+    /// <param name = "_inventTable"></param>
+    /// <param name = "_inventSizeId"></param>
+    /// <returns></returns>
+    static boolean existsSize(InventTable _inventTable, EcoResSizeName _inventSizeId)
+    {
+        InventDimCombination    inventDimCombination;
+        InventDim               inventDimComb;
+        boolean ret = true;
+
+        if (_inventSizeId && _inventTable.sizeActive())
+        {
+            select firstonly inventDimCombination
+                where inventDimCombination.ItemId   == _inventTable.ItemId
+                join inventDimComb
+                where inventDimComb.inventDimId     == inventDimCombination.inventDimId
+                && inventDimComb.InventSizeId       == _inventSizeId;
+            if (!inventDimCombination)
+            {
+                ret = checkFailed(strFmt("@ATXApparelAndTextile_en_US:ATXL00110", _inventSizeId, _inventTable.ItemId));
+            }
+        }
+
+        return ret;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>existsColor</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Check if color is already created in product dimension variants
+    /// </summary>
+    /// <param name = "_inventTable"></param>
+    /// <param name = "_inventColorId"></param>
+    /// <returns></returns>
+    static boolean existsColor(InventTable _inventTable, EcoResColorName _inventColorId)
+    {
+        InventDimCombination    inventDimCombination;
+        InventDim               inventDimComb;
+        boolean ret = true;
+
+        if (_inventColorId && _inventTable.colorActive())
+        {
+            select firstonly inventDimCombination
+            where inventDimCombination.ItemId   == _inventTable.ItemId
+            join inventDimComb
+            where inventDimComb.inventDimId     == inventDimCombination.inventDimId
+            && inventDimComb.InventColorId      == _inventColorId;
+            if (!inventDimCombination)
+            {
+                ret = checkFailed(strFmt("@ATXApparelAndTextile_en_US:ATXL00111", _inventColorId, _inventTable.ItemId));
+            }
+        }
+
+        return ret;
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>

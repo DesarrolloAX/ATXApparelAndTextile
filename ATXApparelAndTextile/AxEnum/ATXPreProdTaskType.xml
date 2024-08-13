@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxEnum xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXPreProdTaskType</Name>
+	<Label>@ATXPLM:NewLabel12</Label>
+	<UseEnumValue>No</UseEnumValue>
+	<EnumValues>
+		<AxEnumValue>
+			<Name>Product</Name>
+			<Label>@ATXPLM:NewLabel13</Label>
+		</AxEnumValue>
+		<AxEnumValue>
+			<Name>SampleBook</Name>
+			<Label>@ATXPLM:NewLabel14</Label>
+			<Value>1</Value>
+		</AxEnumValue>
+		<AxEnumValue>
+			<Name>SampleWIP</Name>
+			<Label>@ATXPLM:NewLabel2</Label>
+			<Value>2</Value>
+		</AxEnumValue>
+	</EnumValues>
+	<IsExtensible>true</IsExtensible>
+</AxEnum>

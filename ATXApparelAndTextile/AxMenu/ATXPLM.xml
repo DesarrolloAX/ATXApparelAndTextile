@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxMenu xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="Microsoft.Dynamics.AX.Metadata.V1">
+	<Name>ATXPLM</Name>
+	<Label>@ATXPLM:NewLabel1</Label>
+	<Elements>
+		<AxMenuElement xmlns=""
+			i:type="AxMenuElementMenuItem">
+			<Name>ATXSampleWIP</Name>
+			<MenuItemName>ATXSampleWIP</MenuItemName>
+		</AxMenuElement>
+		<AxMenuElement xmlns=""
+			i:type="AxMenuElementMenuItem">
+			<Name>ATXSampleTypeFormDisplay</Name>
+			<MenuItemName>ATXSampleTypeFormDisplay</MenuItemName>
+		</AxMenuElement>
+		<AxMenuElement xmlns=""
+			i:type="AxMenuElementMenuItem">
+			<Name>ATXSamplingPhase</Name>
+			<MenuItemName>ATXSamplingPhase</MenuItemName>
+		</AxMenuElement>
+		<AxMenuElement xmlns=""
+			i:type="AxMenuElementMenuItem">
+			<Name>ATXSampleBook</Name>
+			<MenuItemName>ATXSampleBook</MenuItemName>
+		</AxMenuElement>
+		<AxMenuElement xmlns=""
+			i:type="AxMenuElementSubMenu">
+			<Name>PreproductionTask</Name>
+			<Label>@ATXPLM:NewLabel6</Label>
+			<Elements>
+				<AxMenuElement xmlns=""
+					i:type="AxMenuElementMenuItem">
+					<Name>ATXProductPreProdTask</Name>
+					<MenuItemName>ATXProductPreProdTask</MenuItemName>
+				</AxMenuElement>
+				<AxMenuElement xmlns=""
+					i:type="AxMenuElementMenuItem">
+					<Name>ATXProductPreProdTaskEmployee</Name>
+					<MenuItemName>ATXProductPreProdTaskEmployee</MenuItemName>
+				</AxMenuElement>
+				<AxMenuElement xmlns=""
+					i:type="AxMenuElementMenuItem">
+					<Name>ATXPreProdTask</Name>
+					<MenuItemName>ATXPreProdTask</MenuItemName>
+				</AxMenuElement>
+				<AxMenuElement xmlns=""
+					i:type="AxMenuElementMenuItem">
+					<Name>ATXPreProdTaskTemplate</Name>
+					<MenuItemName>ATXPreProdTaskTemplate</MenuItemName>
+				</AxMenuElement>
+			</Elements>
+		</AxMenuElement>
+	</Elements>
+</AxMenu>

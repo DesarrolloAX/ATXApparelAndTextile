@@ -1,0 +1,363 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXRequestOrderCreate</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+class ATXRequestOrderCreate extends ATXRequestOrder
+{
+    DialogField                 dialogRequestOrderId,
+                                dialogRequestOrderType,
+                                dialogCustAccount,
+                                dialogCurrencyCode,
+                                dialogCustPurchaseOrder,
+                                dialogCustRef,
+                                dialogProdPoolId,
+                                dialogRequestOrderGroupId_AT,
+                                dialogInventTransType,
+                                dialogRequestOrderCreated,
+                                dialogInventSiteId,
+                                dialogInventLocationId,
+                                dialogRequestOrderDate,
+                                dialogRequestOrderCancelDate,
+                                dialogSampleTypeId;
+
+    CustAccount                 custAccount;
+    CurrencyCode                currencyCode;
+    CustPurchaseOrder           custPurchaseOrder;
+    CustRef                     custRef;
+    ProdPoolId                  prodPoolId;
+    InventTransType             inventTransType;
+    ATXRequestOrderCreated      requestOrderCreated;
+    ATXRequestOrderDate         requestOrderDate;
+    ATXRequestOrderCancelDate   requestOrderCancelDate;
+    ATXRequestOrderGroupId      requestOrderGroupId_AT;
+    InventSiteId                inventSiteId;
+    InventLocationId            inventLocationId;
+    ATXSampleTypeId             sampleTypeId_AT;
+
+    #define.RequestOrderNumberDefault(1)
+
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>createRequestOrder</Name>
+				<Source><![CDATA[
+    private void createRequestOrder()
+    {
+        ATXAXRequestOrderHeader axRequestOrderHeader;
+        ;
+
+        if (requestOrderType == ATXRequestOrderType::Sales && !ATXRequestOrderHeader::validatePODuplicated(custPurchaseOrder))
+        {
+            throw error(strFmt("@ATXAT:NewLabel105", custPurchaseOrder));
+        }
+
+        axRequestOrderHeader = ATXAXRequestOrderHeader::construct();
+        axRequestOrderHeader.parmRequestOrderId_AT(requestOrderId);
+        axRequestOrderHeader.parmRequestOrderStatus_AT(ATXRequestOrderStatus::Loaded);
+        axRequestOrderHeader.parmCustAccount(custAccount);
+        axRequestOrderHeader.parmCurrencyCode(currencyCode);
+        axRequestOrderHeader.parmCustPurchaseOrder(custPurchaseOrder);
+        axRequestOrderHeader.parmCustRef(custRef);
+        axRequestOrderHeader.parmRequestOrderGroupId_AT(requestOrderGroupId_AT);
+        axRequestOrderHeader.parmProdPoolId(prodPoolId);
+        axRequestOrderHeader.parmInventTransType(inventTransType);
+        axRequestOrderHeader.parmRequestOrderCreated_AT(requestOrderCreated);
+        axRequestOrderHeader.parmInventSiteId(inventSiteId);
+        axRequestOrderHeader.parmInventLocationId(inventLocationId);
+        axRequestOrderHeader.parmRequestOrderDate(requestOrderDate);
+        axRequestOrderHeader.parmRequestOrderCancelDate_AT(requestOrderCancelDate);
+        axRequestOrderHeader.parmRequestOrderType_AT(requestOrderType);
+        axRequestOrderHeader.save();
+
+        requestOrderHeader   = axRequestOrderHeader.requestOrderHeader();
+        ttsbegin;
+        requestOrderHeader.selectForUpdate(true);
+        requestOrderHeader.RequestOrderType = requestOrderType;
+        requestOrderHeader.InventLocationId = inventLocationId;
+        requestOrderHeader.SampleTypeId  = sampleTypeId_AT;
+        requestOrderHeader.LineOfBusinessId = CustTable::find(custAccount).LineOfBusinessId;
+        requestOrderHeader.update();
+        ttscommit;
+
+        // Create Request Update
+        requestOrderUpdates.clear();
+        requestOrderUpdates.initFromRequestOrderHeader(requestOrderHeader);
+        requestOrderUpdates.insert();
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>validate</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name = "calledFrom"></param>
+    /// <returns></returns>
+    public boolean validate(Object calledFrom = null)
+    {
+        boolean ret;
+
+        ret = super(calledFrom);
+
+        if (dialogProdPoolId.value() == "")
+        {
+            ret = checkFailed("@ATXAT:NewLabel101");
+        }
+
+        if (dialogRequestOrderType.value() == ATXRequestOrderType::Sample)
+        {
+            if (dialogSampleTypeId.value() == "")
+            {
+                ret = checkFailed("@ATXAT:NewLabel102");
+            }
+        }
+        else
+        {
+            if (dialogInventSiteId.value() == "")
+            {
+                ret = checkFailed("@ATXAT:NewLabel99");
+            }
+            if (dialogInventLocationId.value() == "")
+            {
+                ret = checkFailed("@ATXAT:NewLabel100");
+            }
+        }
+
+        if (!CustTable::find(custAccount).LineOfBusinessId)
+        {
+            ret = checkFailed("@ATXAT:NewLabel103");
+        }
+
+        return ret;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>dialog</Name>
+				<Source><![CDATA[
+    Object dialog()
+    {
+        DialogGroup             fileGroup, productGroup;
+        NumberSeq               numberSeq;
+        NumberSequenceTable     numberSequenceTable;
+
+        dialog = super();
+        fileGroup = dialog.addGroup('');
+        fileGroup.columns(2);
+        fileGroup.frameType(1);
+
+        dialog.addGroup("@ATXAT:NewLabel104", fileGroup);
+
+        select firstonly numberSequenceTable
+            where numberSequenceTable.RecId  == ATXSalesParameters::find().NumberSequenceId;
+
+        numberSeq   = NumberSeq::newGetNumFromCode(numberSequenceTable.NumberSequence);
+
+        dialogRequestOrderId     = dialog.addFieldValue(extendedtypestr(ATXRequestOrderId), requestOrderId);
+        dialogRequestOrderId.value(numberSeq.num());
+        dialogRequestOrderId.allowEdit(false);
+
+        dialogRequestOrderType   = dialog.addFieldValue(enumStr(ATXRequestOrderType), ATXRequestOrderType::Sales);
+
+        dialogCustAccount           = dialog.addFieldValue(extendedtypestr(CustAccount), custAccount);
+        dialogCurrencyCode          = dialog.addFieldValue(extendedtypestr(CurrencyCode), currencyCode);
+        dialogRequestOrderGroupId_AT= dialog.addFieldValue(extendedtypestr(ATXRequestOrderGroupId), requestOrderGroupId_AT);
+        dialogCustPurchaseOrder     = dialog.addFieldValue(extendedtypestr(CustPurchaseOrder), custPurchaseOrder);
+        dialogCustRef               = dialog.addFieldValue(extendedtypestr(CustRef), custRef);
+        dialogProdPoolId            = dialog.addFieldValue(extendedtypestr(ProdPoolId), prodPoolId);
+        dialogProdPoolId.mandatory_RU(true);
+        dialogSampleTypeId          = dialog.addFieldValue(extendedtypestr(ATXSampleTypeId), sampleTypeId_AT);
+        dialogSampleTypeId.visible(false);
+        dialogInventTransType       = dialog.addFieldValue(enumStr(InventTransType), inventTransType);
+        dialogInventTransType.value(InventTransType::Sales);
+        dialogInventTransType.allowEdit(false);
+        dialogInventTransType.visible(false);
+        dialogRequestOrderCreated   = dialog.addFieldValue(extendedtypestr(ATXRequestOrderCreated), requestOrderCreated);
+        dialogRequestOrderCreated.value(DateTimeUtil::getSystemDate(DateTimeUtil::getUserPreferredTimeZone()));
+        dialogRequestOrderCreated.allowEdit(false);
+        dialogRequestOrderDate      = dialog.addFieldValue(extendedtypestr(ATXRequestOrderDate), requestOrderDate);
+        dialogRequestOrderCancelDate= dialog.addFieldValue(extendedtypestr(ATXRequestOrderCancelDate), requestOrderCancelDate);
+
+        dialogInventSiteId          = dialog.addFieldValue(extendedtypestr(InventSiteId), inventSiteId);
+        dialogInventSiteId.value(ATXSalesParameters::find().InventSiteId);
+        dialogInventLocationId      = dialog.addFieldValue(extendedtypestr(InventLocationId), inventLocationId);
+        dialogInventLocationId.value(ATXSalesParameters::find().InventLocationId);
+
+        return dialog;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>Fld2_1_modified</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Modify Request order type
+    /// </summary>
+    /// <returns></returns>
+    public boolean Fld2_1_modified()
+    {
+        FormComboBoxControl control = dialog.formRun().controlCallingMethod();
+        boolean             isFieldModified;
+
+        ;
+
+        isFieldModified = control.modified();
+
+        if (isFieldModified)
+        {
+            requestOrderType   = dialogRequestOrderType.value();
+            switch (requestOrderType)
+            {
+                case ATXRequestOrderType::Sales:
+                    dialogInventTransType.value(InventTransType::Sales);
+                    dialogSampleTypeId.visible(false);
+                    dialogSampleTypeId.mandatory_RU(false);
+
+                    dialogInventSiteId.mandatory_RU(true);
+                    dialogInventLocationId.mandatory_RU(true);
+                    // Hide inventory dimensions
+                    dialogInventSiteId.visible(true);
+                    dialogInventLocationId.visible(true);
+                    break;
+                case ATXRequestOrderType::Sample:
+                    dialogInventTransType.value(InventTransType::Production);
+                    dialogSampleTypeId.visible(true);
+                    dialogSampleTypeId.mandatory_RU(true);
+
+                    dialogInventSiteId.mandatory_RU(true);
+                    dialogInventLocationId.mandatory_RU(true);
+                    // Show inventory dimensions
+                    dialogInventSiteId.visible(false);
+                    dialogInventLocationId.visible(false);
+                    break;
+            }
+        }
+
+        return isFieldModified;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>Fld3_1_modified</Name>
+				<Source><![CDATA[
+    public boolean Fld3_1_modified()
+    {
+        FormStringControl   control = dialog.formRun().controlCallingMethod();
+        boolean             isFieldModified;
+
+        ;
+
+        isFieldModified = control.modified();
+
+        if (isFieldModified)
+        {
+            custAccount = dialogCustAccount.value();
+            dialogInventSiteId.value(CustTable::find(custAccount).InventSiteId);
+            dialogInventLocationId.value(CustTable::find(custAccount).InventLocation);
+            dialogCurrencyCode.value(CustTable::find(custAccount).Currency);
+        }
+
+        return isFieldModified;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>Fld12_1_modified</Name>
+				<Source><![CDATA[
+    public boolean Fld12_1_modified()
+    {
+        FormDateControl     control = dialog.formRun().controlCallingMethod();
+        boolean             isFieldModified;
+        TransDate           transDate;
+        ;
+
+        isFieldModified = control.modified();
+
+        if (isFieldModified)
+        {
+            transDate = control.dateValue();
+            dialogRequestOrderCancelDate.value(transDate);
+        }
+
+        return isFieldModified;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>getFromDialog</Name>
+				<Source><![CDATA[
+    public boolean getFromDialog()
+    {
+        ;
+
+        requestOrderId          = dialogRequestOrderId.value();
+        requestOrderType        = dialogRequestOrderType.value();
+        custAccount             = dialogCustAccount.value();
+        currencyCode            = dialogCurrencyCode.value();
+        custPurchaseOrder       = dialogCustPurchaseOrder.value();
+        inventTransType         = dialogInventTransType.value();
+        requestOrderCreated     = dialogRequestOrderCreated.value();
+        requestOrderDate        = dialogRequestOrderDate.value();
+        requestOrderCancelDate  = dialogRequestOrderCancelDate.value();
+        requestOrderGroupId_AT  = dialogRequestOrderGroupId_AT.value();
+        custRef                 = dialogCustRef.value();
+        prodPoolId              = dialogProdPoolId.value();
+        sampleTypeId_AT         = dialogSampleTypeId.value();
+        inventSiteId            = dialogInventSiteId.value();
+        inventLocationId        = dialogInventLocationId.value();
+
+        return super();
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>run</Name>
+				<Source><![CDATA[
+    void run()
+    {
+        ;
+
+        this.createRequestOrder();
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>main</Name>
+				<Source><![CDATA[
+    public static void main(Args _args)
+    {
+        ATXRequestOrderCreate   instance = new ATXRequestOrderCreate();
+        FormRun fr;
+        ;
+
+        if (instance.prompt())
+        {
+            instance.run();
+
+            if (_args && _args.dataset() == tableNum(ATXRequestOrderHeader) && _args.caller())
+            {
+                fr = _args.caller();
+                
+                fr.doResearch();
+                fr.doRefresh();
+                fr.reload();
+            }
+        }
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>

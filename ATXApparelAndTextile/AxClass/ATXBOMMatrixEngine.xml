@@ -1,0 +1,1447 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXBOMMatrixEngine</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+/// <summary>
+/// BOM Matrix funcions
+/// </summary>
+class ATXBOMMatrixEngine
+{
+    ATXBOMMatrixTemplate    bomMatrixTemplateOriginal;
+    ATXBOMTemplateLine      bomTemplateLine;
+    boolean                 configActive, sizeActive, colorActive, styleActive;
+    ItemId                  productMasterItemId;
+
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>createBOMLine</Name>
+				<Source><![CDATA[
+    private void createBOMLine(InventDim _inventDimProductMaster)
+    {
+        /*ATXBOMMatrixTemplate    bomMatrixTemplate;
+        BOM                     bom;
+        BOMVersion              bomVersion;
+        InventTable             inventTable;
+        ;
+        this.initDimActive(_inventDimProductMaster);
+
+        select firstOnly bomMatrixTemplate
+            index BOMTemplatelineIdx
+            where bomMatrixTemplate.BOMTemplateline      == this.parmBomMatrixTemplateOriginal().BOMTemplateline
+                && (bomMatrixTemplate.StyleconfigId      == _inventDimProductMaster.configId || !configActive)
+                && (bomMatrixTemplate.StyleInventSizeId  == _inventDimProductMaster.InventSizeId || !sizeActive)
+                && (bomMatrixTemplate.StyleInventColorId == _inventDimProductMaster.InventColorId || !colorActive)
+                && (bomMatrixTemplate.StyleInventStyleId == _inventDimProductMaster.InventStyleId || !styleActive)
+        ;
+
+        bom.clear();
+        bom.initValue();
+        bom.ATXBOMTemplateLine          = this.parmBomMatrixTemplateOriginal().BOMTemplateline;
+        bom.BOMId                       = this.parmBOMTemplateLine().BOMId;
+        if (!bom.BOMId)
+        {
+            throw error("@ATXApparelAndTextile_AT:NewLabel205");
+        }
+        bom.ItemId      = bomMatrixTemplate.ItemId;
+
+        bom.BOMQtySerie = this.parmBOMTemplateLine().BOMQtySerie;
+        bom.LineNum                 = BOM::lastLineNum(bom.BOMId) + 1;
+
+        bom.BOMConsump              = InventTable::find(this.parmBOMTemplateLine().ItemId).BOMConsumpType_AT;
+        bom.BOMQty                  = this.parmBOMTemplateLine().BOMQty;
+        bom.ItemId                  = this.parmBOMTemplateLine().ItemId;
+        bom.UnitId                  = this.parmBOMTemplateLine().UnitId;
+        bom.AltText_AT              = this.parmBOMTemplateLine().AltText;
+        bom.RouteOprId_AT           = this.parmBOMTemplateLine().MaterialRouting;
+        bom.InventDimId             = this.parmBOMTemplateLine().InventDimId;
+        bom.ATXBOMTemplateLine      = this.parmBOMTemplateLine().RecId;
+        bom.MainFabric_AT           = this.parmBOMTemplateLine().MainFabric;
+        bom.FabricWidth_AT          = this.parmBOMTemplateLine().FabricWidth;
+        bom.RouteOprId_AT           = this.parmBOMTemplateLine().RouteOprId;
+        bom.ScrapConst              = this.parmBOMTemplateLine().ScrapConst;
+        bom.ScrapVar                = this.parmBOMTemplateLine().ScrapVar;
+
+
+        bom.InventDimId = InventDim::inventDimIdBlank();
+        // Validate style dimension
+        select firstonly bomVersion
+            where bomVersion.BOMId  == this.parmBOMTemplateLine().BOMId;
+        inventTable = bomVersion.inventTable();
+        if (!ATXProductTools::existsSize(inventTable, bom.InventSizeId_AT)
+            || !ATXProductTools::existsSize(bom.inventTable(), InventDim::find(bom.InventDimId).InventSizeId)
+            || !ATXProductTools::existsConfiguration(inventTable, bom.ConfigId_AT)
+            || !ATXProductTools::existsConfiguration(bom.inventTable(), InventDim::find(bom.InventDimId).configId)
+            || !ATXProductTools::existsColor(inventTable, bom.InventColorId_AT)
+            || !ATXProductTools::existsColor(bom.inventTable(), InventDim::find(bom.InventDimId).InventColorId)
+            || !ATXProductTools::existsStyle(inventTable, bom.InventStyleId_AT)
+            || !ATXProductTools::existsStyle(bom.inventTable(), InventDim::find(bom.InventDimId).InventStyleId)
+            )
+        {
+            throw error("@ATXApparelAndTextile_AT:ATXL00017");
+        }
+
+        bom.insert();*/
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>createBOMRecord</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Create BOM line
+    /// </summary>
+    /// <param name=""></param>
+    /// <param name=""></param>
+    private void createBOMRecord(
+        RefRecId _bomTemplateLine,
+        BOMId _bomId, 
+        ItemId _itemIdMatrix, 
+        BOMConsumpType _bomConsumpType, 
+        BOMQty _bomQty, 
+        BOMQtySerie _bomQtySerie, 
+        BOMUnitId _bomUnitId,
+        /* BOMAltTextId_AT altTextId,*/ 
+        RouteOprId _routeOprId, 
+        InventDimId _inventDimId, 
+        ScrapConst _scrapConst, 
+        ScrapVar _scrapVar, 
+        EcoResConfigurationName _configIdStyle, 
+        EcoResSizeName _inventSizeIdStyle, 
+        EcoResColorName _inventColorIdStyle, 
+        EcoResStyleName _inventStyleIdStyle, 
+        BOMType _bomType, 
+        VendAccount _vendAccount, 
+        ATXSeasonId _seasonId, 
+        ATXDestinationPlaceId _destinationPlaceId)
+    {
+        BOM         bom;
+        InventDim   inventDim;
+        BOMVersion  bomVersion;
+        InventTable inventTable;
+        ;
+
+        bom.clear();
+        bom.initValue();
+        bom.ATXBOMTemplateLine      = _bomTemplateLine;
+        bom.BOMId                   = _bomId;
+        if (!bom.BOMId)
+        {
+            throw error("@ATXApparelAndTextile_AT:NewLabel205");
+        }
+        bom.ItemId                  = _itemIdMatrix;
+        bom.LineNum                 = BOM::lastLineNum(bom.BOMId) + 1;
+        bom.BOMConsump              = _bomConsumpType;
+        bom.BOMQty                  = _bomQty;
+        bom.BOMQtySerie             = _bomQtySerie;
+        bom.UnitId                  = _bomUnitId;
+        //bom.AltText_AT              = _altTextId;
+        bom.ATXRouteOprId           = _routeOprId;
+        bom.InventDimId             = _inventDimId;
+        bom.ScrapConst              = _scrapConst;
+        bom.ScrapVar                = _scrapVar;
+        bom.ATXConfigId             = _configIdStyle;
+        bom.ATXInventSizeId         = _inventSizeIdStyle;
+        bom.ATXInventColorId        = _inventColorIdStyle;
+        bom.ATXInventStyleId        = _inventStyleIdStyle;
+        bom.BOMType                 = _bomType;
+        bom.VendId                  = _vendAccount;
+        bom.ATXSeasonId             = _seasonId;
+        bom.ATXDestinationPlaceId   = _destinationPlaceId;
+
+        // Validate style dimension
+        select firstonly bomVersion
+            where bomVersion.BOMId  == this.parmBOMTemplateLine().BOMId;
+        inventTable = bomVersion.inventTable();
+        if (!ATXProductTools::existsSize(inventTable, bom.ATXInventSizeId)
+            || !ATXProductTools::existsSize(bom.inventTable(), InventDim::find(bom.InventDimId).InventSizeId)
+            || !ATXProductTools::existsConfiguration(inventTable, bom.ATXConfigId)
+            || !ATXProductTools::existsConfiguration(bom.inventTable(), InventDim::find(bom.InventDimId).configId)
+            || !ATXProductTools::existsColor(inventTable, bom.ATXInventColorId)
+            || !ATXProductTools::existsColor(bom.inventTable(), InventDim::find(bom.InventDimId).InventColorId)
+            //|| !ATXProductTools::existsStyle(inventTable, bom.ATXInventStyleId)
+            //|| !ATXProductTools::existsStyle(bom.inventTable(), InventDim::find(bom.InventDimId).InventStyleId)
+            )
+        {
+            throw error("@ATXApparelAndTextile_AT:ATXL00017");
+        }
+
+        if (bom.inventTable().sizeActive() && !bom.inventDim().InventSizeId)
+        {
+            throw error(strFmt("@ATXAT:NewLabel307", bom.ItemId));
+        }
+
+        if (bom.validateWrite())
+        {
+            bom.insert();
+        }
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>createBOMLineBySize</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Create BOMTemplateLines based on Matrix line. Matrix line is marked with MatrixConfig
+    /// </summary>
+    /// <param name="_inventDimProductMaster"></param>
+    /// <param name="_bomMatrixTemplate"></param>
+    private void createBOMLineBySize(InventDim _inventDimProductMaster, ATXBOMMatrixTemplate _bomMatrixTemplate)
+    {
+        BOM             bom;
+        InventDim       inventDim;
+        BOMQty          bomQty;
+
+        inventDim.clear();
+        if (_bomMatrixTemplate.inventTable().sizeActive())
+        {
+            inventDim.InventSizeId      = _inventDimProductMaster.InventSizeId;
+        }
+        inventDim.InventColorId     = _bomMatrixTemplate.InventColorId;
+        inventDim.InventStyleId     = _bomMatrixTemplate.InventStyleId;
+        inventDim.InventSiteId      = _bomMatrixTemplate.bomTemplateLine().inventDim().InventSiteId;
+        inventDim.InventLocationId  = _bomMatrixTemplate.bomTemplateLine().inventDim().InventLocationId;
+
+        if (_bomMatrixTemplate.BOMQty)
+        {
+            bomQty = _bomMatrixTemplate.BOMQty;
+        }
+        else
+        {
+            bomQty = _bomMatrixTemplate.bomTemplateLine().BOMQty;
+        }
+
+        //this.createBOMRecord(this.parmBomMatrixTemplateOriginal().BOMTemplateline, this.parmBOMTemplateLine().BOMId, _bomMatrixTemplate.ItemId, InventTable::find(this.parmBOMTemplateLine().ItemId).BOMConsumpType_AT, bomQty, _bomMatrixTemplate.BOMQtySerie, this.parmBOMTemplateLine().UnitId, this.parmBOMTemplateLine().AltText, this.parmBOMTemplateLine().RouteOprId, InventDim::findOrCreate(inventDim).InventDimId, this.parmBOMTemplateLine().ScrapConst, this.parmBOMTemplateLine().ScrapVar, _bomMatrixTemplate.StyleconfigId, _inventDimProductMaster.InventSizeId, _bomMatrixTemplate.StyleInventColorId, _inventDimProductMaster.InventStyleId, _bomMatrixTemplate.BOMType, _bomMatrixTemplate.VendId, _bomMatrixTemplate.SeasonId_AT, _bomMatrixTemplate.DestinationPlaceId_AT);
+        this.createBOMRecord(
+            this.parmBomMatrixTemplateOriginal().BOMTemplateLine
+            , this.parmBOMTemplateLine().BOMId
+            , _bomMatrixTemplate.ItemId
+            , this.parmBOMTemplateLine().BOMConsumpType
+            , bomQty
+            , _bomMatrixTemplate.BOMQtySerie
+            , this.parmBOMTemplateLine().UnitId
+            //, this.parmBOMTemplateLine().PlacementId
+            , this.parmBOMTemplateLine().RouteOprId
+            , InventDim::findOrCreate(inventDim).inventDimId
+            , this.parmBOMTemplateLine().ScrapConst
+            , this.parmBOMTemplateLine().ScrapVar
+            , _bomMatrixTemplate.ConfigId
+            , _inventDimProductMaster.InventSizeId //, _bomMatrixTemplate.InventSizeId
+            , _bomMatrixTemplate.InventColorId
+            , _bomMatrixTemplate.InventStyleId
+            , _bomMatrixTemplate.BOMType
+            , _bomMatrixTemplate.VendAccount
+            , _bomMatrixTemplate.SeasonId
+            , _bomMatrixTemplate.DestinationPlaceId);
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>createBOMLineByStyleColor</Name>
+				<Source><![CDATA[
+    private void createBOMLineByStyleColor(InventDim _inventDimProductMaster, ATXBOMMatrixTemplate _bomMatrixTemplate)
+    {
+        /*
+        BOMVersion              bomVersion;
+        InventTable             inventTable;
+        BOM                     bom;
+        InventDim               inventDim;
+        ;
+
+        // Check no line created
+        select firstOnly bom
+            where bom.ATXBOMTemplateLine       == this.parmBomMatrixTemplateOriginal().BOMTemplateline
+            && bom.ItemId           == _bomMatrixTemplate.ItemId
+            && bom.InventColorId_AT == _inventDimProductMaster.InventColorId;
+
+        if (!bom)
+        {
+            inventDim.clear();
+            inventDim.InventColorId     = _bomMatrixTemplate.InventColorId;
+            inventDim.InventSiteId      = _bomMatrixTemplate.bomTemplateLine().inventDim().InventSiteId;
+            inventDim.InventLocationId  = _bomMatrixTemplate.bomTemplateLine().inventDim().InventLocationId;
+
+
+            bom.clear();
+            bom.initValue();
+            bom.ATXBOMTemplateLine             = this.parmBomMatrixTemplateOriginal().BOMTemplateline;
+            bom.BOMId                   = this.parmBOMTemplateLine().BOMId;
+            if (!bom.BOMId)
+            {
+                throw error("@ATXApparelAndTextile_AT:NewLabel205");
+            }
+            bom.ItemId                  = _bomMatrixTemplate.ItemId;
+            bom.LineNum                 = BOM::lastLineNum(bom.BOMId) + 1;
+
+            bom.BOMConsump              = InventTable::find(this.parmBOMTemplateLine().ItemId).BOMConsumpType_AT;
+            if (_bomMatrixTemplate.BOMQty)
+            bom.BOMQty                  = _bomMatrixTemplate.BOMQty;
+            else
+            bom.BOMQty                  = _bomMatrixTemplate.bomTemplateLine().BOMQty;
+
+            bom.BOMQtySerie             = _bomMatrixTemplate.BOMQtySerie; // ref
+            bom.UnitId                  = this.parmBOMTemplateLine().UnitId;
+            bom.AltText_AT              = this.parmBOMTemplateLine().AltText;
+            bom.RouteOprId_AT           = this.parmBOMTemplateLine().MaterialRouting;
+            bom.InventDimId             = this.parmBOMTemplateLine().InventDimId;
+            bom.ATXBOMTemplateLine             = this.parmBOMTemplateLine().RecId;
+            bom.MainFabric_AT           = this.parmBOMTemplateLine().MainFabric;
+            bom.FabricWidth_AT             = this.parmBOMTemplateLine().FabricWidth;
+            bom.RouteOprId_AT           = this.parmBOMTemplateLine().RouteOprId;
+            bom.ScrapConst              = this.parmBOMTemplateLine().ScrapConst;
+            bom.ScrapVar                = this.parmBOMTemplateLine().ScrapVar;
+
+            // <ATX_Invent_026_BOMMatrixFields Insertar filas Insertar consumo lineal y comentarios>
+            bom.LinealConsumption_AT    = _bomMatrixTemplate.LinealConsumption;
+            bom.Comments_AT             = _bomMatrixTemplate.Comments;
+            // </ATX_Invent_026_BOMMatrixFields Insertar filas Insertar consumo lineal y comentarios>
+
+            bom.InventDimId             = InventDim::findOrCreate(inventDim).inventDimId;
+            bom.ConfigId_AT             = _inventDimProductMaster.configId;
+            bom.InventSizeId_AT         = _inventDimProductMaster.InventSizeId;
+            bom.InventColorId_AT        = _inventDimProductMaster.InventColorId;
+            bom.InventStyleId_AT        = _inventDimProductMaster.InventStyleId;
+
+            bom.BOMType                 = _bomMatrixTemplate.BOMType;
+            if (!bom.RouteOprId_AT)
+            bom.RouteOprId_AT       = _bomMatrixTemplate.RouteOprId;
+            bom.VendId                  = _bomMatrixTemplate.VendId;
+
+            // Validate style dimension
+            select firstonly bomVersion
+                where bomVersion.BOMId  == this.parmBOMTemplateLine().BOMId;
+            inventTable = bomVersion.inventTable();
+            if (!ATXProductTools::existsSize(inventTable, bom.InventSizeId_AT)
+                || !ATXProductTools::existsSize(bom.inventTable(), InventDim::find(bom.InventDimId).InventSizeId)
+                || !ATXProductTools::existsConfiguration(inventTable, bom.ConfigId_AT)
+                || !ATXProductTools::existsConfiguration(bom.inventTable(), InventDim::find(bom.InventDimId).configId)
+                || !ATXProductTools::existsColor(inventTable, bom.InventColorId_AT)
+                || !ATXProductTools::existsColor(bom.inventTable(), InventDim::find(bom.InventDimId).InventColorId)
+                || !ATXProductTools::existsStyle(inventTable, bom.InventStyleId_AT)
+                || !ATXProductTools::existsStyle(bom.inventTable(), InventDim::find(bom.InventDimId).InventStyleId)
+                )
+            {
+                throw error("@ATXApparelAndTextile_AT:ATXL00017");
+            }
+
+            if (bom.validateWrite())
+            {
+                bom.insert();
+            }
+        }
+        */
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>createBOMLineByStyleColorSize</Name>
+				<Source><![CDATA[
+    private void createBOMLineByStyleColorSize(
+        InventDim _inventDimProductMaster,
+        ATXBOMMatrixTemplate _bomMatrixTemplate)
+    {
+        BOM                     bom;
+        InventDim               inventDim;
+        BOMVersion              bomVersion;
+        InventTable             inventTable;
+        ;
+
+        // Check no line created
+        select firstOnly bom
+            where bom.ATXBOMTemplateLine == this.parmBomMatrixTemplateOriginal().BOMTemplateline
+            && bom.ItemId == _bomMatrixTemplate.ItemId
+            && bom.ATXConfigId == _inventDimProductMaster.configId
+            && bom.ATXInventColorId == _inventDimProductMaster.InventColorId
+            && bom.ATXInventSizeId == _inventDimProductMaster.InventSizeId
+            //&& bom.ATXInvent == _inventDimProductMaster.InventSizeId
+            ;
+
+        if (!bom)
+        {
+            inventDim.clear();
+            inventDim.configId = _bomMatrixTemplate.configId;
+            inventDim.InventColorId = _bomMatrixTemplate.InventColorId;
+            inventDim.InventSizeId = _bomMatrixTemplate.InventSizeId;
+            //inventDim.InventStyleId = _bomMatrixTemplate.InventStyleId;
+
+            /*if (_bomMatrixTemplate.StyleInventStyleId)
+            {
+                inventDim.InventStyleId     = _bomMatrixTemplate.StyleInventStyleId;
+            }*/
+
+            inventDim.InventSiteId      = _bomMatrixTemplate.bomTemplateLine().inventDim().InventSiteId;
+            inventDim.InventLocationId  = _bomMatrixTemplate.bomTemplateLine().inventDim().InventLocationId;
+
+
+            bom.clear();
+            bom.initValue();
+            bom.ATXBOMTemplateLine = this.parmBomMatrixTemplateOriginal().BOMTemplateline;
+            bom.BOMId = this.parmBOMTemplateLine().BOMId;
+            if (!bom.BOMId)
+            {
+                throw error("@ATXAT:NewLabel284");
+            }
+            bom.ItemId                  = _bomMatrixTemplate.ItemId;
+            bom.LineNum                 = BOM::lastLineNum(bom.BOMId) + 1;
+
+            //bom.BOMConsump              = InventTable::find(this.parmBOMTemplateLine().ItemId).BOMConsumpType_AT;
+            if (_bomMatrixTemplate.BOMQty)
+            bom.BOMQty                  = _bomMatrixTemplate.BOMQty;
+            else
+            bom.BOMQty                  = _bomMatrixTemplate.bomTemplateLine().BOMQty;
+
+            bom.BOMQtySerie             = _bomMatrixTemplate.BOMQtySerie; // ref
+            bom.UnitId                  = this.parmBOMTemplateLine().UnitId;
+            //bom.AltText_AT              = this.parmBOMTemplateLine().AltText;
+            //bom.RouteOprId_AT           = this.parmBOMTemplateLine().MaterialRouting;
+            bom.InventDimId             = this.parmBOMTemplateLine().InventDimId;
+            bom.ATXBOMTemplateLine             = this.parmBOMTemplateLine().RecId;
+            //bom.MainFabric_AT           = this.parmBOMTemplateLine().MainFabric;
+            //bom.FabricWidth_AT             = this.parmBOMTemplateLine().FabricWidth;
+            //bom.RouteOprId_AT           = this.parmBOMTemplateLine().RouteOprId;
+            bom.ScrapConst              = this.parmBOMTemplateLine().ScrapConst;
+            bom.ScrapVar                = this.parmBOMTemplateLine().ScrapVar;
+
+            // <ATX_Invent_026_BOMMatrixFields Insertar filas Insertar consumo lineal y comentarios>
+            //bom.LinealConsumption_AT    = _bomMatrixTemplate.LinealConsumption;
+            ///bom.Comments_AT             = _bomMatrixTemplate.Comments;
+            // </ATX_Invent_026_BOMMatrixFields Insertar filas Insertar consumo lineal y comentarios>
+
+            bom.InventDimId             = InventDim::findOrCreate(inventDim).inventDimId;
+            bom.ATXConfigId = _inventDimProductMaster.configId;
+            bom.ATXInventSizeId = _inventDimProductMaster.InventSizeId;
+            bom.ATXInventColorId = _inventDimProductMaster.InventColorId;
+            bom.ATXInventStyleId = _inventDimProductMaster.InventStyleId;
+
+            bom.BOMType                 = _bomMatrixTemplate.BOMType;
+            /*if (!bom.RouteOprId_AT)
+            bom.RouteOprId_AT       = _bomMatrixTemplate.RouteOprId;
+            bom.VendId                  = _bomMatrixTemplate.VendId;*/
+
+            // Validate style dimension
+            select firstonly bomVersion
+                where bomVersion.BOMId  == this.parmBOMTemplateLine().BOMId
+                ;
+            inventTable = bomVersion.inventTable();
+            
+            if (!ATXProductTools::existsSize(inventTable, bom.ATXInventSizeId)
+                || !ATXProductTools::existsSize(bom.inventTable(), InventDim::find(bom.InventDimId).InventSizeId)
+                || !ATXProductTools::existsConfiguration(inventTable, bom.ATXConfigId)
+                || !ATXProductTools::existsConfiguration(bom.inventTable(), InventDim::find(bom.InventDimId).configId)
+                || !ATXProductTools::existsColor(inventTable, bom.ATXInventColorId)
+                || !ATXProductTools::existsColor(bom.inventTable(), InventDim::find(bom.InventDimId).InventColorId)
+                //|| !ATXProductTools::existsStyle(inventTable, bom.ATXInventStyleId)
+                //|| !ATXProductTools::existsStyle(bom.inventTable(), InventDim::find(bom.InventDimId).InventStyleId)
+                )
+            {
+                throw error("@ATXAT:NewLabel37");
+            }
+
+            if (bom.validateWrite())
+            {
+                bom.insert();
+            }
+        }
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>createBOMLineNoDimByStyleDim</Name>
+				<Source><![CDATA[
+    private void createBOMLineNoDimByStyleDim(InventDim _inventDimProductMaster, ATXBOMMatrixTemplate _bomMatrixTemplate)
+    {
+        BOM                     bom;
+        InventDim               inventDim;
+        BOMVersion              bomVersion;
+        InventTable             inventTable;
+        ;
+
+        inventDim.clear();
+        inventDim.InventSiteId      = _bomMatrixTemplate.bomTemplateLine().inventDim().InventSiteId;
+        inventDim.InventLocationId  = _bomMatrixTemplate.bomTemplateLine().inventDim().InventLocationId;
+
+
+        bom.clear();
+        bom.initValue();
+        bom.ATXBOMTemplateLine             = this.parmBomMatrixTemplateOriginal().BOMTemplateline;
+        bom.BOMId                   = this.parmBOMTemplateLine().BOMId;
+        if (!bom.BOMId)
+        {
+            throw error("@ATXApparelAndTextile_AT:NewLabel205");
+        }
+        bom.ItemId                  = _bomMatrixTemplate.ItemId;
+        bom.LineNum                 = BOM::lastLineNum(bom.BOMId) + 1;
+
+        bom.ATXSeasonId = _bomMatrixTemplate.SeasonId;
+        bom.ATXDestinationPlaceId = _bomMatrixTemplate.DestinationPlaceId;
+
+        //bom.BOMConsump              = InventTable::find(this.parmBOMTemplateLine().ItemId).BOMConsumpType_AT;
+        if (_bomMatrixTemplate.BOMQty)
+        bom.BOMQty                  = _bomMatrixTemplate.BOMQty;
+        else
+        bom.BOMQty                  = _bomMatrixTemplate.bomTemplateLine().BOMQty;
+
+        bom.BOMQtySerie             = _bomMatrixTemplate.BOMQtySerie;
+        bom.UnitId                  = this.parmBOMTemplateLine().UnitId;
+        //bom.AltText_AT              = this.parmBOMTemplateLine().AltText;
+        //bom.RouteOprId_AT           = this.parmBOMTemplateLine().MaterialRouting;
+        bom.InventDimId             = this.parmBOMTemplateLine().InventDimId;
+        bom.ATXBOMTemplateLine             = this.parmBOMTemplateLine().RecId;
+        //bom.MainFabric_AT           = this.parmBOMTemplateLine().MainFabric;
+        //bom.FabricWidth_AT             = this.parmBOMTemplateLine().FabricWidth;
+        //bom.RouteOprId_AT           = this.parmBOMTemplateLine().RouteOprId;
+        bom.ScrapConst              = this.parmBOMTemplateLine().ScrapConst;
+        bom.ScrapVar                = this.parmBOMTemplateLine().ScrapVar;
+
+        // <ATX_Invent_026_BOMMatrixFields Insertar filas Insertar consumo lineal y comentarios>
+        //bom.LinealConsumption_AT    = _bomMatrixTemplate.LinealConsumption;
+        //bom.Comments_AT             = _bomMatrixTemplate.Comments;
+        // </ATX_Invent_026_BOMMatrixFields Insertar filas Insertar consumo lineal y comentarios>
+
+        bom.InventDimId             = InventDim::findOrCreate(inventDim).inventDimId;
+        bom.ATXConfigId = _inventDimProductMaster.configId;
+        bom.ATXInventSizeId = _inventDimProductMaster.InventSizeId;
+        bom.ATXInventColorId = _inventDimProductMaster.InventColorId;
+        bom.ATXInventStyleId = _inventDimProductMaster.InventStyleId;
+
+        bom.ATXRequestOrderId = _bomMatrixTemplate.RequestOrderId;
+
+        // Validate style dimension
+        select firstonly bomVersion
+            where bomVersion.BOMId  == this.parmBOMTemplateLine().BOMId;
+        inventTable = bomVersion.inventTable();
+        if (!ATXProductTools::existsSize(inventTable, bom.ATXInventSizeId)
+                || !ATXProductTools::existsSize(bom.inventTable(), InventDim::find(bom.InventDimId).InventSizeId)
+                || !ATXProductTools::existsConfiguration(inventTable, bom.ATXConfigId)
+                || !ATXProductTools::existsConfiguration(bom.inventTable(), InventDim::find(bom.InventDimId).configId)
+                || !ATXProductTools::existsColor(inventTable, bom.ATXInventColorId)
+                || !ATXProductTools::existsColor(bom.inventTable(), InventDim::find(bom.InventDimId).InventColorId)
+                //|| !ATXProductTools::existsStyle(inventTable, bom.ATXInventStyleId)
+        //|| !ATXProductTools::existsStyle(bom.inventTable(), InventDim::find(bom.InventDimId).InventStyleId)
+        )
+        {
+            throw error("@ATXAT:NewLabel37");
+        }
+        if (bom.validateWrite())
+        {
+            bom.insert();
+        }
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>createBOMLineSameColorSize</Name>
+				<Source><![CDATA[
+    private void createBOMLineSameColorSize(InventDim _inventDimProductMaster, ATXBOMMatrixTemplate _bomMatrixTemplate)
+    {
+        /*
+        BOM                     bom;
+        InventDim               inventDim;
+        BOMVersion              bomVersion;
+        InventTable             inventTable;
+        ;
+
+        inventDim.clear();
+        inventDim.InventColorId     = _inventDimProductMaster.InventColorId;
+        inventDim.InventSizeId      = _inventDimProductMaster.InventSizeId;
+        inventDim.InventSiteId      = _bomMatrixTemplate.bomTemplateLine().inventDim().InventSiteId;
+        inventDim.InventLocationId  = _bomMatrixTemplate.bomTemplateLine().inventDim().InventLocationId;
+
+
+        bom.clear();
+        bom.initValue();
+        bom.ATXBOMTemplateLine             = this.parmBomMatrixTemplateOriginal().BOMTemplateline;
+        bom.BOMId                   = this.parmBOMTemplateLine().BOMId;
+        if (!bom.BOMId)
+        {
+            throw error("No se encontro lista de materiales");
+        }
+        bom.ItemId                  = _bomMatrixTemplate.ItemId;
+        bom.LineNum                 = BOM::lastLineNum(bom.BOMId) + 1;
+        bom.BOMConsump              = InventTable::find(this.parmBOMTemplateLine().ItemId).BOMConsumpType_AT;
+        if (_bomMatrixTemplate.BOMQty)
+        bom.BOMQty                  = _bomMatrixTemplate.BOMQty;
+        else
+        bom.BOMQty                  = _bomMatrixTemplate.bomTemplateLine().BOMQty;
+        bom.BOMQtySerie             = _bomMatrixTemplate.BOMQtySerie;
+        bom.UnitId                  = this.parmBOMTemplateLine().UnitId;
+        bom.AltText_AT              = this.parmBOMTemplateLine().AltText;
+        bom.RouteOprId_AT           = this.parmBOMTemplateLine().MaterialRouting;
+        bom.InventDimId             = this.parmBOMTemplateLine().InventDimId;
+        bom.ATXBOMTemplateLine             = this.parmBOMTemplateLine().RecId;
+        bom.MainFabric_AT           = this.parmBOMTemplateLine().MainFabric;
+        bom.FabricWidth_AT             = this.parmBOMTemplateLine().FabricWidth;
+        bom.RouteOprId_AT           = this.parmBOMTemplateLine().RouteOprId;
+        bom.ScrapConst              = this.parmBOMTemplateLine().ScrapConst;
+        bom.ScrapVar                = this.parmBOMTemplateLine().ScrapVar;
+
+        // <ATX_Invent_026_BOMMatrixFields Insertar filas Insertar consumo lineal y comentarios>
+        bom.LinealConsumption_AT    = _bomMatrixTemplate.LinealConsumption;
+        bom.Comments_AT             = _bomMatrixTemplate.Comments;
+        // </ATX_Invent_026_BOMMatrixFields Insertar filas Insertar consumo lineal y comentarios>
+
+        bom.InventDimId             = InventDim::findOrCreate(inventDim).inventDimId;
+        bom.ConfigId_AT             = _bomMatrixTemplate.StyleconfigId;
+        bom.InventColorId_AT        = _inventDimProductMaster.InventColorId;
+        bom.InventSizeId_AT         = _inventDimProductMaster.InventSizeId;
+
+        bom.BOMType                 = _bomMatrixTemplate.BOMType;
+        if (!bom.RouteOprId_AT)
+        bom.RouteOprId_AT       = _bomMatrixTemplate.RouteOprId;
+        bom.VendId                  = _bomMatrixTemplate.VendId;
+        // Validate style dimension
+        select firstonly bomVersion
+            where bomVersion.BOMId  == this.parmBOMTemplateLine().BOMId;
+        inventTable = bomVersion.inventTable();
+        if (!ATXProductTools::existsSize(inventTable, bom.InventSizeId_AT)
+            || !ATXProductTools::existsSize(bom.inventTable(), InventDim::find(bom.InventDimId).InventSizeId)
+            || !ATXProductTools::existsConfiguration(inventTable, bom.ConfigId_AT)
+            || !ATXProductTools::existsConfiguration(bom.inventTable(), InventDim::find(bom.InventDimId).configId)
+            || !ATXProductTools::existsColor(inventTable, bom.InventColorId_AT)
+            || !ATXProductTools::existsColor(bom.inventTable(), InventDim::find(bom.InventDimId).InventColorId)
+            || !ATXProductTools::existsStyle(inventTable, bom.InventStyleId_AT)
+            || !ATXProductTools::existsStyle(bom.inventTable(), InventDim::find(bom.InventDimId).InventStyleId)
+            )
+        {
+            throw error("@ATXApparelAndTextile_AT:ATXL00017");
+        }
+        if (bom.validateWrite())
+        {
+            bom.insert();
+        }
+        */
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>generateCombinationSameSizeColor</Name>
+				<Source><![CDATA[
+    // Generar lineas cuando se usan dimensiones de talla y color
+    private void generateCombinationSameSizeColor(ATXBOMMatrixTemplate _bomMatrixTemplate)
+    {
+        /*
+        InventDimCombination    inventDimCombination, inventDimCombinationQry;
+        InventDim               inventDim, inventDimQry;
+        InventDimParm           inventDimParm;
+        Map                     combinations;
+        MapIterator             tmpMi;
+        Integer                 allCount, countSection, tmpCnt;
+        BOM                     bom;
+
+        ProductDimensionConfigurationLookup_AT prodDimConfigView;
+        ProductDimensionSizeLookup_AT          prodDimSizeView;
+        ProductDimensionColorLookup_AT         prodDimColorView;
+        ProductDimensionStyleLookup_AT         prodDimStyleView;
+
+        InventTable                         inventTable;
+        EcoResProduct                       ecoResProduct;
+        EcoResProductMasterConfiguration    ecoResProductMasterConfiguration;
+        EcoResProductMasterSize             ecoResProductMasterSize;
+        EcoResProductMasterColor            ecoResProductMasterColor;
+        EcoResProductMasterStyle            ecoResProductMasterStyle;
+        EcoResConfiguration                 ecoResConfiguration;
+        EcoResSize                          ecoResSize;
+        EcoResColor                         ecoResColor;
+        EcoResStyle                         ecoResStyle;
+        RefRecId                            productDimensionAttribute;
+        SysGroup                            dummyValue = ProductParameters_AT::find().DummyValue;
+
+        ;
+
+        combinations =new Map(Types::Integer, Types::Record);
+        // Size
+        productDimensionAttribute = EcoResProductDimensionAttribute::inventDimFieldId2DimensionAttributeRecId(fieldNum(InventDim, InventSizeId));
+        while select ItemId, Product from inventTable
+        index Itemidx
+        where inventTable.ItemId == this.parmProductMasterItemId()
+        join ecoResProductMasterSize
+            where ecoResProductMasterSize.SizeProductMaster == inventTable.Product
+                && ecoResProductMasterSize.SizeProductDimensionAttribute == productDimensionAttribute
+        join ecoResSize
+            where   ecoResSize.RecId == ecoResProductMasterSize.Size
+                &&  ecoResSize.Name != dummyValue
+        {
+            if (countSection == 0)
+            {
+                allCount++;
+                inventDim.InventSizeId = ecoResSize.Name;
+                combinations.insert(allCount, inventDim);
+                continue;
+            }
+            tmpCnt = 0;
+            tmpMi  = new MapIterator(combinations);
+            tmpMi.begin();
+            while (tmpMi.more() && tmpCnt < countSection)
+            {
+                inventDim = combinations.lookup(tmpMi.key());
+                if (!inventDim.InventSizeId)
+                {
+                    inventDim.InventSizeId   = ecoResSize.Name;
+                    combinations.insert(tmpMi.key(), inventDim);
+                }
+                else
+                {
+                    allCount++;
+                    inventDim.InventSizeId = ecoResSize.Name;
+                    combinations.insert(allCount, inventDim);
+                }
+                tmpCnt++;
+                tmpMi.next();
+            }
+        }
+        countSection    = allCount;
+        // Color
+        productDimensionAttribute = EcoResProductDimensionAttribute::inventDimFieldId2DimensionAttributeRecId(fieldNum(InventDim, InventColorId));
+        while select ItemId, Product from inventTable
+        index Itemidx
+        where inventTable.ItemId == this.parmProductMasterItemId()
+        join ecoResProductMasterColor
+            where ecoResProductMasterColor.ColorProductMaster == inventTable.Product
+                && ecoResProductMasterColor.ColorProductDimensionAttribute == productDimensionAttribute
+        join ecoResColor
+            where   ecoResColor.RecId == ecoResProductMasterColor.Color
+                &&  ecoResColor.Name != dummyValue
+        {
+            if (countSection == 0)
+            {
+                allCount++;
+                inventDim.InventColorId = ecoResColor.Name;
+                combinations.insert(allCount, inventDim);
+                continue;
+            }
+            tmpCnt = 0;
+            tmpMi  = new MapIterator(combinations);
+            tmpMi.begin();
+            while (tmpMi.more() && tmpCnt < countSection)
+            {
+                inventDim = combinations.lookup(tmpMi.key());
+                if (!inventDim.InventColorId)
+                {
+                    inventDim.InventColorId   = ecoResColor.Name;
+                    combinations.insert(tmpMi.key(), inventDim);
+                }
+                else
+                {
+                    allCount++;
+                    inventDim.InventColorId = ecoResColor.Name;
+                    combinations.insert(allCount, inventDim);
+                }
+                tmpCnt++;
+                tmpMi.next();
+            }
+        }
+        countSection    = allCount;
+
+        tmpMi  = new MapIterator(combinations);
+
+        tmpMi.begin();
+        while (tmpMi.more())
+        {
+            inventDim               = combinations.lookup(tmpMi.key());
+            this.createBOMLineSameColorSize(inventDim, _bomMatrixTemplate);
+
+            tmpMi.next();
+        }
+        */
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>generateStyleCombinations</Name>
+				<Source><![CDATA[
+    private void generateStyleCombinations()
+    {
+        /*
+        InventDimCombination    inventDimCombination, inventDimCombinationQry;
+        InventDim               inventDim, inventDimQry;
+        InventDimParm           inventDimParm;
+        Map                     combinations;
+        MapIterator             tmpMi;
+        Integer                 allCount, countSection, tmpCnt;
+        BOM                     bom;
+
+        ProductDimensionConfigurationLookup_AT prodDimConfigView;
+        ProductDimensionSizeLookup_AT          prodDimSizeView;
+        ProductDimensionColorLookup_AT         prodDimColorView;
+        ProductDimensionStyleLookup_AT         prodDimStyleView;
+
+        InventTable                         inventTable;
+        EcoResProduct                       ecoResProduct;
+        EcoResProductMasterConfiguration    ecoResProductMasterConfiguration;
+        EcoResProductMasterSize             ecoResProductMasterSize;
+        EcoResProductMasterColor            ecoResProductMasterColor;
+        EcoResProductMasterStyle            ecoResProductMasterStyle;
+        EcoResConfiguration                 ecoResConfiguration;
+        EcoResSize                          ecoResSize;
+        EcoResColor                         ecoResColor;
+        EcoResStyle                         ecoResStyle;
+        RefRecId                            productDimensionAttribute;
+        SysGroup                            dummyValue = ProductParameters_AT::find().DummyValue;
+
+        ;
+
+        combinations =new Map(Types::Integer, Types::Record);
+        // Config
+        productDimensionAttribute = EcoResProductDimensionAttribute::inventDimFieldId2DimensionAttributeRecId(fieldNum(InventDim, ConfigId));
+        while select ItemId, Product from inventTable
+        index Itemidx
+        where inventTable.ItemId == this.parmProductMasterItemId()
+        join ecoResProductMasterConfiguration
+            where   ecoResProductMasterConfiguration.ConfigProductMaster == inventtable.Product
+                &&  ecoResProductMasterConfiguration.ConfigProductDimensionAttribute == productDimensionAttribute
+        join ecoResConfiguration
+            where   ecoResConfiguration.RecId == ecoResProductMasterConfiguration.Configuration
+                &&  ecoResConfiguration.Name != dummyValue
+        {
+            allCount++;
+            inventDim.configId = ecoResConfiguration.Name;
+            combinations.insert(allCount, inventDim);
+        }
+        countSection = allCount;
+        // Size
+        productDimensionAttribute = EcoResProductDimensionAttribute::inventDimFieldId2DimensionAttributeRecId(fieldNum(InventDim, InventSizeId));
+        while select ItemId, Product from inventTable
+        index Itemidx
+        where inventTable.ItemId == this.parmProductMasterItemId()
+        join ecoResProductMasterSize
+            where ecoResProductMasterSize.SizeProductMaster == inventTable.Product
+                && ecoResProductMasterSize.SizeProductDimensionAttribute == productDimensionAttribute
+        join ecoResSize
+            where   ecoResSize.RecId == ecoResProductMasterSize.Size
+                &&  ecoResSize.Name != dummyValue
+        {
+            if (countSection == 0)
+            {
+                allCount++;
+                inventDim.InventSizeId = ecoResSize.Name;
+                combinations.insert(allCount, inventDim);
+                continue;
+            }
+            tmpCnt = 0;
+            tmpMi  = new MapIterator(combinations);
+            tmpMi.begin();
+            while (tmpMi.more() && tmpCnt < countSection)
+            {
+                inventDim = combinations.lookup(tmpMi.key());
+                if (!inventDim.InventSizeId)
+                {
+                    inventDim.InventSizeId   = ecoResSize.Name;
+                    combinations.insert(tmpMi.key(), inventDim);
+                }
+                else
+                {
+                    allCount++;
+                    inventDim.InventSizeId = ecoResSize.Name;
+                    combinations.insert(allCount, inventDim);
+                }
+                tmpCnt++;
+                tmpMi.next();
+            }
+        }
+        countSection    = allCount;
+        // Color
+        productDimensionAttribute = EcoResProductDimensionAttribute::inventDimFieldId2DimensionAttributeRecId(fieldNum(InventDim, InventColorId));
+        while select ItemId, Product from inventTable
+        index Itemidx
+        where inventTable.ItemId == this.parmProductMasterItemId()
+        join ecoResProductMasterColor
+            where ecoResProductMasterColor.ColorProductMaster == inventTable.Product
+                && ecoResProductMasterColor.ColorProductDimensionAttribute == productDimensionAttribute
+        join ecoResColor
+            where   ecoResColor.RecId == ecoResProductMasterColor.Color
+                &&  ecoResColor.Name != dummyValue
+        {
+            if (countSection == 0)
+            {
+                allCount++;
+                inventDim.InventColorId = ecoResColor.Name;
+                combinations.insert(allCount, inventDim);
+                continue;
+            }
+            tmpCnt = 0;
+            tmpMi  = new MapIterator(combinations);
+            tmpMi.begin();
+            while (tmpMi.more() && tmpCnt < countSection)
+            {
+                inventDim = combinations.lookup(tmpMi.key());
+                if (!inventDim.InventColorId)
+                {
+                    inventDim.InventColorId   = ecoResColor.Name;
+                    combinations.insert(tmpMi.key(), inventDim);
+                }
+                else
+                {
+                    allCount++;
+                    inventDim.InventColorId = ecoResColor.Name;
+                    combinations.insert(allCount, inventDim);
+                }
+                tmpCnt++;
+                tmpMi.next();
+            }
+        }
+        countSection    = allCount;
+        // Style
+        productDimensionAttribute = EcoResProductDimensionAttribute::inventDimFieldId2DimensionAttributeRecId(fieldNum(InventDim, InventStyleId));
+        while select ItemId, Product from inventTable
+        index Itemidx
+        where inventTable.ItemId == this.parmProductMasterItemId()
+        join ecoResProductMasterStyle
+            where   ecoResProductMasterStyle.StyleProductMaster == inventTable.Product
+                &&  ecoResProductMasterStyle.StyleProductDimensionAttribute == productDimensionAttribute
+        join ecoResStyle
+            where   ecoResStyle.RecId == ecoResProductMasterStyle.Style
+                &&  ecoResStyle.Name != dummyValue
+        {
+            if (countSection == 0)
+            {
+                allCount++;
+                inventDim.InventStyleId = ecoResStyle.Name;
+                combinations.insert(allCount, inventDim);
+                continue;
+            }
+            tmpCnt = 0;
+            tmpMi  = new MapIterator(combinations);
+            tmpMi.begin();
+            while (tmpMi.more() && tmpCnt < countSection)
+            {
+                inventDim = combinations.lookup(tmpMi.key());
+                if (!inventDim.InventStyleId)
+                {
+                    inventDim.InventStyleId   = ecoResStyle.Name;
+                    combinations.insert(tmpMi.key(), inventDim);
+                }
+                else
+                {
+                    allCount++;
+                    inventDim.InventStyleId = ecoResStyle.Name;
+                    combinations.insert(allCount, inventDim);
+                }
+                tmpCnt++;
+                tmpMi.next();
+            }
+        }
+        countSection    = allCount;
+
+        tmpMi  = new MapIterator(combinations);
+
+        tmpMi.begin();
+        while (tmpMi.more())
+        {
+            inventDim               = combinations.lookup(tmpMi.key());
+            this.createBOMLine(inventDim);
+            tmpMi.next();
+        }
+        */
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>generateStyleLinesBySize</Name>
+				<Source><![CDATA[
+    private void generateStyleLinesBySize(ATXBOMMatrixTemplate _bomMatrixTemplate)
+    {
+        InventDimCombination    inventDimCombination, inventDimCombinationQry;
+        InventDim               inventDim, inventDimQry;
+        InventDimParm           inventDimParm;
+        Map                     combinations;
+        MapIterator             tmpMi;
+        Integer                 allCount, countSection, tmpCnt;
+        BOM                     bom;
+
+        InventTable                         inventTable;
+        EcoResProduct                       ecoResProduct;
+        EcoResProductMasterConfiguration    ecoResProductMasterConfiguration;
+        EcoResProductMasterSize             ecoResProductMasterSize;
+        EcoResProductMasterColor            ecoResProductMasterColor;
+        EcoResProductMasterStyle            ecoResProductMasterStyle;
+        EcoResConfiguration                 ecoResConfiguration;
+        EcoResSize                          ecoResSize;
+        EcoResColor                         ecoResColor;
+        EcoResStyle                         ecoResStyle;
+        RefRecId                            productDimensionAttribute;
+        SysGroup                            dummyValue = ATXProductParameters::find().DummyValue;
+
+        ATXProductDimensionColorLookup          prodDimColorView;
+        ATXProductDimensionConfigurationLookup  prodDimConfigView;
+        ATXProductDimensionSizeLookup           prodDimSizeView;
+        ATXProductDimensionStyleLookup          prodDimStyleView;
+        ;
+
+        combinations =new Map(Types::Integer, Types::Record);
+        // Size
+        productDimensionAttribute = EcoResProductDimensionAttribute::inventDimFieldId2DimensionAttributeRecId(fieldNum(InventDim, InventSizeId));
+        while select ItemId, Product from inventTable
+            index Itemidx
+            where inventTable.ItemId    == this.parmProductMasterItemId()
+            join ecoResProductMasterSize
+            where ecoResProductMasterSize.SizeProductMaster                 == inventTable.Product
+                && ecoResProductMasterSize.SizeProductDimensionAttribute    == productDimensionAttribute
+            join ecoResSize
+            where   ecoResSize.RecId    == ecoResProductMasterSize.Size
+                &&  ecoResSize.Name     != dummyValue
+        {
+            if (countSection == 0)
+            {
+                allCount++;
+                inventDim.InventSizeId = ecoResSize.Name;
+                combinations.insert(allCount, inventDim);
+                continue;
+            }
+            tmpCnt = 0;
+            tmpMi  = new MapIterator(combinations);
+            tmpMi.begin();
+            while (tmpMi.more() && tmpCnt < countSection)
+            {
+                inventDim = combinations.lookup(tmpMi.key());
+                if (!inventDim.InventSizeId)
+                {
+                    inventDim.InventSizeId   = ecoResSize.Name;
+                    combinations.insert(tmpMi.key(), inventDim);
+                }
+                else
+                {
+                    allCount++;
+                    inventDim.InventSizeId = ecoResSize.Name;
+                    combinations.insert(allCount, inventDim);
+                }
+                tmpCnt++;
+                tmpMi.next();
+            }
+        }
+        countSection    = allCount;
+
+        tmpMi  = new MapIterator(combinations);
+
+        tmpMi.begin();
+        while (tmpMi.more())
+        {
+            inventDim               = combinations.lookup(tmpMi.key());
+            this.createBOMLineBySize(inventDim, _bomMatrixTemplate);
+            tmpMi.next();
+        }
+
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>generateStyleLinesBySizeMatrix</Name>
+				<Source><![CDATA[
+    // New function. Size matrix
+    private void generateStyleLinesBySizeMatrix(ATXBOMMatrixTemplate _bomMatrixTemplate)
+    {
+        /*
+        InventDimCombination    inventDimCombination, inventDimCombinationQry;
+        InventDim               inventDim, inventDimQry;
+        InventDimParm           inventDimParm;
+        Map                     combinations;
+        MapIterator             tmpMi;
+        Integer                 allCount, countSection, tmpCnt;
+        BOM                     bom;
+        //InventTable                         inventTable;
+        SysGroup                            dummyValue = ProductParameters_AT::find().DummyValue;
+        ItemGridLines_AT                    itemGridLines_AT;
+
+        ;
+
+        combinations = new Map(Types::Integer, Types::Record);
+
+        while select itemGridLines_AT
+            where itemGridLines_AT.ItemGridId   == _bomMatrixTemplate.ItemSizeGridValue_AT
+            &&  itemGridLines_AT.ItemGridValue  != dummyValue
+        {
+            if (countSection == 0)
+            {
+                allCount++;
+                inventDim.InventSizeId = itemGridLines_AT.ItemGridValue;
+                combinations.insert(allCount, inventDim);
+                continue;
+            }
+            tmpCnt = 0;
+            tmpMi  = new MapIterator(combinations);
+            tmpMi.begin();
+            while (tmpMi.more() && tmpCnt < countSection)
+            {
+                inventDim = combinations.lookup(tmpMi.key());
+                if (!inventDim.InventSizeId)
+                {
+                    inventDim.InventSizeId   = itemGridLines_AT.ItemGridValue;
+                    combinations.insert(tmpMi.key(), inventDim);
+                }
+                else
+                {
+                    allCount++;
+                    inventDim.InventSizeId = itemGridLines_AT.ItemGridValue;
+                    combinations.insert(allCount, inventDim);
+                }
+                tmpCnt++;
+                tmpMi.next();
+            }
+        }
+        countSection    = allCount;
+
+        tmpMi  = new MapIterator(combinations);
+
+        tmpMi.begin();
+        while (tmpMi.more())
+        {
+            inventDim               = combinations.lookup(tmpMi.key());
+            this.createBOMLineBySize(inventDim, _bomMatrixTemplate);
+            tmpMi.next();
+        }
+        */
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>initDimActive</Name>
+				<Source><![CDATA[
+    private void initDimActive(InventDim _inventDimProductMaster)
+    {
+        /*
+        ATXBOMMatrixTemplate    bomMatrixTemplate;
+
+        ;
+
+        select firstOnly bomMatrixTemplate
+        index BOMTemplateLineIdx
+        where bomMatrixTemplate.BOMTemplateline      == this.parmBomMatrixTemplateOriginal().BOMTemplateline
+            && bomMatrixTemplate.StyleconfigId       == _inventDimProductMaster.configId
+    ;
+        if (bomMatrixTemplate.StyleconfigId)
+        {
+            configActive    = true;
+        }
+
+        select firstOnly bomMatrixTemplate
+        index BOMTemplateLineIdx
+        where bomMatrixTemplate.BOMTemplateline      == this.parmBomMatrixTemplateOriginal().BOMTemplateline
+            && bomMatrixTemplate.StyleInventSizeId   == _inventDimProductMaster.InventSizeId
+    ;
+        if (bomMatrixTemplate.StyleInventSizeId)
+        {
+            sizeActive      = true;
+        }
+
+        select firstOnly bomMatrixTemplate
+        index BOMTemplateLineIdx
+        where bomMatrixTemplate.BOMTemplateline      == this.parmBomMatrixTemplateOriginal().BOMTemplateline
+            && bomMatrixTemplate.StyleInventColorId  == _inventDimProductMaster.InventColorId
+    ;
+        if (bomMatrixTemplate.StyleInventColorId)
+        {
+            colorActive     = true;
+        }
+
+        select firstOnly bomMatrixTemplate
+        index BOMTemplateLineIdx
+        where bomMatrixTemplate.BOMTemplateline      == this.parmBomMatrixTemplateOriginal().BOMTemplateline
+            && bomMatrixTemplate.StyleInventStyleId  == _inventDimProductMaster.InventStyleId
+    ;
+        if (bomMatrixTemplate.StyleInventStyleId)
+        {
+            styleActive     = true;
+        }
+        */
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmBomMatrixTemplateOriginal</Name>
+				<Source><![CDATA[
+    public ATXBOMMatrixTemplate parmBomMatrixTemplateOriginal(ATXBOMMatrixTemplate _bomMatrixTemplateOriginal = bomMatrixTemplateOriginal)
+    {
+        bomMatrixTemplateOriginal = _bomMatrixTemplateOriginal;
+
+        return bomMatrixTemplateOriginal;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmBOMTemplateLine</Name>
+				<Source><![CDATA[
+    public ATXBOMTemplateLine parmBOMTemplateLine(ATXBOMTemplateLine _bomTemplateLine = bomTemplateLine)
+    {
+        bomTemplateLine = _bomTemplateLine;
+
+        return bomTemplateLine;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmProductMasterItemId</Name>
+				<Source><![CDATA[
+    public ItemId parmProductMasterItemId(ItemId _itemId = productMasterItemId)
+    {
+        productMasterItemId = _itemId;
+
+        return productMasterItemId;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>run</Name>
+				<Source><![CDATA[
+    private void run()
+    {
+        ATXBOMMatrixTemplate    bomMatrixTemplate;
+        //ATXBOMTemplateLine      bomTemplateLineLocal;
+        BOM                     bom;
+        InventDim               inventDimProductMaster;
+        //boolean                 lineByColor;
+        BOMTable bomTable;
+
+        //lineByColor = false;
+
+        this.validateData();
+
+        delete_from bom
+            where bom.ATXBOMTemplateLine == this.parmBomMatrixTemplateOriginal().BOMTemplateline
+            exists join bomTable
+            where bomTable.BOMId == bom.BOMId
+            && bomTable.ATXBOMType == ATXBOMType::Template;
+
+        select firstOnly bomTemplateLine
+            index BOMIDx
+            where bomTemplateLine.RecId == this.parmBomMatrixTemplateOriginal().BOMTemplateline;
+
+        // TODO Validate bomtype released
+        
+        /*if (bomTemplateLine && bomTemplateLine.BOMTypeId)
+        {
+            if (ATXBOMBlokingLogTable::find(bomTemplateLine.ItemStyleId, bomTemplateLine.BOMTypeId).BOMTypeIdActive)
+            {
+                throw error(strFmt("@ATXAT:NewLabel283". bomTemplateLine.BOMTypeId));
+            }
+        }*/
+
+        this.parmBOMTemplateLine(bomTemplateLine);
+        this.parmProductMasterItemId(bomTemplateLine.ProductMasterItemId);
+        /*
+        // Create lines by Req
+        while select bomMatrixTemplate
+            index BOMTemplateLineIdx
+            where bomMatrixTemplate.BOMTemplateline  == this.parmBomMatrixTemplateOriginal().BOMTemplateline
+            && bomMatrixTemplate.RequestOrderId_AT
+            && !bomMatrixTemplate.SameStyleSize
+            && !bomMatrixTemplate.SameStyleColor
+            && !bomMatrixTemplate.ItemSizeGridValue_AT
+        {
+            inventDimProductMaster.clear();
+            inventDimProductMaster.configId         = bomMatrixTemplate.StyleconfigId;
+            inventDimProductMaster.InventColorId    = bomMatrixTemplate.StyleInventColorId;
+            inventDimProductMaster.InventSizeId     = bomMatrixTemplate.StyleInventSizeId;
+            inventDimProductMaster.InventStyleId    = bomMatrixTemplate.StyleInventStyleId;
+
+            this.createBOMLineNoDimByStyleDim(inventDimProductMaster, bomMatrixTemplate);
+        }*/
+
+        while select bomMatrixTemplate
+            index BOMTemplateIdx
+            where bomMatrixTemplate.BOMTemplateline  == this.parmBomMatrixTemplateOriginal().BOMTemplateline
+            && !bomMatrixTemplate.RequestOrderId
+        {
+            // 1er caso. Sin uso de matrices
+            if (!bomMatrixTemplate.SameProductMasterSize
+            && !bomMatrixTemplate.SameProductMasterColor/*
+            && !bomMatrixTemplate.ItemSizeGridValue_AT*/)
+            {
+                // Sin dimensiones
+                if (!bomMatrixTemplate.inventTable().configActive()
+                    && !bomMatrixTemplate.inventTable().sizeActive()
+                    && !bomMatrixTemplate.inventTable().colorActive()
+                    && !bomMatrixTemplate.inventTable().styleActive())
+                {
+                    inventDimProductMaster.clear();
+                    inventDimProductMaster.configId         = bomMatrixTemplate.ProductMasterConfigId;
+                    inventDimProductMaster.InventColorId    = bomMatrixTemplate.ProductMasterInventColorId;
+                    inventDimProductMaster.InventSizeId     = bomMatrixTemplate.ProductMasterInventSizeId;
+                    inventDimProductMaster.InventStyleId    = bomMatrixTemplate.ProductMasterInventStyleId;
+
+                    this.createBOMLineNoDimByStyleDim(inventDimProductMaster, bomMatrixTemplate);
+                }
+
+                // Solo con dimension de color
+                if (!bomMatrixTemplate.inventTable().configActive()
+                    && !bomMatrixTemplate.inventTable().sizeActive()
+                    && bomMatrixTemplate.inventTable().colorActive()
+                    && !bomMatrixTemplate.inventTable().styleActive())
+                {
+                    inventDimProductMaster.clear();
+                    inventDimProductMaster.configId         = bomMatrixTemplate.ProductMasterConfigId;
+                    inventDimProductMaster.InventColorId    = bomMatrixTemplate.ProductMasterInventColorId;
+                    inventDimProductMaster.InventSizeId     = bomMatrixTemplate.ProductMasterInventSizeId;
+                    inventDimProductMaster.InventStyleId    = bomMatrixTemplate.ProductMasterInventStyleId;
+
+                    this.createBOMLineByStyleColorSize(inventDimProductMaster, bomMatrixTemplate);
+                }
+                /*
+                // Dimension de color y talla
+                if (!bomMatrixTemplate.inventTable().configActive()
+                && bomMatrixTemplate.inventTable().sizeActive()
+                && bomMatrixTemplate.inventTable().colorActive()
+                && !bomMatrixTemplate.inventTable().styleActive())
+                {
+                    inventDimProductMaster.clear();
+                    inventDimProductMaster.configId         = bomMatrixTemplate.StyleconfigId;
+                    inventDimProductMaster.InventColorId    = bomMatrixTemplate.StyleInventColorId;
+                    inventDimProductMaster.InventSizeId     = bomMatrixTemplate.StyleInventSizeId;
+                    inventDimProductMaster.InventStyleId    = bomMatrixTemplate.StyleInventStyleId;
+
+                    this.createBOMLineByStyleColorSize(inventDimProductMaster, bomMatrixTemplate);
+                }
+                */
+            }
+
+            // Crear tallas usando las tallas del producto maestro
+            if (bomMatrixTemplate.SameProductMasterSize
+                && !bomMatrixTemplate.SameProductMasterColor)
+            {
+                this.generateStyleLinesBySize(bomMatrixTemplate);
+            }
+
+            /*
+            // New function. Size matrix
+            if (bomMatrixTemplate.ItemSizeGridValue_AT)
+            {
+                this.generateStyleLinesBySizeMatrix(bomMatrixTemplate);
+            }
+            */
+            // TODO. Miss implementation of size matrix and color matrix
+            /*if (bomMatrixTemplate.SameStyleSize
+            && bomMatrixTemplate.SameStyleColor)
+            {
+                this.generateCombinationSameSizeColor(bomMatrixTemplate);
+            }*/
+        }
+        
+        info("@ATXAT:NewLabel285");
+        
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>updateBOMLineBySize</Name>
+				<Source><![CDATA[
+    private void updateBOMLineBySize(ATXBOMMatrixTemplate _bomMatrixTemplate)
+    {
+        /*
+        BOM                     bom;
+        InventDim               inventDim;
+
+        ;
+
+        select firstOnly bom
+        where bom.ATXBOMTemplateLine       == this.parmBomMatrixTemplateOriginal().BOMTemplateline
+            && bom.InventSizeId_AT  == _bomMatrixTemplate.StyleInventSizeId
+    ;
+        if (bom)
+        {
+            ttsBegin;
+            bom.selectForUpdate(true);
+            bom.ItemId                  = _bomMatrixTemplate.ItemId;
+            bom.modifiedField(fieldNum(bom, productMasterItemId));
+            bom.BOMQty                  = _bomMatrixTemplate.BOMQty;
+            bom.BOMQtySerie             = _bomMatrixTemplate.BOMQtySerie;
+
+            bom.LinealConsumption_AT    = _bomMatrixTemplate.LinealConsumption;
+            bom.Comments_AT             = _bomMatrixTemplate.Comments;
+
+            if (bom.validateWrite())
+            bom.update();
+            ttsCommit;
+        }
+        else
+        {
+            inventDim.clear();
+            inventDim.InventSizeId      = _bomMatrixTemplate.StyleInventSizeId;
+            inventDim.InventSiteId      = _bomMatrixTemplate.bomTemplateLine().inventDim().InventSiteId;
+            inventDim.InventLocationId  = _bomMatrixTemplate.bomTemplateLine().inventDim().InventLocationId;
+
+
+            bom.clear();
+            bom.initValue();
+            bom.ATXBOMTemplateLine      = this.parmBomMatrixTemplateOriginal().BOMTemplateline;
+            bom.BOMId                   = this.parmBOMTemplateLine().BOMId;
+            if (!bom.BOMId)
+            {
+                throw error("@ATXApparelAndTextile_AT:NewLabel205");
+            }
+            bom.ItemId                  = _bomMatrixTemplate.ItemId;
+            bom.LineNum                 = BOM::lastLineNum(bom.BOMId) + 1;
+            bom.BOMConsump              = InventTable::find(this.parmBOMTemplateLine().ItemId).BOMConsumpType_AT;
+            bom.BOMQty                  = _bomMatrixTemplate.BOMQty;
+            bom.BOMQtySerie             = _bomMatrixTemplate.BOMQtySerie; // ref
+            bom.ItemId                  = this.parmBOMTemplateLine().ItemId;
+            bom.UnitId                  = this.parmBOMTemplateLine().UnitId;
+            bom.AltText_AT              = this.parmBOMTemplateLine().AltText;
+            bom.RouteOprId_AT           = this.parmBOMTemplateLine().MaterialRouting;
+            bom.InventDimId             = this.parmBOMTemplateLine().InventDimId;
+            bom.ATXBOMTemplateLine      = this.parmBOMTemplateLine().RecId;
+            bom.MainFabric_AT           = this.parmBOMTemplateLine().MainFabric;
+            bom.FabricWidth_AT          = this.parmBOMTemplateLine().FabricWidth;
+            bom.RouteOprId_AT           = this.parmBOMTemplateLine().RouteOprId;
+            bom.ScrapConst              = this.parmBOMTemplateLine().ScrapConst;
+            bom.ScrapVar                = this.parmBOMTemplateLine().ScrapVar;
+            bom.LinealConsumption_AT    = _bomMatrixTemplate.LinealConsumption;
+            bom.Comments_AT             = _bomMatrixTemplate.Comments;
+            bom.InventDimId             = InventDim
+
+        */
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>validateData</Name>
+				<Source><![CDATA[
+    private void validateData()
+    {
+        if (!this.parmBomMatrixTemplateOriginal())
+        {
+            throw error("@ATXAT:NewLabel282");
+        }
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>main</Name>
+				<Source><![CDATA[
+    static void main(Args _args)
+    {
+        ATXBOMMatrixEngine  instance;
+
+        instance = new ATXBOMMatrixEngine();
+        if (instance)
+        {
+            if (_args.dataset() == tableNum(ATXBOMMatrixTemplate))
+            {
+                instance.parmBomMatrixTemplateOriginal(_args.record());
+            }
+            instance.run();
+        }
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>

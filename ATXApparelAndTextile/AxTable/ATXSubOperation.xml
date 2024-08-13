@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxTable xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXSubOperation</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+public class ATXSubOperation extends common
+{
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>find</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    static ATXSubOperation find(ATXSubOperationId _subOperationId, boolean _forUpdate = false)
+    {
+        ATXSubOperation subOperation;
+
+        subOperation.selectForUpdate(_forUpdate);
+        select firstonly subOperation
+            index SubOperationIdx
+            where subOperation.SubOperationId == _subOperationId
+            ;
+
+        return subOperation;
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+	<FormRef>ATXSubOperation</FormRef>
+	<Label>@ATXAT:NewLabel304</Label>
+	<SubscriberAccessLevel>
+		<Read>Allow</Read>
+	</SubscriberAccessLevel>
+	<TitleField1>SubOperationId</TitleField1>
+	<TitleField2>Name</TitleField2>
+	<DeleteActions />
+	<FieldGroups>
+		<AxTableFieldGroup>
+			<Name>AutoReport</Name>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoLookup</Name>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoIdentification</Name>
+			<AutoPopulate>Yes</AutoPopulate>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoSummary</Name>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoBrowse</Name>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>General</Name>
+			<Label>@ATXAT:NewLabel214</Label>
+			<Fields>
+				<AxTableFieldGroupField>
+					<DataField>SubOperationId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>Name</DataField>
+				</AxTableFieldGroupField>
+			</Fields>
+		</AxTableFieldGroup>
+	</FieldGroups>
+	<Fields>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>SubOperationId</Name>
+			<ExtendedDataType>ATXSubOperationId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>Name</Name>
+			<ExtendedDataType>Name</ExtendedDataType>
+		</AxTableField>
+	</Fields>
+	<FullTextIndexes />
+	<Indexes>
+		<AxTableIndex>
+			<Name>SubOperationIdx</Name>
+			<Fields>
+				<AxTableIndexField>
+					<DataField>SubOperationId</DataField>
+				</AxTableIndexField>
+			</Fields>
+		</AxTableIndex>
+	</Indexes>
+	<Mappings />
+	<Relations />
+	<StateMachines />
+</AxTable>

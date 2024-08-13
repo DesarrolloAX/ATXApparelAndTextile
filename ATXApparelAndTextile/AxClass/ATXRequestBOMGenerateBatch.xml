@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXRequestBOMGenerateBatch</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+class ATXRequestBOMGenerateBatch extends RunBaseBatch
+{
+    ATXRequestOrderHeader requestOrderHeader_AT;
+    SalesId salesId;
+    Dialog dialog;
+    DialogField dflSalesId;
+
+    #DEFINE.CurrentVersion(7)
+
+    #LOCALMACRO.CurrentList
+        salesId
+    #endMacro
+
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>pack</Name>
+				<Source><![CDATA[
+    public container pack()
+    {
+        return [#CurrentVersion,#CurrentList,super()];
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>unpack</Name>
+				<Source><![CDATA[
+    public boolean unpack(container packedClass)
+    {
+        Integer version = conPeek(packedClass,1);
+        container base;
+
+        switch (version)
+        {
+            case #CurrentVersion:
+                [version,#CurrentList,base] = packedClass;
+                super(base);
+                break;
+
+            default:
+                return false;
+        }
+        return true;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmSalesId</Name>
+				<Source><![CDATA[
+    public SalesId parmSalesId(SalesId _salesId = salesId)
+    {
+        salesId = _salesId;
+        return salesId;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>construct</Name>
+				<Source><![CDATA[
+    static ATXRequestBOMGenerateBatch construct()
+    {
+        return new ATXRequestBOMGenerateBatch();
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>new</Name>
+				<Source><![CDATA[
+    protected void new()
+    {
+        super();
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>run</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    public void run()
+    {
+        SalesLine salesLine;
+        ATXRequestOrderRelease requestOrderRelease;
+        Args args;
+        super();
+
+        while select salesLine
+            where salesLine.SalesId == this.parmSalesId()
+        {
+            args = new Args();
+            args.record(salesLine);
+            //SalesBOMUpdate_AT::main(args);
+
+            select firstonly requestOrderRelease
+                where requestOrderRelease.SalesId == this.parmSalesId();
+            if (requestOrderRelease)
+            {
+                ttsbegin;
+                requestOrderRelease.selectForUpdate(true);
+                requestOrderRelease.GenerateRequestBOMBatch = false;
+                requestOrderRelease.update();
+                ttscommit;
+            }
+        }
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>main</Name>
+				<Source><![CDATA[
+    public static void main(Args _args)
+    {
+        ATXRequestBOMGenerateBatch engine = new ATXRequestBOMGenerateBatch();
+        if (_args.dataset() == tableNum(ATXRequestOrderHeader))
+        {
+            engine.parmRequestOrderHeader_AT(_args.record());
+            engine.parmSalesId(engine.parmRequestOrderHeader_AT().SalesId);
+        }
+
+        if (engine.prompt())
+        {
+            engine.run();
+        }
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>dialog</Name>
+				<Source><![CDATA[
+    public Object dialog()
+    {
+        dialog = super();
+
+        dflSalesId     = dialog.addFieldValue(extendedTypeStr(SalesId), salesId);
+        dflSalesId.value(this.parmRequestOrderHeader_AT().SalesId);
+
+        return dialog;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>getFromDialog</Name>
+				<Source><![CDATA[
+    public boolean getFromDialog()
+    {
+        salesId = dflSalesId.value();
+
+        return super();
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmRequestOrderHeader_AT</Name>
+				<Source><![CDATA[
+    public ATXRequestOrderHeader parmRequestOrderHeader_AT(ATXRequestOrderHeader _requestOrderHeader_AT = requestOrderHeader_AT)
+    {
+        requestOrderHeader_AT = _requestOrderHeader_AT;
+        return requestOrderHeader_AT;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>caption</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    /// <returns></returns>
+    public ClassDescription caption()
+    {
+        ClassDescription ret;
+    
+        ret = strFmt("@ATXApparelAndTextile_AT:NewLabel245", this.parmSalesId());
+    
+        return ret;
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>

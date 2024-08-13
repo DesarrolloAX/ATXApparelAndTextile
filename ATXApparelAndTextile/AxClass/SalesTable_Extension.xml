@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>SalesTable_Extension</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+[ExtensionOf(tableStr(SalesTable))]
+final public class SalesTable_Extension
+{
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>delete</Name>
+				<Source><![CDATA[
+    public void  delete()
+    {
+        SalesLine salesLine;
+
+        select firstonly RecId from salesLine
+            index hint SalesLineIdx
+            where salesLine.SalesId == this.SalesId;
+
+        if (salesLine.RecId)
+        {
+            throw error("@ATXAT:NewLabel142");
+        }
+        
+        next delete();
+        this.deleteRequestOrderReference();
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>deleteRequestOrderReference</Name>
+				<Source><![CDATA[
+    public void deleteRequestOrderReference()
+    {
+        ATXRequestOrderHeader requestOrderHeader;
+
+        ttsBegin;
+        select firstOnly requestOrderHeader
+            where requestOrderHeader.SalesId == this.SalesId
+        ;
+
+        if (requestOrderHeader.RecId)
+        {
+            requestOrderHeader.selectForUpdate(true);
+            requestOrderHeader.RequestOrderStatus = ATXRequestOrderStatus::Loaded;
+            requestOrderHeader.SalesId = "";
+            requestOrderHeader.update();
+        }
+        ttsCommit;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>SalesTable_onValidatedDelete</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    [DataEventHandler(tableStr(SalesTable), DataEventType::ValidatedDelete)]
+    public static void SalesTable_onValidatedDelete(Common sender, DataEventArgs e)
+    {
+        SalesTable  salesTable = sender;
+        SalesLine   salesLine;
+
+        select firstonly RecId from salesLine
+            index hint SalesLineIdx
+            where salesLine.SalesId == salesTable.SalesId;
+
+        if (salesLine.RecId)
+        {
+            throw error("@ATXAT:NewLabel142");
+        }
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>

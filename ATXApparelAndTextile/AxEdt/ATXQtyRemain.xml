@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxEdt xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns=""
+	i:type="AxEdtReal">
+	<Name>ATXQtyRemain</Name>
+	<Extends>ATXQtyBase</Extends>
+	<Label>@ATXAT:NewLabel156</Label>
+	<ArrayElements />
+	<Relations />
+	<TableReferences />
+</AxEdt>

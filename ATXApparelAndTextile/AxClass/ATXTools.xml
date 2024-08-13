@@ -1,0 +1,862 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXTools</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+class ATXTools
+{
+    #define.languageCodeEnUs('en-us')
+    #define.languageCodeEsMx('es-mx')
+
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>fillWithChar</Name>
+				<Source><![CDATA[
+    static Str fillWithChar(str _string, int _length, str _character = '')
+    {
+        int length, i;
+        str string;
+
+        ;
+
+        length  = strlen(_string);
+        string  = _string;
+
+        for (i=1 ; i<=_length ; i++)
+        {
+            string = _character + string;
+        }
+
+        return string;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>getSerialFromItem</Name>
+				<Source><![CDATA[
+    static inventSerialId getSerialFromItem(ItemId _itmeId)
+    {
+
+        InventSerial        inventSerial;
+        InventNumGroup      serialGroup;
+        NumberSeq           seq;
+        InventTable         inventTable;
+        ProdTable           prodTable;
+        InventSerialId      inventSerialId;
+        NumberSequenceTable numberSeqTable;
+        ;
+
+        inventTable = inventTable::find(_itmeId);
+        serialGroup = InventNumGroup::find(inventTable.SerialNumGroupId);
+
+        if (!serialGroup)
+        {
+            throw error("No se encontro el grupo de series para el artículo: " +inventTable.ItemId);
+        }
+
+        if(!NumberSequenceTable::exist(serialGroup.NumberSequenceTable))
+        {
+            throw error(strFmt("El grupo %1 no tiene una secuencia Asignada",serialGroup.NumGroupId));
+        }
+
+        inventSerialId = NumberSeq::newGetNumFromCode(NumberSequenceTable::find(serialGroup.NumberSequenceTable).NumberSequence).num();
+
+        if(!inventSerialId)
+        {
+            throw error("No se genero un número de Serie");
+        }
+
+        if (!InventSerial::exist(inventTable.itemId,inventSerialId))
+        {
+            inventSerial.clear();
+            inventSerial.initValue();
+            inventSerial.ItemId         = inventTable.itemId;
+            inventSerial.modifiedField(fieldNum(inventSerial,ItemId));
+            inventSerial.InventSerialId = inventSerialId;
+            inventSerial.ProdDate       = systemDateGet();
+            inventSerial.modifiedField(fieldNum(inventSerial,ItemId));
+            inventSerial.insert();
+        }
+
+        return inventSerialId;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>createBatch</Name>
+				<Source><![CDATA[
+    static void createBatch(ItemId _itemid, InventBatchId _inventBatchId, TransDate _prodDate = systemDateGet())
+    {
+        InventBatch inventBatch;
+        ;
+
+        if (_itemid && _inventBatchId)
+        {
+            if (!InventBatch::exist(_inventBatchId,_itemid))
+            {
+                inventBatch.clear();
+                inventBatch.initValue();
+                inventBatch.itemId          = _itemid;
+                inventBatch.inventBatchId   = _inventBatchId;
+                inventBatch.prodDate        = _prodDate;
+                inventBatch.expDate         = _prodDate;
+                if (inventBatch.validateWrite())
+                {
+                    inventBatch.insert();
+                }
+            }
+        }
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>reserveLine</Name>
+				<Source><![CDATA[
+    static void reserveLine(
+    Common      _common,
+    Inventdim   _inventdim,
+    Qty         _qtyReserv)
+    {
+        InventUpd_Reservation   reservation;
+        InventDimParm           inventDimParmFixed;
+
+        ;
+        ttsBegin;
+        inventDimParmFixed.initFromInventDim(_inventdim);
+        reservation = InventUpd_Reservation::newParameters(
+        InventMovement::construct(_common),
+        _inventdim,
+        inventDimParmFixed,
+        InventDimFixedClass::inventDimParm2InventDimFixed(inventDimParmFixed),
+        -_qtyReserv,
+        true);
+
+        reservation.parmAllowAutoReserveDim(false);
+        reservation.updateNow();
+        ttsCommit;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>getLastProdOperation</Name>
+				<Source><![CDATA[
+    public static RouteOprId getLastProdOperation(ProdId _prodId)
+    {
+        ProdRoute prodRoute;
+
+        select firstonly prodRoute
+            where prodRoute.OprNumNext == 0
+               && prodRoute.ProdId == _prodId;
+
+        return prodRoute.OprId;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>fillWithCharLeft</Name>
+				<Source><![CDATA[
+    static Str fillWithCharLeft(str _string, int _length, str _character = '')
+    {
+        int length, i;
+        str string;
+
+        ;
+
+        length  = strlen(_string);
+        string  = _string;
+
+        for (i=length ; i<_length ; i++)
+        {
+            string = strIns(string, _character, 1);
+        }
+
+        return string;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>fillWithCharRight</Name>
+				<Source><![CDATA[
+    static Str fillWithCharRight(str _string, int _length, str _character = '')
+    {
+        int length, i;
+        str string;
+
+        ;
+
+        length  = strlen(_string);
+        string  = _string;
+
+        for (i=length ; i<_length ; i++)
+        {
+            string = string + _character;
+        }
+
+        return string;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>replaceChar</Name>
+				<Source><![CDATA[
+    static str replaceChar(str _char, str _fromStr, str _toStr )
+    {
+        InteropPermission interopPermission = new InteropPermission(InteropKind::ClrInterop);
+        System.Text.StringBuilder sb;
+        str newChar;
+
+        ;
+
+        interopPermission.assert();
+        sb = new System.Text.StringBuilder(_char);
+        if(sb)
+        {
+            sb.Replace(_fromStr,_toStr);
+
+            newChar = sb.ToString();
+        }
+        CodeAccessPermission::revertAssert();
+
+        return strrtrim(strltrim(newChar));
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>replaceControlChar</Name>
+				<Source><![CDATA[
+    static str replaceControlChar(str _char)
+    {
+        InteropPermission interopPermission = new InteropPermission(InteropKind::ClrInterop);
+        System.Text.StringBuilder sb;
+        str newChar;
+
+        ;
+
+        interopPermission.assert();
+        sb = new System.Text.StringBuilder(_char);
+        if(sb)
+        {
+            sb.Replace('\n',' ');
+            sb.Replace('\t',' ');
+
+            newChar = sb.ToString();
+        }
+        CodeAccessPermission::revertAssert();
+
+        return strrtrim(strltrim(newChar));
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>replaceHTMLChar</Name>
+				<Source><![CDATA[
+    static str replaceHTMLChar(str _char)
+    {
+        InteropPermission interopPermission = new InteropPermission(InteropKind::ClrInterop);
+        System.Text.StringBuilder sb;
+        str newChar;
+
+        ;
+
+        interopPermission.assert();
+        sb = new System.Text.StringBuilder(_char);
+        if(sb)
+        {
+            sb.Replace('<table cellspacing="2" border="1">','');
+            sb.Replace('\n','');
+            sb.Replace('<tr>', '\n');
+            sb.Replace('<td>', '');
+            sb.Replace('<b>', '');
+            sb.Replace('</b>', '');
+            sb.Replace('</tr>', '');
+            sb.Replace('</table>', '');
+            sb.Replace('</td>', ' ');
+            
+            newChar = sb.ToString();
+        }
+        CodeAccessPermission::revertAssert();
+
+        return strrtrim(strltrim(newChar));
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>replaceEnterChar</Name>
+				<Source><![CDATA[
+    static str replaceEnterChar(str _char)
+    {
+        InteropPermission interopPermission = new InteropPermission(InteropKind::ClrInterop);
+        System.Text.StringBuilder sb;
+        str newChar;
+
+        ;
+
+        interopPermission.assert();
+        sb = new System.Text.StringBuilder(_char);
+        if(sb)
+        {
+            sb.Replace('\n',' ');
+            sb.Replace('\t',' ');
+
+            newChar = sb.ToString();
+        }
+        CodeAccessPermission::revertAssert();
+
+        return newChar;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>createProductMasterSize</Name>
+				<Source><![CDATA[
+    static void createProductMasterSize(InventTable _inventTable, EcoResSizeName _inventSizeId, Description _description, RetailDisplayOrder _retailDisplayOrder)
+    {
+        EcoResSize                  ecoresSize;
+        EcoResProductMasterSize     masterSize;
+        RefRecId                    size_ProductDimensionAttribute = EcoResProductDimensionAttribute::inventDimFieldId2DimensionAttributeRecId(fieldNum(InventDim, InventSizeId));
+        ;
+
+        EcoResProductMasterDimTools::insertIfNotExistSize(_inventSizeId);
+        ecoresSize = EcoResSize::findByName(_inventSizeId);
+
+        if (!EcoResProductMasterDimTools::existEcoResProductMasterSize(_inventTable.Product, ecoresSize.RecId))
+        {
+            masterSize.clear();
+            masterSize.initValue();
+            masterSize.Size                 = ecoresSize.recId;
+            masterSize.SizeProductMaster    = _inventTable.Product;
+            masterSize.SizeProductDimensionAttribute = size_ProductDimensionAttribute;
+            masterSize.RetailDisplayOrder = _retailDisplayOrder;
+            masterSize.doInsert();
+            EcoResProductMasterDimValueTranslation::createOrUpdateTranslation(masterSize.RecId, _inventSizeId, _description, #languageCodeEnUs);
+            EcoResProductMasterDimValueTranslation::createOrUpdateTranslation(masterSize.RecId, _inventSizeId, _description, #languageCodeEsMx);
+            ATXTools::createProductVariants(masterSize.SizeProductMaster, masterSize.SizeProductDimensionAttribute, masterSize.Size);
+
+        }
+
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>isBatchTrackingDimensionActive</Name>
+				<Source><![CDATA[
+    //BP Deviation documented
+    static boolean isBatchTrackingDimensionActive(ItemId _itemId)
+    {
+        RefRecId                                productDimensionAttribute;
+        EcoResTrackingDimensionGroupFldSetup    ecoResTrackingDimensionGroupFldSetup;
+
+        ;
+
+        return ecoResTrackingDimensionGroupFldSetup::findByDimensionGroupFieldId(InventTable::find(_itemId).trackingDimensionGroup(), fieldNum(InventDim, InventBatchId)).IsActive;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>isInventLocationIdActive</Name>
+				<Source><![CDATA[
+    //BP Deviation documented
+    static boolean isInventLocationIdActive(ItemId _itemId)
+    {
+        RefRecId                            productDimensionAttribute;
+        EcoResStorageDimensionGroupFldSetup ecoResStorageDimensionGroupFldSetup;
+
+        ;
+
+        return ecoResStorageDimensionGroupFldSetup::findByDimensionGroupFieldId(InventTable::find(_itemId).storageDimensionGroup(), fieldNum(InventDim, InventLocationId)).IsActive;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>isInventSiteIdActive</Name>
+				<Source><![CDATA[
+    //BP Deviation documented
+    static boolean isInventSiteIdActive(ItemId _itemId)
+    {
+        RefRecId                            productDimensionAttribute;
+        EcoResStorageDimensionGroupFldSetup ecoResStorageDimensionGroupFldSetup;
+
+        ;
+
+        return ecoResStorageDimensionGroupFldSetup::findByDimensionGroupFieldId(InventTable::find(_itemId).storageDimensionGroup(), fieldNum(InventDim, InventSiteId)).IsActive;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>isSerialTrackingDimensionActive</Name>
+				<Source><![CDATA[
+    //BP Deviation documented
+    static boolean isSerialTrackingDimensionActive(ItemId _itemId)
+    {
+        RefRecId                                productDimensionAttribute;
+        EcoResTrackingDimensionGroupFldSetup    ecoResTrackingDimensionGroupFldSetup;
+
+        ;
+
+        return ecoResTrackingDimensionGroupFldSetup::findByDimensionGroupFieldId(InventTable::find(_itemId).trackingDimensionGroup(), fieldNum(InventDim, InventSerialId)).IsActive;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>isWMSLocationIdActive</Name>
+				<Source><![CDATA[
+    //BP Deviation documented
+    static boolean isWMSLocationIdActive(ItemId _itemId)
+    {
+        RefRecId                            productDimensionAttribute;
+        EcoResStorageDimensionGroupFldSetup ecoResStorageDimensionGroupFldSetup;
+
+        ;
+
+        return ecoResStorageDimensionGroupFldSetup::findByDimensionGroupFieldId(InventTable::find(_itemId).storageDimensionGroup(), fieldNum(InventDim, WMSLocationId)).IsActive;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>isWMSPalletIdActive</Name>
+				<Source><![CDATA[
+    //BP Deviation documented
+    static boolean isWMSPalletIdActive(ItemId _itemId)
+    {
+        RefRecId                            productDimensionAttribute;
+        EcoResStorageDimensionGroupFldSetup ecoResStorageDimensionGroupFldSetup;
+
+        ;
+
+        return ecoResStorageDimensionGroupFldSetup::findByDimensionGroupFieldId(InventTable::find(_itemId).storageDimensionGroup(), fieldNum(InventDim, WMSPalletId)).IsActive;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>itemColorName</Name>
+				<Source><![CDATA[
+    static Description itemColorName(ItemId _itemId, EcoResColorName _ecoResColorName)
+    {
+        Description description;
+
+        ;
+
+        description = (select firstOnly Description from ATXProductDimensionColorLookup
+                        where  ATXProductDimensionColorLookup.ItemId == _itemId
+                            && ATXProductDimensionColorLookup.Name  == _ecoResColorName).Description;
+
+        return ATXTools::replaceControlChar(description);
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>itemConfigurationName</Name>
+				<Source><![CDATA[
+    static Description itemConfigurationName(ItemId _itemId, EcoResConfigurationName _ecoResConfigurationName)
+    {
+        ;
+
+        return (select firstOnly Description from ATXProductDimensionConfigurationLookup
+                where  ATXProductDimensionConfigurationLookup.ItemId == _itemId
+                    && ATXProductDimensionConfigurationLookup.Name  == _ecoResConfigurationName).Description;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>itemSizeName</Name>
+				<Source><![CDATA[
+    static Description itemSizeName(ItemId _itemId, EcoResSizeName _ecoResSizeName)
+    {
+        ;
+
+        return (select firstOnly Description from ATXProductDimensionSizeLookup
+        where ATXProductDimensionSizeLookup.ItemId == _itemId
+            && ATXProductDimensionSizeLookup.Name  == _ecoResSizeName).Description;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>itemStyleName</Name>
+				<Source><![CDATA[
+    static Description itemStyleName(ItemId _itemId, EcoResStyleName _ecoResStyleName)
+    {
+        ;
+
+        return (select firstOnly Description from ATXProductDimensionStyleLookup
+        where ATXProductDimensionStyleLookup.ItemId == _itemId
+            && ATXProductDimensionStyleLookup.Name  == _ecoResStyleName).Description;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>oprNumFromRoute</Name>
+				<Source><![CDATA[
+    static OprNum oprNumFromRoute(ItemId _itemId, RouteOprId _oprId)
+    {
+        OprNum          oprNum;
+        RouteVersion    routeVersion;
+        Route           route;
+
+        ;
+
+        select firstonly routeVersion
+        index ItemIdx
+        where routeVersion.ItemId   == _itemId
+           && routeVersion.Active   == NoYes::Yes
+        join route
+        where route.RouteId == routeVersion.RouteId
+           && route.OprId   == _oprId
+    ;
+
+        return route.OprNum;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>oprNumFromRouteNotActive</Name>
+				<Source><![CDATA[
+    static OprNum oprNumFromRouteNotActive(ItemId _itemId, RouteOprId _oprId)
+    {
+        OprNum          oprNum;
+        RouteVersion    routeVersion;
+        Route           route;
+
+        ;
+
+        select firstonly routeVersion
+        index ItemIdx
+        where routeVersion.ItemId   == _itemId
+            && routeVersion.Approved
+        join route
+        where route.RouteId == routeVersion.RouteId
+           && route.OprId   == _oprId
+    ;
+
+        return route.OprNum;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>updateStorageTrackingForced</Name>
+				<Source><![CDATA[
+    static void updateStorageTrackingForced(ItemId _itemId, EcoResProductDimensionName _storageGroup, EcoResProductDimensionName _trackingGroup)
+    {
+        InventTable                     inventTable;
+        EcoResStorageDimensionGroup     ecoResStorageDimensionGroup;
+        EcoResTrackingDimensionGroup    ecoResTrackingDimensionGroup;
+
+
+        ;
+
+        inventTable                     = InventTable::find(_itemId);
+        ecoResStorageDimensionGroup     = ecoResStorageDimensionGroup::findByDimensionGroupName(_storageGroup);
+        ecoResTrackingDimensionGroup    = ecoResTrackingDimensionGroup::findByDimensionGroupName(_trackingGroup);
+
+        InventTableInventoryDimensionGroups::updateDimensionGroupsForItem(
+            curext()
+            , inventTable.ItemId
+            , ecoResStorageDimensionGroup.RecId
+            , ecoResTrackingDimensionGroup.RecId
+            , inventTable.Product);
+
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>existsConfiguration</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Check if configuration is already created in product dimension variants
+    /// </summary>
+    /// <param name = "_inventTable"></param>
+    /// <param name = "_configId"></param>
+    /// <returns></returns>
+    static boolean existsConfiguration(InventTable _inventTable, EcoResConfigurationName _configId)
+    {
+        InventDimCombination    inventDimCombination;
+        InventDim               inventDimComb;
+        boolean ret = true;
+
+        if (_configId && _inventTable.configActive())
+        {
+            select firstonly inventDimCombination
+                where inventDimCombination.ItemId   == _inventTable.ItemId
+                join inventDimComb
+                where inventDimComb.inventDimId     == inventDimCombination.inventDimId
+                && inventDimComb.configId       == _configId;
+            if (!inventDimCombination)
+            {
+                ret = checkFailed(strFmt("@ATXApparelAndTextile_AT:NewLabel14", _configId, _inventTable.ItemId));
+            }
+        }
+        return ret;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>existsSize</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Check if size is already created in product dimension variants
+    /// </summary>
+    /// <param name = "_inventTable"></param>
+    /// <param name = "_inventSizeId"></param>
+    /// <returns></returns>
+    static boolean existsSize(InventTable _inventTable, EcoResSizeName _inventSizeId)
+    {
+        InventDimCombination    inventDimCombination;
+        InventDim               inventDimComb;
+        boolean ret = true;
+
+        if (_inventSizeId && _inventTable.sizeActive())
+        {
+            select firstonly inventDimCombination
+                where inventDimCombination.ItemId   == _inventTable.ItemId
+                join inventDimComb
+                where inventDimComb.inventDimId     == inventDimCombination.inventDimId
+                && inventDimComb.InventSizeId       == _inventSizeId;
+            if (!inventDimCombination)
+            {
+                ret = checkFailed(strFmt("@ATXApparelAndTextile_AT:NewLabel15", _inventSizeId, _inventTable.ItemId));
+            }
+        }
+
+        return ret;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>existsColor</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Check if color is already created in product dimension variants
+    /// </summary>
+    /// <param name = "_inventTable"></param>
+    /// <param name = "_inventColorId"></param>
+    /// <returns></returns>
+    static boolean existsColor(InventTable _inventTable, EcoResColorName _inventColorId)
+    {
+        InventDimCombination    inventDimCombination;
+        InventDim               inventDimComb;
+        boolean ret = true;
+
+        if (_inventColorId && _inventTable.colorActive())
+        {
+            select firstonly inventDimCombination
+            where inventDimCombination.ItemId   == _inventTable.ItemId
+            join inventDimComb
+            where inventDimComb.inventDimId     == inventDimCombination.inventDimId
+            && inventDimComb.InventColorId      == _inventColorId;
+            if (!inventDimCombination)
+            {
+                ret = checkFailed(strFmt("@ATXApparelAndTextile_AT:NewLabel16", _inventColorId, _inventTable.ItemId));
+            }
+        }
+
+        return ret;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>existsStyle</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Check if style is already created in product dimension variants
+    /// </summary>
+    /// <param name = "_inventTable"></param>
+    /// <param name = "_inventStyleId"></param>
+    /// <returns></returns>
+    static boolean existsStyle(InventTable _inventTable, EcoResStyleName _inventStyleId)
+    {
+        InventDimCombination    inventDimCombination;
+        InventDim               inventDimComb;
+        boolean ret = true;
+
+        if (_inventStyleId && _inventTable.styleActive())
+        {
+            select firstonly inventDimCombination
+            where inventDimCombination.ItemId   == _inventTable.ItemId
+            join inventDimComb
+            where inventDimComb.inventDimId     == inventDimCombination.inventDimId
+            && inventDimComb.InventStyleId      == _inventStyleId;
+            if (!inventDimCombination)
+            {
+                ret = checkFailed(strFmt("@ATXApparelAndTextile_AT:NewLabel17", _inventStyleId, _inventTable.ItemId));
+            }
+        }
+
+        return ret;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>copyGridToDim</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Copy item dimensions from dimension matrix to PRODUCT DIMENSIONS. Then create variants
+    /// </summary>
+    /// <param name = "_inventTable">Style</param>
+    /// <param name = "_itemGridId">Matrix</param>
+    /// <param name = "_type">Style dim</param>
+    static void copyGridToDim(InventTable _inventTable, ATXItemGridId _itemGridId, ATXDimComboType _type)
+    {
+        ATXItemGridLines                    itemGidLines;
+        EcoResSize                          ecoResSize;
+        EcoResConfiguration                 ecoResConfiguration;
+        EcoResColor                         ecoResColor;
+        EcoResStyle                         ecoResStyle;
+        EcoResProductMasterConfiguration    masterConfiguration;
+        EcoResProductMasterSize             masterSize;
+        EcoResProductMasterColor            masterColor;
+        EcoResProductMasterStyle            masterStyle;
+        RefRecId                            productDimensionAttribute;
+        ;
+
+        switch (_type)
+        {
+            case ATXDimComboType::Configuration:
+                productDimensionAttribute = EcoResProductDimensionAttribute::inventDimFieldId2DimensionAttributeRecId(fieldNum(InventDim, configId));
+                while select itemGidLines
+                    where itemGidLines.ItemGridId == _itemGridId
+                {
+                    EcoResProductMasterDimTools::insertIfNotExistConfiguration(itemGidLines.ItemGridValue);
+                    ecoResConfiguration = ecoResConfiguration::findByName(itemGidLines.ItemGridValue);
+                    if(!EcoResProductMasterDimTools::existEcoResProductMasterConfiguration(_inventTable.Product, ecoResConfiguration.RecId))
+                    {
+                        masterConfiguration.clear();
+                        masterConfiguration.initValue();
+                        masterConfiguration.Configuration = ecoResConfiguration.RecId;
+                        masterConfiguration.ConfigProductMaster = _inventTable.Product;
+                        masterConfiguration.ConfigProductDimensionAttribute = productDimensionAttribute;
+                        masterConfiguration.RetailDisplayOrder = itemGidLines.RetailDisplayOrder;
+                        masterConfiguration.doInsert();
+                        EcoResProductMasterDimValueTranslation::createOrUpdateTranslation(masterConfiguration.RecId, itemGidLines.Description, itemGidLines.Description, #languageCodeEnUs);
+                        EcoResProductMasterDimValueTranslation::createOrUpdateTranslation(masterConfiguration.RecId, itemGidLines.Description, itemGidLines.Description, #languageCodeEsMx);
+                        ATXTools::createProductVariants(masterConfiguration.configProductMaster, masterConfiguration.ConfigProductDimensionAttribute, masterConfiguration.Configuration);
+                    }
+                }
+                break;
+            case ATXDimComboType::Size:
+                productDimensionAttribute = EcoResProductDimensionAttribute::inventDimFieldId2DimensionAttributeRecId(fieldNum(InventDim, InventSizeId));
+                while select itemGidLines
+                    where itemGidLines.ItemGridId == _itemGridId
+                {
+                    EcoResProductMasterDimTools::insertIfNotExistSize(itemGidLines.ItemGridValue);
+                    ecoresSize = EcoResSize::findByName(itemGidLines.ItemGridValue);
+                    if(!EcoResProductMasterDimTools::existEcoResProductMasterSize(_inventTable.Product, ecoresSize.RecId))
+                    {
+                        masterSize.clear();
+                        masterSize.initValue();
+                        masterSize.Size                 = ecoresSize.recId;
+                        masterSize.SizeProductMaster    = _inventTable.Product;
+                        masterSize.SizeProductDimensionAttribute = productDimensionAttribute;
+                        masterSize.RetailDisplayOrder = itemGidLines.RetailDisplayOrder;
+                        masterSize.doInsert();
+                        EcoResProductMasterDimValueTranslation::createOrUpdateTranslation(masterSize.RecId, itemGidLines.Description, itemGidLines.Description, #languageCodeEnUs);
+                        EcoResProductMasterDimValueTranslation::createOrUpdateTranslation(masterSize.RecId, itemGidLines.Description, itemGidLines.Description, #languageCodeEsMx);
+                        ATXTools::createProductVariants(masterSize.SizeProductMaster, masterSize.SizeProductDimensionAttribute, masterSize.Size);
+                    }
+                }
+                break;
+            case ATXDimComboType::Color:
+                productDimensionAttribute = EcoResProductDimensionAttribute::inventDimFieldId2DimensionAttributeRecId(fieldNum(InventDim, InventColorId));
+                while select itemGidLines
+                    where itemGidLines.ItemGridId == _itemGridId
+                {
+                    EcoResProductMasterDimTools::insertIfNotExistColor(itemGidLines.ItemGridValue);
+                    ecoresColor = EcoResColor::findByName(itemGidLines.ItemGridValue);
+                    if(!EcoResProductMasterDimTools::existEcoResProductMasterColor(_inventTable.Product, ecoresColor.RecId))
+                    {
+                        masterColor.clear();
+                        masterColor.initValue();
+                        masterColor.Color                 = ecoresColor.recId;
+                        masterColor.ColorProductMaster    = _inventTable.Product;
+                        masterColor.ColorProductDimensionAttribute = productDimensionAttribute;
+                        masterColor.RetailDisplayOrder = itemGidLines.RetailDisplayOrder;
+                        masterColor.doInsert();
+                        EcoResProductMasterDimValueTranslation::createOrUpdateTranslation(masterColor.RecId, itemGidLines.Description, itemGidLines.Description, #languageCodeEnUs);
+                        EcoResProductMasterDimValueTranslation::createOrUpdateTranslation(masterColor.RecId, itemGidLines.Description, itemGidLines.Description, #languageCodeEsMx);
+                        ATXTools::createProductVariants(masterColor.ColorProductMaster, masterColor.ColorProductDimensionAttribute, masterColor.Color);
+                    }
+                }
+                break;
+            case ATXDimComboType::Style:
+                productDimensionAttribute = EcoResProductDimensionAttribute::inventDimFieldId2DimensionAttributeRecId(fieldNum(InventDim, InventStyleId));
+                while select itemGidLines
+                    where itemGidLines.ItemGridId == _itemGridId
+                {
+                    EcoResProductMasterDimTools::insertIfNotExistStyle(itemGidLines.ItemGridValue); // TODO PASAR METODO
+                    ecoresStyle = EcoResStyle::findByName(itemGidLines.ItemGridValue);
+                    if(!EcoResProductMasterDimTools::existEcoResProductMasterStyle(_inventTable.Product, ecoresStyle.RecId))
+                    {
+                        masterStyle.clear();
+                        masterStyle.initValue();
+                        masterStyle.Style                 = ecoresStyle.recId;
+                        masterStyle.StyleProductMaster    = _inventTable.Product;
+                        masterStyle.StyleProductDimensionAttribute = productDimensionAttribute;
+                        masterStyle.RetailDisplayOrder = itemGidLines.RetailDisplayOrder;
+                        masterStyle.doInsert();
+                        EcoResProductMasterDimValueTranslation::createOrUpdateTranslation(masterStyle.RecId, itemGidLines.Description, itemGidLines.Description, #languageCodeEnUs);
+                        EcoResProductMasterDimValueTranslation::createOrUpdateTranslation(masterStyle.RecId, itemGidLines.Description, itemGidLines.Description, #languageCodeEsMx);
+                        ATXTools::createProductVariants(masterStyle.StyleProductMaster, masterStyle.StyleProductDimensionAttribute, masterStyle.Style);
+                    }
+                }
+                break;
+        }
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>createProductVariants</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name = "_productMasterRecId"></param>
+    /// <param name = "_productDimensionAttribute"></param>
+    /// <param name = "_productDimensionValue"></param>
+    static void createProductVariants(EcoResProductMasterRecId _productMasterRecId, RefRecId _productDimensionAttribute, RefRecId _productDimensionValue)
+    {
+        EcoResProductVariantCreationMgr productVariantCreationMgr;
+        Args                            args = new Args();
+
+        args.record(InventTable::findByProduct(_productMasterRecId));
+        args.parmEnumType(enumNum(EcoResReleaseProductToCompany));
+        args.parmEnum(EcoResReleaseProductToCompany::Yes);
+
+        productVariantCreationMgr = EcoResProductVariantCreationMgr::newFromArgs(args);
+        productVariantCreationMgr.createVariantsFromDimensionValue(_productDimensionAttribute, _productDimensionValue);
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>

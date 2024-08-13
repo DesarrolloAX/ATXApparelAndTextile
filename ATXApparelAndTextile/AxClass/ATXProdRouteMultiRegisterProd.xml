@@ -1,0 +1,1470 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXProdRouteMultiRegisterProd</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+class ATXProdRouteMultiRegisterProd
+{
+    ProdTable               prodTable;
+    ProdRoute               prodRoute;
+    ATXProdCutSection       prodCutSection_AT;
+    ProdId                  prodId;
+    BOMId                   bomId;
+    ProdQtyCalc             qtyCalc;
+    ATXRejectionCodeId      rejectionCode;
+    ATXCutId                cutId;
+    Noyes                   rejection;
+    Noyes                   transferCheck;
+    ATXTurnId               turnId;
+    wrkCtrId                wrkCtrId;
+    RouteOprId              oprId;
+    ATXRouteOprTable        routeOprTable_AT;
+    InventJournalTable      inventJournalTableTransfer;
+    ItemId                  itemIdTransfer;
+    ATXProdParameters       prodParameters;
+    ATXProdRefComment       refComment;
+    EcoResStyleName         inventStyleIdTransfer;
+    EcoResConfigurationName configIdTransfer;
+    EcoResColorName         inventColorIdTransfer;
+    Hours                   shutDownIdHours, setupHours, execHours;
+    Minutes                 shutDownIdMinutes, setupMinutes, execMinutes;
+    Description             journalDescriptionStr = ATXProdParameters::find().JournalMovDescription;
+
+    // Add empleyee number
+    HcmPersonnelNumberId    hcmPersonnelNumberId;
+
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>parmHCMPersonnelNumberId</Name>
+				<Source><![CDATA[
+    HCMPersonnelNumberId parmHCMPersonnelNumberId(HCMPersonnelNumberId  _hcmPersonnelNumberId = hcmPersonnelNumberId,boolean _refresh = false)
+    {
+        HcmWorker   hcmWorker;
+        ;
+
+        if (!prmisdefault(_hcmPersonnelNumberId))
+        {
+            try
+            {
+                hcmWorker   = HcmWorker::findByPersonnelNumber(_hcmPersonnelNumberId);
+                if (hcmWorker)
+                {
+                    hcmPersonnelNumberId      = hcmWorker.PersonnelNumber;
+                    info(hcmWorker.name());
+                }
+                else
+                {
+                    this.resetScannedPersonnelNumberId();
+                    throw error(strfmt("@SYS8607", _hcmPersonnelNumberId));
+                }
+
+            }
+            catch (Exception::UpdateConflictNotRecovered)
+            {
+                error("@SYS93835");
+            }
+        }
+
+        return hcmPersonnelNumberId;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>resetScannedPersonnelNumberId</Name>
+				<Source><![CDATA[
+    void resetScannedPersonnelNumberId()
+    {
+        ;
+
+        hcmPersonnelNumberId    = "";
+        prodId                  = "";
+        bomId                   = "";
+        qtyCalc                 = 0;
+        ProdTable.clear();
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmRejectionCode</Name>
+				<Source><![CDATA[
+    public ATXRejectionCodeId parmRejectionCode(ATXRejectionCodeId _rejectionCode = rejectionCode)
+    {
+        rejectionCode = _rejectionCode;
+
+        return rejectionCode;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmRejection</Name>
+				<Source><![CDATA[
+    public Noyes parmRejection(Noyes _rejection = rejection)
+    {
+        rejection = _rejection;
+
+        return rejection;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmProdId</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name = "_prodId"></param>
+    /// <param name = "_dropTmpInfolog"></param>
+    /// <param name = "_refresh"></param>
+    /// <returns></returns>
+    ProdId parmProdId(ProdId _prodId = prodId, boolean _refresh = false)
+    {
+        ;
+
+        if (!prmisdefault(_prodId))
+        {
+            try
+            {
+                if (ProdTable::exist(_prodId))
+                {
+                    prodTable   = ProdTable::find(_prodId);
+                    prodId      = prodTable.ProdId;
+                    qtyCalc     = prodTable.QtySched;
+                }
+                else
+                {
+                    this.resetScannedProdId();
+                    throw error(strfmt("@ATX44", _prodId));
+                }
+
+            }
+            catch (Exception::UpdateConflictNotRecovered)
+            {
+                error("Conflicto de actualización. Operación cancelada.");
+            }
+        }
+
+        return prodTable.ProdId;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>resetScannedProdId</Name>
+				<Source><![CDATA[
+    void resetScannedProdId()
+    {
+        ;
+
+        prodId = "";
+        bomId = "";
+        qtyCalc = 0;
+        ProdTable.clear();
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmOprId</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// This method fill tmp table in ProdRouteMultiRegister form
+    /// </summary>
+    /// <param name = "_oprId"></param>
+    /// <param name = "_dropTmpInfolog"></param>
+    /// <param name = "_refresh"></param>
+    /// <returns></returns>
+    RouteOprId parmOprId(
+        RouteOprId  _oprId = oprId,
+        boolean     _refresh        = false)
+    {
+        ;
+
+        if (!prmisdefault(_oprId))
+        {
+            try
+            {
+                oprId = _oprId;
+                select firstOnly prodRoute
+                    index NumOprNumIdx
+                    where prodRoute.ProdId == prodId
+                    && prodRoute.OprId == oprId;
+
+                this.getWrkCtrId();
+                
+                this.parmRouteOprTable_AT(ATXRouteOprTable::find(oprId));
+                if (!this.parmRouteOprTable_AT())
+                {
+                    throw Error("@ATXAT:NewLabel239");
+                }
+
+                if (!prodRoute)
+                {
+                    this.resetScannedOprId();
+                    throw error(strfmt("@ATXAT:NewLabel240"));
+                }
+            }
+            catch (Exception::UpdateConflictNotRecovered)
+            {
+                error("@ATXAT:NewLabel241");
+            }
+        }
+
+        return prodRoute.OprId;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>getWrkCtrId</Name>
+				<Source><![CDATA[
+    private void getWrkCtrId()
+    {
+        RouteOprTable               routeOprTable;
+        RouteOpr                    routeopr;
+        WrkCtrResourceGroup         WrkCtrResourceGroup;
+        WrkCtrResourceGroupResource WrkCtrResourceGroupResource;
+
+
+        select firstonly RouteOprTable
+            where RouteOprTable.OprId == oprId
+                join RouteOpr
+            where RouteOpr.OprId == RouteOprTable.OprId
+                && RouteOpr.ItemCode == TableGroupAll::All
+                join WrkCtrResourceGroup
+            where WrkCtrResourceGroup.WrkCtrId == RouteOpr.WrkCtrIdCost
+                join WrkCtrResourceGroupResource
+            where WrkCtrResourceGroupResource.ResourceGroup == WrkCtrResourceGroup.RecId;
+
+        if(RouteOprTable.RecId && ATXRouteOprTable::find(oprId).SuggestWrkCtrId == NoYes::Yes)
+        {
+            this.parmWrkCtrId(WrkCtrResourceGroupResource.WrkCtrId);
+        }
+        else
+        {
+            this.parmWrkCtrId("");
+        }
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmRouteOprTable_AT</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name = "_routeOprTable_AT"></param>
+    /// <returns></returns>
+    public ATXRouteOprTable parmRouteOprTable_AT(ATXRouteOprTable _routeOprTable_AT = routeOprTable_AT)
+    {
+        routeOprTable_AT = _routeOprTable_AT;
+
+        return routeOprTable_AT;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmWrkCtrId</Name>
+				<Source><![CDATA[
+    public WrkCtrId parmWrkCtrId(WrkCtrId _wrkCtrId = wrkCtrId)
+    {
+        wrkCtrId = _wrkCtrId;
+
+        return wrkCtrId;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>resetScannedOprId</Name>
+				<Source><![CDATA[
+    void resetScannedOprId()
+    {
+        ;
+
+        oprId = "";
+        prodRoute.clear();
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmCutId</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name = "_cutId"></param>
+    /// <returns></returns>
+    public ATXCutId parmCutId(ATXCutId _cutId = cutId)
+    {
+        cutId = _cutId;
+        this.parmProdCutSection_AT(ATXProdCutSection::findCutId(cutId));
+
+        return cutId;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmProdCutSection_AT</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name = "_prodCutSection_AT"></param>
+    /// <returns></returns>
+    public ATXProdCutSection parmProdCutSection_AT(ATXProdCutSection _prodCutSection_AT = prodCutSection_AT)
+    {
+        prodCutSection_AT = _prodCutSection_AT;
+
+        return prodCutSection_AT;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmATXProdRefComment</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name = "_refComment"></param>
+    /// <returns></returns>
+    public ATXProdRefComment parmATXProdRefComment(ATXProdRefComment _refComment = refComment)
+    {
+        refComment = _refComment;
+
+        return refComment;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>fillMultiRegister</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name = "_wmsLocationId"></param>
+    /// <returns></returns>
+    ATXProductionFloorControl fillMultiRegister(WMSLocationId _wmsLocationId = "")
+    {
+        ATXProductionFloorControl   routeMuiltiRegister;
+        ATXBreakdownOrderLine       breakdownOrderLine;
+
+        Qty qtyPosted(BOMId _bomId, ProdId _prodId, boolean _breakdown = false)
+        {
+            ProdJournalroute    prodJournalroute;
+            ProdJournalTable    prodJournalTable;
+            ;
+
+            select sum(QtyGood) from prodJournalroute
+                where prodJournalroute.ProdId == _prodId
+                && prodJournalroute.OprId == oprId
+                && prodJournalroute.ATXBOMId == _bomId || _breakdown
+                && (prodJournalroute.ATXCutId == this.parmProdCutSection_AT().CutId || !this.parmRouteOprTable_AT().ValidateCutId)
+                exists join ProdJournalTable
+                where ProdJournalTable.JournalId == prodJournalroute.JournalId
+                && ProdJournalTable.Posted == NoYes::Yes;
+
+            return prodJournalRoute.QtyGood;
+
+        }
+
+        Qty qtyPostedError(BOMId _bomId, ProdId _prodId, boolean _breakdown = false)
+        {
+            ProdJournalroute    prodJournalroute;
+            ProdJournalTable    prodJournalTable;
+            ;
+
+            select sum(QtyError) from prodJournalroute
+                where prodJournalroute.ProdId == _prodId
+                && prodJournalroute.OprId == oprId
+                && prodJournalroute.ATXBOMId == _bomId || _breakdown
+                && (prodJournalroute.ATXCutId == this.parmProdCutSection_AT().CutId || !this.parmProdCutSection_AT().CutId)
+                exists join ProdJournalTable
+                where ProdJournalTable.JournalId == prodJournalroute.JournalId
+                && ProdJournalTable.Posted == NoYes::Yes;
+
+            return prodJournalroute.QtyError;
+
+        }
+
+        container qtyPrevious(BOMId _bomId, ProdId _prodId, boolean _breakdown = false)
+        {
+            ProdJournalRoute    prodJournalRoute;
+            ProdJournalTable    prodJournalTable;
+            RouteId             RouteId = ProdTable::find(_prodId).RouteId;
+            ProdRoute           localProdRoute;
+            ;
+
+            select firstOnly OprNum from localProdRoute
+                where localProdRoute.ProdId == _prodId
+                && localProdRoute.OprNumNext == prodRoute.OprNum;
+
+            select sum(QtyGood), sum(QtyError) from prodJournalroute
+                where prodJournalroute.ProdId     == _prodId
+                && prodJournalroute.ATXBOMId   == _bomId || _breakdown
+                && prodJournalroute.OprNum     == localProdRoute.OprNum
+                && (prodJournalroute.ATXCutId == this.parmProdCutSection_AT().CutId || !this.parmProdCutSection_AT().CutId)
+                exists join ProdJournalTable
+                where ProdJournalTable.JournalId == prodJournalroute.JournalId
+                && ProdJournalTable.Posted == NoYes::Yes;
+
+            return [prodJournalroute.QtyGood, prodJournalroute.QtyError];
+        }
+        ;
+
+        // Check if ProductParameters.DummyValue is setup
+        if (!ATXProductParameters::find().DummyValue)
+        {
+            throw Error("@ATXAT:NewLabel242");
+        }
+
+        if (ATXRouteOprTable::find(this.parmOprId()).BreakdownSize)
+        {
+            while select breakdownOrderLine
+                where breakdownOrderLine.SalesId == ProdTable.ATXInventRefId
+                && breakdownOrderLine.InventTransId == ProdTable.ATXInventRefTransId
+            {
+                routeMuiltiRegister.clear();
+                routeMuiltiRegister.initValue();
+                routeMuiltiRegister.TransDate       = ATXProdRouteMultiRegisterProd::getSystemDate();
+                routeMuiltiRegister.OprId           = oprId;
+                routeMuiltiRegister.ProdId          = prodId;
+                routeMuiltiRegister.ItemId          = breakdownOrderLine.ItemId;
+                routeMuiltiRegister.OprNum          = prodRoute.OprNum;
+                routeMuiltiRegister.ConfigId        = breakdownOrderLine.ConfigId;
+                routeMuiltiRegister.InventcolorId   = breakdownOrderLine.InventColorId;
+                routeMuiltiRegister.InventSizeId    = breakdownOrderLine.InventSizeId;
+
+                // Add InventLocationId when post last operation
+                if (prodRoute.OprNum == prodRoute::lastOprNum(prodTable.ProdId))
+                {
+                    routeMuiltiRegister.InventLocationId    = prodTable.inventDim().InventLocationId;
+                    routeMuiltiRegister.WMSLocationId       = prodTable.inventDim().wMSLocationId;
+                }
+                if (_wmsLocationId)
+                {
+                    routeMuiltiRegister.WMSLocationId =  _wmsLocationId;
+                }
+
+                routeMuiltiRegister.QtyOrig         = breakdownOrderLine.Qty;
+                if (this.parmRouteOprTable_AT().ValidateCutId && ATXProdCutSection::findCutId(this.parmCutId()).Locked)
+                {
+                    routeMuiltiRegister.QtySetUp = this.parmProdCutSection_AT().CutQty;
+                }
+                else
+                {
+                    routeMuiltiRegister.QtySetUp = this.parmProdCutSection_AT().CutQty;
+                    // Get cut qty by size
+                    //routeMuiltiRegister.QtySetUp        = ATXProdRouteMultiRegisterProd::getProdCutBagQty(this.parmProdId(), breakdownOrderLine.InventSizeId);
+                }
+
+                // TODO TESTING
+                routeMuiltiRegister.QtySetUp = routeMuiltiRegister.QtyOrig;
+
+                routeMuiltiRegister.BOMId               = breakdownOrderLine.BOMId;
+                routeMuiltiRegister.QtyPosted           = qtyPosted(routeMuiltiRegister.BOMId, prodTable.ProdId);
+                routeMuiltiRegister.ProdReportedError   = qtyPostedError(routeMuiltiRegister.BOMId,prodTable.ProdId);
+                [routeMuiltiRegister.QtyPreviousOpr, routeMuiltiRegister.QtyPreviousOprError] = qtyPrevious(routeMuiltiRegister.BOMId, prodTable.ProdId);
+                routeMuiltiRegister.ProdStandarPack     = enum2int(prodparameters.StandarPack);
+
+                if (this.parmRouteOprTable_AT().GetPreviousQty && routeMuiltiRegister.QtyPreviousOpr)
+                {
+                    routeMuiltiRegister.Qty         = routeMuiltiRegister.QtySetUp - (routeMuiltiRegister.QtyPosted + routeMuiltiRegister.ProdReportedError);
+                }
+
+                routeMuiltiRegister.insert();
+            }
+        }
+        // Post size #
+        else
+        {
+            while select sum(QtyOrig), sum(Qty) from breakdownOrderLine
+                group by ItemId, ConfigId, InventColorId, InventStyleId
+                where   breakdownOrderLine.SalesId == ProdTable.ATXInventRefId
+                &&  breakdownOrderLine.InventTransId == ProdTable.ATXInventRefTransId
+            {
+                routeMuiltiRegister.clear();
+                routeMuiltiRegister.initValue();
+                routeMuiltiRegister.TransDate       = ATXProdRouteMultiRegisterProd::getSystemDate();
+                routeMuiltiRegister.OprId           = oprId;
+                routeMuiltiRegister.ProdId          = prodId;
+                routeMuiltiRegister.ItemId          = breakdownOrderLine.ItemId;
+                routeMuiltiRegister.OprNum          = prodRoute.OprNum;
+                routeMuiltiRegister.ConfigId        = breakdownOrderLine.ConfigId;
+                routeMuiltiRegister.InventcolorId   = breakdownOrderLine.InventColorId;
+                routeMuiltiRegister.InventSizeId    = ATXProductParameters::find().DummyValue;
+
+                // Add InventLocationId when post last operation
+                if (prodRoute.OprNum == prodRoute::lastOprNum(prodTable.ProdId))
+                {
+                    routeMuiltiRegister.InventLocationId    = prodTable.inventDim().InventLocationId;
+                    routeMuiltiRegister.WMSLocationId       = prodTable.inventDim().wMSLocationId;
+                }
+                if (_wmsLocationId)
+                {
+                    routeMuiltiRegister.WMSLocationId =  _wmsLocationId;
+                }
+
+                routeMuiltiRegister.QtyOrig         = breakdownOrderLine.Qty;
+                if (this.parmRouteOprTable_AT().ValidateCutId)
+                {
+                    if (this.parmCutId())
+                    {
+                        if (this.parmProdCutSection_AT().Locked)
+                        {
+                            routeMuiltiRegister.QtySetUp = this.parmProdCutSection_AT().CutQty;
+                        }
+                    }
+                    else
+                    {
+                        if (this.parmProdCutSection_AT().Locked)
+                        {
+                            routeMuiltiRegister.QtySetUp = ATXProdCutHeader::find(this.parmProdId()).QtyCutBag;
+                        }
+                    }
+                }
+                else
+                {
+                    if (this.parmProdCutSection_AT().Locked)
+                    {
+                        routeMuiltiRegister.QtySetUp        = breakdownOrderLine.Qty;
+                    }
+                }
+
+                routeMuiltiRegister.BOMId               = ATXProductParameters::find().DummyValue;
+                routeMuiltiRegister.QtyPosted           = qtyPosted(routeMuiltiRegister.BOMId,prodTable.ProdId);
+                routeMuiltiRegister.ProdReportedError   = qtyPostedError(routeMuiltiRegister.BOMId,prodTable.ProdId);
+                [routeMuiltiRegister.QtyPreviousOpr, routeMuiltiRegister.QtyPreviousOprError] = qtyPrevious(routeMuiltiRegister.BOMId,prodTable.ProdId);
+                routeMuiltiRegister.ProdStandarPack     = enum2int(prodparameters.StandarPack);
+
+                if (ATXRouteOprTable::find(oprId).GetPreviousQty && routeMuiltiRegister.QtyPreviousOpr)
+                {
+                    routeMuiltiRegister.Qty         = routeMuiltiRegister.QtySetUp ? routeMuiltiRegister.QtySetUp - (routeMuiltiRegister.QtyPosted + routeMuiltiRegister.ProdReportedError) : 0;
+                }
+
+                routeMuiltiRegister.insert();
+            }
+        }
+
+        return routeMuiltiRegister;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>getSystemDate</Name>
+				<Source><![CDATA[
+    public static date getSystemDate()
+    {
+        TransDate   systemDate;
+        
+        // timezone definitions for use in demo code
+        Timezone            myTimeZone = Timezone::GMTMINUS0600CENTRALTIME;
+        // DateTime variables for use in demo code
+        utcDateTime         myDateTime;
+
+        // apply my timezone offset to see date in my current timezone
+        myDateTime = DateTimeUtil::getSystemDateTime();
+        myDateTime = DateTimeUtil::applyTimeZoneOffset(myDateTime,myTimeZone);
+
+
+        systemDate = DateTimeUtil::date(myDateTime);
+
+        return systemDate;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmTurnId</Name>
+				<Source><![CDATA[
+    public ATXTurnId parmTurnId(ATXTurnId _turnId = turnId)
+    {
+        turnId = _turnId;
+
+        return turnId;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmInventStyleIdTransfer</Name>
+				<Source><![CDATA[
+    public EcoResStyleName parmInventStyleIdTransfer(EcoResStyleName _inventStyleIdTransfer = inventStyleIdTransfer)
+    {
+        inventStyleIdTransfer = _inventStyleIdTransfer;
+
+        return inventStyleIdTransfer;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmProdRoute</Name>
+				<Source><![CDATA[
+    public ProdRoute parmProdRoute(ProdRoute _prodRoute = prodRoute)
+    {
+        prodRoute = _prodRoute;
+
+        return prodRoute;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>insertShutDownCode</Name>
+				<Source><![CDATA[
+    boolean insertShutDownCode(TransDate _transDate = systemDateGet())
+    {
+        ProdJournalTable    prodjournalTable, 
+                            prodjournalTableRoute;
+
+        ProdJournalRoute    prodjournalRoute;
+        ProdRoute           prodRouteTmp;
+        ATXProdJournalMulti prodJournalMulti;
+
+        boolean ret = true;
+        Description text = ATXProdParameters::find().StopProdJournalDescription;
+
+        ;
+
+        try
+        {
+            if (this.validateShutDownCode())
+            {
+                prodJournalMulti     = new ATXProdJournalMulti();
+                prodjournalTable    = prodJournalMulti.newProdJournalTable(
+                    prodTable.ProdId,
+                    ProdJournalType::RouteCard,
+                    strfmt(text, RouteOprTable::find(oprId).Name)
+                );
+
+                if (prodjournalTable)
+                {
+                    /*this.insertJournalRouteLineTimeWrkFromRoute(
+                    prodjournalTable.JournalId,
+                    oprId,
+                    -this.getShutDownCodeHours(),
+                    RouteJobType::Process,
+                    _transDate,
+                    this
+                    );*/
+                }
+            }
+            else
+            return false;
+
+            //prodJournalMulti.postProdJournalRoute(prodjournalTable,true);
+
+            //this.parmShutDownId("");
+            this.parmShutDownIdHours(0);
+            this.parmShutDownIdMinutes(0);
+        }
+        catch (Exception::UpdateConflictNotRecovered)
+        {
+            error("@ATXProdLabel_AT:NewLabel64");
+        }
+
+        return ret;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>validateShutDownCode</Name>
+				<Source><![CDATA[
+    private boolean validateShutDownCode()
+    {
+        boolean ret = true;
+        ;
+
+        ret = this.validateFloorControlData();
+
+        ret = ret && this.checkShutDownCodePosted();
+
+        return ret;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>validateFloorControlData</Name>
+				<Source><![CDATA[
+    public boolean validateFloorControlData(FormDataSource _fDS = null)
+    {
+        ATXProductionFloorControl   tmpTable;
+        InventTable                 inventTable;
+        InventDim                   inventDim;
+        ProdRoute                   prodRouteForValidation;
+        str                         lastOperation;
+        boolean                     ret = true;
+
+        ;
+
+        if(prodParameters.ExistenceInLastOperation == NoYes::Yes)
+        {
+            lastOperation =strFmt("%1", ATXTools::getLastProdOperation(ProdTable.ProdId));
+
+            select firstonly prodRouteForValidation
+                where prodRouteForValidation.ProdId == ProdTable.ProdId
+                    && prodRouteForValidation.OprId == lastOperation;
+
+            if(prodRouteForValidation.qtyGood() > 0)
+            {
+                ret = checkFailed("@ATXAT:NewLabel252");
+            }
+        }
+
+        // Validate personnel number
+        /*if (ATXProdParameters::find().ValidateEmplId)
+        {
+            if (!this.parmHCMPersonnelNumberId())
+                ret = checkFailed(strFmt("@SYS26332", extendedTypeId2pname(extendedTypeNum(HcmPersonnelNumberId))));
+
+            if (!ATXProdRouteEmplPerm::canPostRouteOpr(this.parmHCMPersonnelNumberId(), this.parmOprId()))
+            {
+                ret = checkFailed(strFmt("@ATXProdLabel_AT:NewLabel99", HcmWorker::findByPersonnelNumber(this.parmHCMPersonnelNumberId()).name()));
+            }
+        }*/
+
+        if (prodTable.ProdStatus != ProdStatus::StartedUp)
+            ret = checkFailed("@ATXAT:NewLabel253");
+
+        if (ATXRouteOprTable::find(this.parmProdRoute().OprId).ValidateCutId && !this.parmCutId())
+        {
+            ret = checkFailed("@ATXAT:NewLabel254");
+        }
+
+        // Validate production order
+        if (!prodTable.ProdId)
+        {
+            ret = checkFailed(strFmt("@SYS26332", extendedTypeId2pname(extendedTypeNum(ProdId))));
+        }
+        // Validate route operation
+        if (!this.parmOprId())
+        {
+            ret = checkFailed(strFmt("@SYS26332", extendedTypeId2pname(extendedTypeNum(RouteOprId))));
+        }
+        // Validate resource
+        if (!this.parmWrkctrId())
+        {
+            ret = checkFailed(strFmt("@SYS26332", extendedTypeId2pname(extendedTypeNum(WrkCtrId))));
+        }
+        // Validate exist resource
+
+        // Validate turn
+        if (!this.parmTurnId())
+        {
+            ret = checkFailed(strFmt("@SYS26332",extendedTypeId2pname(extendedTypeNum(ATXTurnId))));
+        }
+        // Validate transfer item
+        /*if (this.parmTransferCheck())
+        {
+            inventTable = InventTable::find(this.parmItemIdTransfer());
+            if (!inventTable)
+            {
+                ret = checkFailed(strFmt("@SYS5307", this.parmItemIdTransfer()));
+            }
+            if (inventTable.configActive() && !this.parmConfigIdTransfer())
+            {
+                ret = checkFailed(strFmt("@SYS26332", extendedTypeId2pname(extendedTypeNum(EcoResConfigurationName))));
+            }
+            if (inventTable.colorActive() && !this.parmInventColorIdTransfer())
+            {
+                ret = checkFailed(strFmt("@SYS26332", extendedTypeId2pname(extendedTypeNum(EcoResColorName))));
+            }
+            if (inventTable.styleActive() && !this.parmInventStyleIdTransfer())
+            {
+                ret = checkFailed(strFmt("@SYS26332", extendedTypeId2pname(extendedTypeNum(EcoResStyleName))));
+            }
+        }*/
+
+        // Process operations validations
+        /*if (prodRoute.OprNum != prodRoute::lastOprNum(prodTable.ProdId))
+        {
+            if (this.parmTransferCheck())
+            {
+                ret = checkFailed(strFmt("@ATXProdLabel_AT:NewLabel98"));
+            }
+        }*/
+
+        if (prodRoute.OprNum == prodRoute::lastOprNum(prodTable.ProdId))
+        {
+            if (this.parmRejection())
+            {
+                ret = checkFailed("@ATXAT:NewLabel255");
+            }
+        }
+
+        // Validate quantyties
+        for (tmpTable = _fds.getFirst(); tmpTable; tmpTable = _fds.getNext())
+        {
+            if (tmpTable.Qty !=0)
+            {
+                if(tmpTable.Qty + tmpTable.QtyPosted + tmpTable.ProdReportedError > tmpTable.QtySetUp)
+                {
+                    ret = checkFailed(strFmt("@ATXAT:NewLabel256", tmpTable.QtySetUp, tmpTable.InventSizeId));
+                }
+            }
+        }
+
+        return ret;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>checkShutDownCodePosted</Name>
+				<Source><![CDATA[
+    private boolean checkShutDownCodePosted()
+    {
+        boolean ret = true;
+        ProdJournalRoute    prodJournalRoute;
+        ProdJournalTable    prodJournalTable;
+        ToTime              fixedToTime3rd;
+        utcDateTime         fixedDateTime3rd;
+        ;
+
+        select sum(Hours) from prodJournalRoute
+            where prodJournalRoute.ATXTurnId    == this.parmTurnId()
+            && prodJournalRoute.WrkCtrId     == this.parmWrkctrId()
+            && prodJournalRoute.OprId        == this.parmOprId()
+            && prodJournalRoute.TransDate    == systemDateGet()
+            join prodJournalTable
+            where prodJournalTable.JournalId    == prodJournalRoute.JournalId
+            && prodJournalTable.Posted;
+        if (prodJournalRoute.Hours < this.getShutDownCodeHours())
+        {
+            ret = checkFailed("@ATXAT:NewLabel257");
+        }
+
+        return ret;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>getShutDownCodeHours</Name>
+				<Source><![CDATA[
+    private Hours getShutDownCodeHours()
+    {
+        return (this.parmShutDownIdHours() + (this.parmShutDownIdMinutes() / 60));
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmShutDownIdHours</Name>
+				<Source><![CDATA[
+    public Hours parmShutDownIdHours(Hours _shutDownIdHours = shutDownIdHours)
+    {
+        shutDownIdHours = _shutDownIdHours;
+
+        return shutDownIdHours;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmShutDownIdMinutes</Name>
+				<Source><![CDATA[
+    public Minutes parmShutDownIdMinutes(Minutes _shutDownIdMinutes = shutDownIdMinutes)
+    {
+        shutDownIdMinutes = _shutDownIdMinutes;
+
+        return shutDownIdMinutes;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>insertJournalRouteLineTimeWrkFromRoute</Name>
+				<Source><![CDATA[
+    void insertJournalRouteLineTimeWrkFromRoute(
+    JournalId           _journalId,
+    RouteOprId          _routeOprId,
+    Qty                 _qty,
+    RouteJobType        _routeJobType = RouteJobType::Process,
+    TransDate           _transDate = systemDateGet(),
+    ATXProdRouteMultiRegisterProd  _prodRouteConsumption = null
+        )
+    {
+        ProdJournalRoute    prodJournalRoute;
+        ProdJobType         prodJobType  = ProdJobType::construct(_RouteJobType);
+        WrkCtrTable         wrkCtrTable;
+        date                searchDate = systemdateget();
+        ;
+
+        prodJournalRoute.clear();
+        prodJournalRoute.initValue();
+        prodJournalRoute.JournalId         = _journalId;
+        prodJournalRoute.TransDate         = _transDate;
+        prodJournalRoute.JobType           = _routeJobType;
+        prodJournalRoute.ProdId            = ProdJournalTable::find(_journalId).ProdId;
+        prodJournalRoute.OprId             = _routeOprId;
+        prodJournalRoute.OprNum            = prodRoute.OprNum;
+
+        switch(_routeJobType)
+        {
+            case RouteJobType::Process:
+                prodJournalRoute.CategoryHoursId   = prodRoute.ProcessCategoryId;
+                break;
+            case RouteJobType::Setup:
+                prodJournalRoute.CategoryHoursId   = prodRoute.SetUpCategoryId;
+                break;
+        }
+
+        prodJournalRoute.CategoryQtyId     = prodRoute.QtyCategoryId;
+
+        prodJournalRoute.Hours             = _qty;
+        prodJournalRoute.setCategoryHours(prodJournalRoute.CategoryHoursId);
+        prodJournalRoute.ExecutedPct       = prodJournalRoute.proposalRouteExecutedPct();
+        prodJobType.initProdJournalRoute(prodJournalRoute.prodRoute(),prodJournalRoute);
+        prodJournalRoute.WrkCtrId          = prodRoute.WrkCtrIdCost;
+        ProdJournalRoute::lastLineNum(_journalId);
+
+        if (prodRoute.FromDate)
+        {
+            searchDate = prodRoute.FromDate;
+        }
+        else if (prodJournalRoute.TransDate)
+        {
+            searchDate = prodJournalRoute.TransDate;
+        }
+
+        wrkCtrTable                             = wrkCtrTable::find(_prodRouteConsumption.parmWrkCtrId());
+        prodJournalRoute.WrkCtrId               = wrkCtrTable.WrkCtrId;
+        prodJournalRoute.Worker                 = wrkCtrTable.Worker;
+        //prodJournalRoute.DefaultDimension       = prodJournalRoute.copyDimension(prodRoute.DefaultDimension);
+        //prodJournalRoute.WrkctrOperators_AT     = _prodRouteConsumption.parmOperators();
+
+        if (!prodJournalRoute.DefaultDimension)
+        {
+            prodJournalRoute.DefaultDimension = wrkCtrTable.DefaultDimension;
+        }
+
+        if(_prodRouteConsumption)
+        {
+            prodJournalRoute.ATXTurnId              = _prodRouteConsumption.parmTurnId();
+            prodJournalRoute.WrkCtrId               = _prodRouteConsumption.parmWrkctrId();
+            prodJournalRoute.ATXRejectionCodeId     = _prodRouteConsumption.parmRejectionCode();
+            //prodJournalRoute.ATXShutDownId          = _prodRouteConsumption.parmShutDownId();
+        }
+
+        ProdJournalRoute.insert();
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>canReportAsFinish</Name>
+				<Source><![CDATA[
+    boolean canReportAsFinish(FormDataSource _fds, boolean _refresh = false)
+    {
+        boolean ret = true;
+
+        try
+        {
+            ret = this.validatePostMulti(_fds);
+            if(ret)
+            {
+                this.postBackflush(_fds);
+                this.postRoute(_fds);
+                this.postProd(_fds);
+            }
+        }
+        catch (Exception::UpdateConflictNotRecovered)
+        {
+            error("@ATXAT:NewLabel260");
+        }
+        
+        return ret;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>validatePostMulti</Name>
+				<Source><![CDATA[
+    boolean validatePostMulti(FormDataSource _fDS)
+    {
+        boolean ret = true;
+        Qty         schedQty
+
+        ;
+
+        schedQty = (select sum(QtyGood) from ProdJournalProd
+                        where ProdJournalProd.ProdId ==prodTable.ProdId).QtyGood;
+
+        ret = this.validateFloorControlData(_fDS);
+
+        return ret;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>postBackflush</Name>
+				<Source><![CDATA[
+    private void postBackflush(FormDataSource _fds)
+    {
+        ATXProductionFloorControl   tmpTable;
+        Qty                         prodQty;
+        ProdJournalBOM              prodJournalBOM;
+        ProdBOM                     prodBOM;
+        ProdJournalTable            prodJournalTableBOM;
+        prodJournalTableData        prodJournalTableData;
+        ProdJournalTransData        ProdJournalTransData;
+        InventModelGroupItem        inventModelGroupItem;
+        InventModelGroup            inventModelGroup;
+
+        ProdBOMCalc                 prodBOMCalc;
+        BOMCalcData                 bomCalcData;
+        BOMQty                      bomQty;
+        InventQty                   bomQtyInvent;
+        
+        for (tmpTable = _fds.getFirst(); tmpTable; tmpTable = _fds.getNext())
+        {
+            if (tmpTable.Qty !=0)
+            {
+                prodQty += tmpTable.Qty;
+            }
+        }
+
+        if (ATXRouteOprTable::find(oprId).ProdAutoPickList)
+        {
+            prodJournalTableBOM = new ATXProdJournalTools().newProdJournalTable(prodId, ProdJournalType::Picklist, strFmt("Backflush OPR%1", oprId));
+            if (prodJournalTableBOM)
+            {
+                while select prodBOM
+                    where  prodBOM.ProdId    == prodId
+                        && prodBOM.OprNum   == prodRoute.OprNum
+                    join inventModelGroupItem
+                        where inventModelGroupItem.ItemId   == prodBOM.ItemId
+                        join inventModelGroup
+                            where  inventModelGroup.ModelGroupId == inventModelGroupItem.ModelGroupId
+                                && inventModelGroup.ATXBackflushRouteOprId
+                {
+                    bomQty      = prodBOM.BOMQty / prodTable.QtySched;
+                    bomQty      = rounduP(bomQty * prodQty, 1);
+                    bomCalcData = BOMCalcData::newProdTable(bomQty, prodTable::find(prodId));
+                    prodBOMCalc = ProdBOMCalc::newBOMCalcData(bomCalcData, prodBOM, ProdBOMConsumpProposal::Qty, BOMAutoConsump::Always,!prodBOM.ConstantReleased);
+
+                    prodJournalTableData = JournalTableData::newTable(prodJournalTableBOM);
+                    prodJournalTransData = prodJournalTableData.journalStatic().newJournalTransData(prodJournalBOM, prodJournalTableData);
+
+                    prodJournalBom.clear();
+                    prodJournalBom.initValue();
+                    prodJournalTransData.initFromJournalTable();
+                    prodJournalBom.JournalId = prodJournalTableBOM.JournalId;
+                    prodJournalBom.initFromProdBOM(prodBOM);
+                    prodJournalBom.TransDate = systemDateGet();
+                    prodJournalBom.EndConsump   = NoYes::No;
+                    prodBOMCalc.setProdJournalBOM(prodJournalBOM);
+                    prodJournalBOM.BOMUnitId        = prodBOM.UnitId;
+                    prodJournalBom.InventDimId      = prodBOM.InventDimId;
+                    prodJournalBom.modifiedField(fieldNum(prodJournalBom,InventDimId));
+                    prodJournalBOM.BOMProposal      = 0;
+                    prodJournalBOM.InventProposal   = 0;
+                    prodJournalBOM.BOMConsump       = bomQty;
+
+                    if(prodJournalBOM.BOMUnitId != inventTable::find(prodJournalBOM.ItemId).inventTableModuleInvent().UnitId)
+                    {
+                        bomQtyInvent                    = UnitOfMeasureConverter::convert(
+                        bomQty,
+                        UnitOfMeasure::unitOfMeasureIdBySymbol(prodJournalBOM.BOMUnitId),
+                        UnitOfMeasure::unitOfMeasureIdBySymbol(inventTable::find(prodJournalBOM.ItemId).inventTableModuleInvent().UnitId), NoYes::No, InventTable::find(prodJournalBOM.ItemId).Product, NoYes::No);
+                        prodJournalBOM.InventConsump    = round(bomQtyInvent, 0.0001);
+                    }
+                    else
+                    {
+                        prodJournalBOM.InventConsump =  bomQty;
+                    }
+
+
+                    prodJournalBom.insert();
+                }
+
+                new ATXProdJournalTools().postProdJournalBOMBF(prodJournalTableBOM);
+            }
+        }
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>postRoute</Name>
+				<Source><![CDATA[
+    private void postRoute(FormDataSource _fds)
+    {
+        ATXProductionFloorControl   tmpTable;
+        ProdJournalTable            prodjournalTable;
+        ATXProdJournalMulti         prodJournalMulti = new ATXProdJournalMulti();
+
+        for (tmpTable = _fds.getFirst(); tmpTable; tmpTable = _fds.getNext())
+        {
+            if (tmpTable.Qty != 0)
+            {
+                if (ATXProdParameters::find().ValidateQuality && !prodTable.ATXQualityEndChecked && ProdRoute::findLast(prodTable.ProdId).OprId == prodRoute.OprId)
+                {
+                    throw error(strFmt("@ATXAT:NewLabel264"));
+                }
+
+                if(!prodjournalTable.RecId)
+                {
+                    prodjournalTable = new ATXProdJournalMulti().newProdJournalTable(prodTable.ProdId, ProdJournalType::RouteCard, strfmt("CONTROL DE PISO %1 ", oprId));
+
+                    prodjournalTable.selectForUpdate(true);
+                }
+
+                prodJournalMulti.insertJournalRouteLineFromProdRoute(
+                    prodjournalTable.JournalId,
+                    oprId,
+                    tmpTable.Qty,
+                    tmpTable.BOMId
+                    , wrkCtrId
+                    , RouteJobType::Process
+                    , tmpTable.TransDate ? tmpTable.TransDate : ATXProdRouteMultiRegisterProd::getSystemDate()
+                    , 0
+                    , turnId
+                    , rejection
+                    , rejectionCode
+                    , tmpTable.ProdQualityId || this.parmTransferCheck() ? true : false 
+                    , hcmPersonnelNumberId
+                    , cutId
+                    , refComment
+                );
+            }
+        }
+
+        if (prodjournalTable.RecId)
+        {
+            prodJournalMulti.postProdJournalRoute(prodjournalTable, true);
+            Info("@ATXAT:NewLabel147");
+        }
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmTransferCheck</Name>
+				<Source><![CDATA[
+    public Noyes parmTransferCheck(Noyes _transferCheck = transferCheck)
+    {
+        transferCheck = _transferCheck;
+
+        return transferCheck;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>postProd</Name>
+				<Source><![CDATA[
+    private void postProd(FormDataSource _fDS)
+    {
+        ATXProductionFloorControl tmpTable;
+        ProdJournalTable          prodjournalTable;
+        ATXProdJournalMulti       prodJournalMulti   = new ATXProdJournalMulti();
+        ATXInventJournalMuilti    inventJournalMulti = new ATXInventJournalMuilti();
+        SalesLine                 salesLine;
+        InventDim                 inventDimNew;
+
+        if (prodRoute.OprNum != prodRoute::lastOprNum(prodTable.ProdId))
+        {
+            return;
+        }
+
+        // Actualizar cantidad iniciada a control de bultos
+        this.updateStUpQty();
+
+        for (tmpTable = _fds.getFirst(); tmpTable; tmpTable = _fds.getNext())
+        {
+            if (tmpTable.Qty != 0)
+            {
+                if(!prodjournalTable.RecId)
+                {
+                    prodjournalTable = prodJournalMulti.newProdJournalTable(prodTable.ProdId, ProdJournalType::ReportFinished, strfmt(ATXProdParameters::find().LastOperationJournalName, systemDateGet()));
+                }
+                
+                // Unreserve for reversal
+                if (tmpTable.Qty < 0 && this.parmCutId())
+                {
+                    if (prodTable.inventDim().WMSLocationId == tmpTable.WMSLocationId)
+                    {
+                        salesLine = SalesLine::findInventTransId(ProdTable.ATXInventRefTransId);
+                        if (salesLine)
+                        {
+                            inventDimNew = salesLine.inventDim();
+                            inventDimNew.inventBatchId = this.parmCutId();
+
+                            ATXTools::reserveLine(salesLine, inventDimNew, tmpTable.Qty);
+                        }
+                    }
+                }
+                prodJournalMulti.inserProdJournalProdLineFromControl(
+                    prodjournalTable.JournalId,
+                    tmpTable.Qty,
+                    tmpTable.BOMId,
+                    tmpTable.ProdQualityId,
+                    systemDateGet(),
+                    this.parmRejection(),
+                    tmpTable,
+                    this);
+            }
+        }
+
+        ATXInventMovement::transferJournalReversal(prodjournalTable);
+
+        if (prodjournalTable.RecId)
+        {
+            prodJournalMulti.postProdJournalProd(prodjournalTable, true);
+        }
+
+        if (this.parmTransferCheck())
+        {
+            inventJournalTableTransfer  = this.createInventJournalTable();
+            if (inventJournalTableTransfer)
+            {
+                this.createInventJournalLines(prodjournalTable);
+                inventJournalMulti.postInventJournal(inventJournalTableTransfer);
+            }
+        }
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmConfigIdTransfer</Name>
+				<Source><![CDATA[
+    public EcoResConfigurationName parmConfigIdTransfer(EcoResConfigurationName _configIdTransfer = configIdTransfer)
+    {
+        configIdTransfer = _configIdTransfer;
+
+        return configIdTransfer;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmInventColorIdTransfer</Name>
+				<Source><![CDATA[
+    public EcoResColorName parmInventColorIdTransfer(EcoResColorName _inventColorIdTransfer = inventColorIdTransfer)
+    {
+        inventColorIdTransfer = _inventColorIdTransfer;
+
+        return inventColorIdTransfer;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>createInventJournalLines</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name = "_prodJournalTable"></param>
+    public void createInventJournalLines(ProdJournalTable _prodJournalTable)
+    {
+        InventJournalTable          inventJournalTable;
+        InventJournalTrans          inventJournalTrans, inventJournalTransNew;
+        InventDim                   inventDimUpd;
+        ATXInventJournalMuilti      inventJournalMulti   = new ATXInventJournalMuilti();
+        ;
+
+        while select inventJournalTable
+            where inventJournalTable.ATXProdJournalId   == _prodJournalTable.JournalId
+            join inventJournalTrans
+            where inventJournalTrans.JournalId          == inventJournalTable.JournalId
+        {
+            // Loss inventory
+            inventJournalTransNew.clear();
+            inventJournalTransNew.initValue();
+            inventJournalTransNew.initFromInventJournalTable(inventJournalTableTransfer);
+            inventJournalTransNew.initFromInventTable(prodTable.inventTable());
+
+            inventJournalTransNew.ItemId            = prodTable.ItemId;
+            inventJournalTransNew.modifiedField(fieldnum(InventJournalTrans, ItemId));
+            inventJournalTransNew.LineNum           = InventJournalTrans::lastLineNum(inventJournalTransNew.JournalId) + 1.0;
+            inventJournalTransNew.TransDate         = systemDateGet();
+
+            // TODO ERROR? inventJournalTransNew.LedgerDimension   = inventJournalTrans.inventTable().itemGroup().ATXLedgerDimensionMovement;
+
+            inventJournalTransNew.InventDimId       = inventJournalTrans.ToInventDimId;
+            inventJournalTransNew.modifiedField(fieldNum(inventJournalTrans, InventDimId));
+            inventJournalTransNew.Qty               = inventJournalTrans.Qty;
+            inventJournalTransNew.inventMovement().journalSetQty(NoYes::Yes);
+            inventJournalTransNew.insert();
+
+            // Profit inventory
+            inventJournalTransNew.clear();
+            inventJournalTransNew.initValue();
+            inventJournalTransNew.initFromInventJournalTable(inventJournalTableTransfer);
+            inventJournalTransNew.initFromInventTable(prodTable.inventTable());
+
+            inventJournalTransNew.ItemId            = this.parmItemIdTransfer();
+            inventJournalTransNew.modifiedField(fieldnum(inventJournalTrans, ItemId));
+            inventJournalTransNew.LineNum           = InventJournalTrans::lastLineNum(inventJournalTransNew.JournalId) + 1.0;
+            inventJournalTransNew.TransDate         = systemDateGet();
+
+            inventDimUpd.clear();
+            inventDimUpd.configId                   = this.parmConfigIdTransfer();
+            //inventDimUpd.InventSizeId               = InventDim::find(InventJournalTrans.ToInventDimId).InventSizeId;
+            inventDimUpd.InventSizeId               = inventJournalTrans.ATXInventSizeIdTransfer;
+            inventDimUpd.InventColorId              = this.parmInventColorIdTransfer();
+            inventDimUpd.InventStyleId              = this.parmInventStyleIdTransfer();
+            inventJournalTransNew.InventDimId       = InventDim::findOrCreate(inventDimUpd).inventDimId;
+            inventJournalTransNew.modifiedField(fieldNum(inventJournalTrans, InventDimId));
+
+            if (!InventDimCombination::exist(inventJournalTransNew.ItemId, inventJournalTransNew.InventDimId))
+            {
+                throw error(strFmt("%1|%2|%3|%4|%5|%6|%7|%8",
+                    extendedTypeId2pname(extendedTypeNum(EcoResConfigurationName)),
+                    inventDimUpd.configId,
+                    extendedTypeId2pname(extendedTypeNum(EcoResSizeName)),
+                    inventDimUpd.InventSizeId,
+                    extendedTypeId2pname(extendedTypeNum(EcoResColorName)),
+                    inventDimUpd.InventColorId,
+                    extendedTypeId2pname(extendedTypeNum(EcoResStyleName)),
+                    inventDimUpd.InventStyleId));
+            }
+            inventDimUpd.InventSiteId               = InventDim::find(inventJournalTrans.ToInventDimId).InventSiteId;
+            inventDimUpd.InventLocationId           = InventDim::find(inventJournalTrans.ToInventDimId).InventLocationId;
+            inventDimUpd.wMSLocationId              = InventDim::find(inventJournalTrans.ToInventDimId).wMSLocationId;
+            inventDimUpd.inventBatchId              = InventDim::find(inventJournalTrans.ToInventDimId).inventBatchId;
+
+            if (inventDimUpd.inventBatchId && ATXProductTools::isBatchTrackingDimensionActive(inventJournalTransNew.ItemId))
+            {
+                ATXTools::createBatch(inventJournalTransNew.ItemId, inventDimUpd.inventBatchId);
+            }
+
+            inventJournalTransNew.InventDimId       = InventDim::findOrCreate(inventDimUpd).inventDimId;
+            inventJournalTransNew.modifiedField(fieldNum(inventJournalTrans, InventDimId));
+
+            // TODO ERROR?inventJournalTransNew.LedgerDimension   = inventJournalTrans.inventTable().itemGroup().ATXLedgerDimensionMovement;
+            inventJournalTransNew.Qty               = inventJournalTrans.Qty * -1;
+            inventJournalTransNew.inventMovement().journalSetQty(NoYes::Yes);
+            inventJournalTransNew.insert();
+        }
+
+        if (inventJournalTable.RecId)
+        {
+            inventJournalMulti.postInventJournal(inventJournalTableTransfer,true);
+        }
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmItemIdTransfer</Name>
+				<Source><![CDATA[
+    public ItemId parmItemIdTransfer(ItemId _itemIdTransfer = itemIdTransfer)
+    {
+        itemIdTransfer = _itemIdTransfer;
+
+        return itemIdTransfer;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>createInventJournalTable</Name>
+				<Source><![CDATA[
+    public inventJournalTable createInventJournalTable()
+    {
+        InventJournalName   journalName = InventJournalName::find(InventParameters::find().MovementJournalNameId);
+
+        if(!journalName)
+        {
+            throw error("@ATXAT:NewLabel271");
+        }
+        inventJournalTableTransfer.clear();
+        inventJournalTableTransfer.initValue();
+        inventJournalTableTransfer.initFromInventJournalName(journalName);
+        inventJournalTableTransfer.Description = journalDescriptionStr;
+        inventJournalTableTransfer.insert();
+
+        return inventJournalTableTransfer;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>updateStUpQty</Name>
+				<Source><![CDATA[
+    private void updateStUpQty()
+    {
+        ProdTable        prodTableUpd = ProdTable::find(prodTable.ProdId);
+        ATXProdCutHeader prodCutHeader_AT;
+
+        if (prodTableUpd)
+        {
+            prodCutHeader_AT = ATXProdCutHeader::find(prodTable.ProdId);
+            if (prodCutHeader_AT.QtyCutBag)
+            {
+                ttsbegin;
+                prodTableUpd.selectForUpdate(true);
+                prodTableUpd.QtyStUp = prodCutHeader_AT.QtyCutBag;
+                prodTableUpd.doUpdate();
+                ttscommit;
+            }
+        }
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>postProdJournalProd</Name>
+				<Source><![CDATA[
+    public void postProdJournalProd(ProdJournalTable  _prodJournalTable,boolean _validatePost = false)
+    {
+        ProdJournalCheckPost    journalCheckPost;
+        ProdJournalTable        localProd;
+        ProdJournalProd         prodJournalProd;
+        InventDim               inventDim;
+        
+        while select prodJournalProd
+            where prodJournalProd.JournalId == _prodJournalTable.JournalId
+        {
+            inventDim = prodJournalProd.inventDim();
+        }
+        ttsbegin;
+        if (_prodJournalTable)
+        {
+            journalCheckPost    = ProdJournalCheckPostProd::newPostJournal( _prodJournalTable.JournalId, true);
+            if (journalCheckPost.validate())
+            {
+                journalCheckPost.run();
+            }
+
+            if(_validatePost)
+            {
+                if (!ProdJournalTable::find(_prodJournalTable.JournalId).Posted)
+                {
+                    localProd = ProdJournalTable::find(_prodJournalTable.JournalId,true);
+                    localProd.delete();
+
+                    throw error(strfmt("@ATXProdLabel_AT:NewLabel132",_prodJournalTable.JournalId));
+                }
+            }
+        }
+        ttscommit;
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxLabelFile xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXApparelAndTextile_en_US_es-MX</Name>
+	<LabelContentFileName>ATXApparelAndTextile_en_US.es-MX.label.txt</LabelContentFileName>
+	<LabelFileId>ATXApparelAndTextile_en_US</LabelFileId>
+	<Language>es-MX</Language>
+	<RelativeUriInModelStore>ATXApparelAndTextile\ATXApparelAndTextile\AxLabelFile\LabelResources\es-MX\ATXApparelAndTextile_en_US.es-MX.label.txt</RelativeUriInModelStore>
+</AxLabelFile>

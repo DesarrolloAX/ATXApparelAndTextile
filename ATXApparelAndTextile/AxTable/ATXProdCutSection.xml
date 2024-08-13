@@ -1,0 +1,511 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxTable xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXProdCutSection</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+public class ATXProdCutSection extends common
+{
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>iniFromProdCutHeader</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    public void iniFromProdCutHeader(ATXProdCutHeader _prodCutHeader)
+    {
+        ;
+        this.ProdCutHeaderRecId = _prodCutHeader.RecId;
+        this.ProdId             = _prodCutHeader.ProdId;
+        this.WrkCtrId           = ProdTable::find(_prodCutHeader.ProdId).ATXWrkCtrIdSew;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>setYieldNewSection</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    public void setYieldNewSection()
+    {
+        ATXProdCutSection prodCutSection_AT;
+
+        select firstonly prodCutSection_AT
+            where prodCutSection_AT.ProdCutHeaderRecId == this.ProdCutHeaderRecId;
+
+        this.YieldQty        = prodCutSection_AT.YieldQty;
+        this.YieldQtyOverPct = prodCutSection_AT.YieldQtyOverPct;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>nextCutId</Name>
+				<Source><![CDATA[
+    public static str nextCutId()
+    {
+        NumberSeq         numberSeq;
+        ATXProdParameters prodParameters = ATXProdParameters::find();
+
+        if (prodParameters.ATXProdCutNumberSequenceId != "")
+        {
+            numberSeq = NumberSeq::newGetNumFromCode(prodParameters.ATXProdCutNumberSequenceId,NumberSeqScopeFactory::createDefaultScope(),true,true);
+
+            return numberSeq.num();
+        }
+        else
+        {
+            warning("No se encuentra la secuencia numerica del plan de corte.");
+            return "";
+        }
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>find</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Find section by ProdCutSection.RecId
+    /// </summary>
+    /// <param name = "_recIdSection"></param>
+    /// <param name = "_forUpdate"></param>
+    /// <returns></returns>
+    public static ATXProdCutSection find(RefRecId _recIdSection,boolean _forUpdate = false)
+    {
+        ATXProdCutSection prodCutSection;
+
+        prodCutSection.selectForUpdate(_forUpdate);
+
+        select firstonly prodCutSection
+            where prodCutSection.RecId == _recIdSection;
+
+        return prodCutSection;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>findCutId</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name = "_cutId"></param>
+    /// <param name = "_forUpdate"></param>
+    /// <returns></returns>
+    public static ATXProdCutSection findCutId(ATXCutId _cutId, boolean _forUpdate = false)
+    {
+        ATXProdCutSection prodCutSection;
+
+        prodCutSection.selectForUpdate(_forUpdate);
+
+        select firstonly prodCutSection
+            where prodCutSection.CutId == _cutId;
+
+        return prodCutSection;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>modifiedField</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name = "_fieldId"></param>
+    public void modifiedField(FieldId _fieldId)
+    {
+        ATXProdCutPattern prodCutPattern;
+        super(_fieldId);
+
+        switch (_fieldId)
+        {
+            case fieldNum(ATXProdCutSection,Section):
+                ttsbegin;
+                while select forupdate prodCutPattern
+                    where prodCutPattern.ProdCutSectionRecId == this.RecId
+                {
+                    prodCutPattern.Section = this.Section;
+                    prodCutPattern.update();
+                }
+                ttscommit;
+                break;
+            case fieldNum(ATXProdCutSection, YieldQty):
+                this.YieldQtyOverPct = this.YieldQty * ATXProdParameters::find().YieldPercent;
+                break;
+        }
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>ATXProdCutHeader</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    public ATXProdCutHeader ATXProdCutHeader()
+    {
+        ATXProdCutHeader prodCutHeader_AT;
+
+        ;
+
+        select firstonly prodCutHeader_AT
+            where prodCutHeader_AT.RecId == this.ProdCutHeaderRecId;
+        return prodCutHeader_AT;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>aosValidateDelete</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    /// <returns></returns>
+    public boolean aosValidateDelete()
+    {
+        boolean ret;
+        ProdJournalBOM    prodJournalBom;
+        ProdJournalTable  prodJournalTable;
+        ProdJournalRoute  prodJournalRoute;
+    
+        ret = super();
+        if (this.Locked)
+        {
+            ret = checkFailed("@ATXAT:NewLabel193");
+        }
+
+        select firstonly ProdJournalBOM
+            where ProdJournalBOM.ATXCutId == this.CutId;
+
+        select firstonly prodJournalRoute
+            where prodJournalRoute.ATXCutId == this.CutId;
+        
+        if(ProdJournalBOM.RecId)
+        {
+            select firstonly ProdJournalTable
+                where ProdJournalTable.journalId == ProdJournalBOM.JournalId;
+        }
+        else
+        {
+            select firstonly ProdJournalTable
+                where ProdJournalTable.journalId == prodJournalRoute.JournalId;
+        }
+        
+        if(ProdJournalBOM.RecId || prodJournalRoute.RecId && (ProdJournalTable.JournalType == ProdJournalType::Picklist || ProdJournalTable.JournalType == ProdJournalType::RouteCard))
+        {
+            ret = checkFailed(strFmt("@ATXAT:NewLabel194", ProdJournalTable.JournalId));
+        }
+        
+    
+        return ret;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>exist</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    static boolean exist(ATXCutId _cutId)
+    {
+        return  _cutId && (select firstOnly RecId from ATXProdCutSection
+                                    where ATXProdCutSection.CutId == _cutId).RecId !=0;
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+	<SubscriberAccessLevel>
+		<Read>Allow</Read>
+	</SubscriberAccessLevel>
+	<TableGroup>Transaction</TableGroup>
+	<ClusteredIndex>ProdCutIdx</ClusteredIndex>
+	<CreatedBy>Yes</CreatedBy>
+	<CreatedDateTime>Yes</CreatedDateTime>
+	<ModifiedBy>Yes</ModifiedBy>
+	<ModifiedDateTime>Yes</ModifiedDateTime>
+	<DeleteActions />
+	<FieldGroups>
+		<AxTableFieldGroup>
+			<Name>AutoReport</Name>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoLookup</Name>
+			<Fields>
+				<AxTableFieldGroupField>
+					<DataField>CutId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>Prodid</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>CutQty</DataField>
+				</AxTableFieldGroupField>
+			</Fields>
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoIdentification</Name>
+			<AutoPopulate>Yes</AutoPopulate>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoSummary</Name>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoBrowse</Name>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>Overview</Name>
+			<Fields>
+				<AxTableFieldGroupField>
+					<DataField>CutId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>InventItemPatternId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>Section</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>WrkCtrId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>CutQty</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>Locked</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>ReleasedDate</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>PrintBagCtrl</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>Finished</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>FinishedDate</DataField>
+				</AxTableFieldGroupField>
+			</Fields>
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>General</Name>
+			<Fields>
+				<AxTableFieldGroupField>
+					<DataField>ProdId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>NumberOfPatterns</DataField>
+				</AxTableFieldGroupField>
+			</Fields>
+		</AxTableFieldGroup>
+	</FieldGroups>
+	<Fields>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>ProdId</Name>
+			<ExtendedDataType>ProdId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>CutId</Name>
+			<ExtendedDataType>ATXCutId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>InventItemPatternId</Name>
+			<ExtendedDataType>ATXInventItemPatternId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>Section</Name>
+			<ExtendedDataType>ATXSection</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldEnum">
+			<Name>Locked</Name>
+			<AllowEdit>No</AllowEdit>
+			<AllowEditOnCreate>No</AllowEditOnCreate>
+			<ExtendedDataType>NoYesId</ExtendedDataType>
+			<Label>@ATXAT:NewLabel167</Label>
+			<EnumType>NoYes</EnumType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>WrkCtrId</Name>
+			<ExtendedDataType>WrkCtrId</ExtendedDataType>
+			<Label>@ATXAT:NewLabel168</Label>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldReal">
+			<Name>Qty</Name>
+			<ExtendedDataType>Qty</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldReal">
+			<Name>YieldQty</Name>
+			<ExtendedDataType>ATXYieldAvg</ExtendedDataType>
+			<Label>@ATXAT:NewLabel170</Label>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldReal">
+			<Name>PocketingQty</Name>
+			<ExtendedDataType>Qty</ExtendedDataType>
+			<Label>@ATXAT:NewLabel171</Label>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>MarkerComments</Name>
+			<ExtendedDataType>Notes</ExtendedDataType>
+			<Label>@ATXAT:NewLabel172</Label>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>SectionComments</Name>
+			<ExtendedDataType>Notes</ExtendedDataType>
+			<Label>@ATXAT:NewLabel173</Label>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldInt64">
+			<Name>ProdCutHeaderRecId</Name>
+			<ExtendedDataType>RefRecId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldReal">
+			<Name>Units</Name>
+			<ExtendedDataType>ATXQtyBase</ExtendedDataType>
+			<Label>@ATXAT:NewLabel174</Label>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>FoleoType</Name>
+			<ExtendedDataType>Description</ExtendedDataType>
+			<Label>@ATXAT:NewLabel175</Label>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldReal">
+			<Name>YDSRT</Name>
+			<ExtendedDataType>Qty</ExtendedDataType>
+			<Label>@ATXAT:NewLabel176</Label>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldReal">
+			<Name>YieldQtyOverPct</Name>
+			<ExtendedDataType>ATXYieldAvg</ExtendedDataType>
+			<Label>@ATXAT:NewLabel177</Label>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldDate">
+			<Name>ReleasedDate</Name>
+			<AllowEdit>No</AllowEdit>
+			<ExtendedDataType>ATXReleasedDate</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldReal">
+			<Name>CutQty</Name>
+			<AllowEditOnCreate>No</AllowEditOnCreate>
+			<ExtendedDataType>ATXCutQty</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldInt">
+			<Name>NumberOfPatterns</Name>
+			<AllowEdit>No</AllowEdit>
+			<AllowEditOnCreate>No</AllowEditOnCreate>
+			<ExtendedDataType>NumberOf</ExtendedDataType>
+			<Label>@ATXAT:NewLabel179</Label>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldEnum">
+			<Name>PrintBagCtrl</Name>
+			<AllowEditOnCreate>No</AllowEditOnCreate>
+			<ExtendedDataType>NoYesId</ExtendedDataType>
+			<Label>@ATXAT:NewLabel180</Label>
+			<EnumType>NoYes</EnumType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldReal">
+			<Name>YieldQtyAvg</Name>
+			<AllowEdit>No</AllowEdit>
+			<AllowEditOnCreate>No</AllowEditOnCreate>
+			<ExtendedDataType>ATXYieldAvg</ExtendedDataType>
+			<Label>@ATXAT:NewLabel170</Label>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldEnum">
+			<Name>Finished</Name>
+			<AllowEdit>No</AllowEdit>
+			<ExtendedDataType>NoYesId</ExtendedDataType>
+			<Label>@ATXAT:NewLabel181</Label>
+			<EnumType>NoYes</EnumType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldDate">
+			<Name>FinishedDate</Name>
+			<AllowEdit>No</AllowEdit>
+			<ExtendedDataType>TransDate</ExtendedDataType>
+			<Label>@ATXAT:NewLabel182</Label>
+		</AxTableField>
+	</Fields>
+	<FullTextIndexes />
+	<Indexes>
+		<AxTableIndex>
+			<Name>ProdCutIdx</Name>
+			<AlternateKey>Yes</AlternateKey>
+			<Fields>
+				<AxTableIndexField>
+					<DataField>ProdId</DataField>
+				</AxTableIndexField>
+				<AxTableIndexField>
+					<DataField>CutId</DataField>
+				</AxTableIndexField>
+			</Fields>
+		</AxTableIndex>
+	</Indexes>
+	<Mappings />
+	<Relations>
+		<AxTableRelation>
+			<Name>ATXProdCutHeader</Name>
+			<Cardinality>ZeroMore</Cardinality>
+			<RelatedTable>ATXProdCutHeader</RelatedTable>
+			<RelatedTableCardinality>ExactlyOne</RelatedTableCardinality>
+			<RelationshipType>Aggregation</RelationshipType>
+			<Constraints>
+				<AxTableRelationConstraint xmlns=""
+					i:type="AxTableRelationConstraintField">
+					<Name>ProdCutHeaderRecId</Name>
+					<Field>ProdCutHeaderRecId</Field>
+					<RelatedField>RecId</RelatedField>
+				</AxTableRelationConstraint>
+			</Constraints>
+		</AxTableRelation>
+		<AxTableRelation>
+			<Name>WrkCtrTable</Name>
+			<RelatedTable>WrkCtrTable</RelatedTable>
+			<Constraints>
+				<AxTableRelationConstraint xmlns=""
+					i:type="AxTableRelationConstraintField">
+					<Name>WrkCtrId</Name>
+					<Field>WrkCtrId</Field>
+					<RelatedField>WrkCtrId</RelatedField>
+				</AxTableRelationConstraint>
+			</Constraints>
+		</AxTableRelation>
+	</Relations>
+	<StateMachines />
+</AxTable>

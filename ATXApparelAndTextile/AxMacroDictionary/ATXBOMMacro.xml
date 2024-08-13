@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxMacroDictionary xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXBOMMacro</Name>
+	<Source>#define.Template                ('PLANTILLA')&#xD;
+#define.SalesOrder              ('S.O.')&#xD;
+#define.ProductionOrder         ('P.O.')&#xD;
+#define.ExclamationMark         ('!')&#xD;
+#define.InventColor             ('InventColor')&#xD;
+#define.InventSize              ('InventSize')&#xD;
+#define.InventColorId           ('InventColorId')&#xD;
+#define.InventSizeId            ('InventSizeId')&#xD;
+#define.ConfigId                ('ConfigTable')&#xD;
+#define.Empy                    ('')&#xD;
+#define.DummyValue              ('#')&#xD;
+#define.ItemFieldName           ('ItemId')&#xD;
+#define.NameFieldName           ('Name')&#xD;
+#define.CharBOMSeparator        ('-')&#xD;
+#define.CharItemDimSeparator    (' ')</Source>
+	<Macros />
+</AxMacroDictionary>

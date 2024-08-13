@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXRequestOrderCopy</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+class ATXRequestOrderCopy extends RunBase
+{
+    DialogField             dlgFromCustPurchaseOrder,
+                            dlgFromCustRef,
+                            dlgToCustPurchaseOrder,
+                            dlgToCustRef;
+
+    ATXRequestOrderHeader   requestOrderHeader;
+
+    CustPurchaseOrder       custPurchaseOrder;
+    CustRef                 custRef;
+
+
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>main</Name>
+				<Source><![CDATA[
+    public static void main(Args _args)
+    {
+        ATXRequestOrderCopy engine = new ATXRequestOrderCopy();
+        FormRun fr;
+
+        if(!_args.record() || _args.dataset() != tableNum(ATXRequestOrderHeader))
+        throw error(strFmt("@SYS25516"), funcName());
+
+        engine.parmRequestOrderHeader(_args.record());
+        if(engine.prompt())
+        {
+            engine.run();
+        }
+        if (_args && _args.dataset() == tableNum(ATXRequestOrderHeader) && _args.caller())
+        {
+            fr = _args.caller();
+                
+            fr.doResearch();
+            fr.doRefresh();
+            fr.reload();
+        }
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>run</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    public void run()
+    {
+        ATXRequestOrderUpdates  requestOrderUpdates;
+        ATXRequestOrderHeader   newRequestOrderHeader;
+        ATXRequestOrderLine     localRequestOrderLine, newRequestOrderLine;
+        NumberSeq               numberSeq;
+        NumberSequenceTable     numberSequenceTable;
+        ATXRequestOrderId newRequestOrderId;
+        ATXRequestOrderUpdateId newRequestOrderUpdateId;
+
+        select firstonly numberSequenceTable
+            where numberSequenceTable.RecId  == ATXSalesParameters::find().NumberSequenceId;
+
+        numberSeq   = NumberSeq::newGetNumFromCode(numberSequenceTable.NumberSequence);
+
+        if (this.parmRequestOrderHeader().RequestOrderType == ATXRequestOrderType::Sales && !ATXRequestOrderHeader::validatePODuplicated(this.parmCustPurchaseOrder()))
+        {
+            throw error("@ATXApparelAndTextile_AT:ATXL00017");
+        }
+
+        ttsBegin;
+        newRequestOrderHeader.clear();
+        newRequestOrderHeader.initValue();
+        newRequestOrderHeader.data(this.parmRequestOrderHeader());
+        newRequestOrderId = numberSeq.num();
+        newRequestOrderHeader.RequestOrderId      = newRequestOrderId;
+        newRequestOrderHeader.CustPurchaseOrder   = this.parmCustPurchaseOrder();
+        newRequestOrderHeader.CustRef             = this.parmCustRef();
+        newRequestOrderHeader.InventTransRefId    = "";
+        newRequestOrderHeader.SalesId             = "";
+        newRequestOrderHeader.RequestOrderStatus  = ATXRequestOrderStatus::Loaded;
+        newRequestOrderHeader.RequestOrderCreated = DateTimeUtil::getSystemDate(DateTimeUtil::getUserPreferredTimeZone());
+        newRequestOrderHeader.PreviousRequestOrderId   = this.parmRequestOrderHeader().RequestOrderId;
+        newRequestOrderHeader.insert();
+
+        requestOrderUpdates.clear();
+        requestOrderUpdates.initFromRequestOrderHeader(newRequestOrderHeader);
+        requestOrderUpdates.insert();
+        newRequestOrderUpdateId = requestOrderUpdates.RequestOrderUpdateId;
+
+        newRequestOrderLine.skipDataMethods(true);
+        insert_recordset newRequestOrderLine(BranchId, DestinationPlaceId, DlvModeId, InventDimId, InventTransIdOrigin, InventTransOriginId, ItemDivisionId, ItemId, LineAmount, LineAmountOrig, LineDisc, LineNum, LinePercent, QtyOrig, RequestOrderCancelDate, RequestOrderDate, RequestOrderId, RequestOrderUpdateId, RequestQty, ReviewedOrderDate, SalesPrice, SeasonId)
+            select BranchId, DestinationPlaceId, DlvModeId, InventDimId, InventTransIdOrigin, InventTransOriginId, ItemDivisionId, ItemId, LineAmount, LineAmountOrig, LineDisc, LineNum, LinePercent, QtyOrig, RequestOrderCancelDate, RequestOrderDate, newRequestOrderId, newRequestOrderUpdateId, RequestQty, ReviewedOrderDate, SalesPrice, SeasonId
+            from localRequestOrderLine
+            where localRequestOrderLine.RequestOrderId == this.parmRequestOrderHeader().RequestOrderId
+            && localRequestOrderLine.RequestOrderUpdateId == ATXRequestOrderUpdates::lastVersion(this.parmRequestOrderHeader().RequestOrderId);
+        ttsCommit;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmRequestOrderHeader</Name>
+				<Source><![CDATA[
+    public ATXRequestOrderHeader parmRequestOrderHeader(ATXRequestOrderHeader _requestOrderHeader = requestOrderHeader)
+    {
+        requestOrderHeader = _requestOrderHeader;
+
+        return requestOrderHeader;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmCustRef</Name>
+				<Source><![CDATA[
+    public CustRef parmCustRef(CustRef _custRef = custRef)
+    {
+        custRef = _custRef;
+
+        return custRef;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>unpack</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name = "packedClass"></param>
+    /// <returns></returns>
+    public boolean unpack(container packedClass)
+    {
+        boolean ret;
+
+        ret = false;
+
+        return ret;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmCustPurchaseOrder</Name>
+				<Source><![CDATA[
+    public CustPurchaseOrder parmCustPurchaseOrder(CustPurchaseOrder _custPurchaseOrder = custPurchaseOrder)
+    {
+        custPurchaseOrder = _custPurchaseOrder;
+
+        return custPurchaseOrder;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>getFromDialog</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    /// <returns></returns>
+    public boolean getFromDialog()
+    {
+        boolean ret;
+
+        ret = super();
+        if(ret)
+        {
+            this.parmCustPurchaseOrder(dlgToCustPurchaseOrder.value());
+            this.parmCustRef(dlgToCustRef.value());
+        }
+
+        return ret;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>dialog</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    /// <returns></returns>
+    public Object dialog()
+    {
+        Object ret;
+        DialogRunbase   dlgRunBase;
+
+        ret = super();
+
+        dlgRunBase = ret;
+
+        dlgRunBase.addGroup("@SYS333605");
+        dlgFromCustPurchaseOrder    = dlgRunBase.addFieldValue(extendedTypeStr(CustPurchaseOrder), this.parmRequestOrderHeader().CustPurchaseOrder);
+        dlgFromCustPurchaseOrder.allowEdit(false);
+        dlgFromCustRef              = dlgRunBase.addFieldValue(extendedTypeStr(custRef), this.parmRequestOrderHeader().CustRef);
+        dlgFromCustRef.allowEdit(false);
+
+        dlgRunBase.addGroup("@SYS53942");
+        dlgToCustPurchaseOrder  = dlgRunBase.addFieldValue(extendedTypeStr(CustPurchaseOrder), this.parmRequestOrderHeader().CustPurchaseOrder);
+        dlgToCustRef            = dlgRunBase.addFieldValue(extendedTypeStr(custRef), this.parmRequestOrderHeader().CustRef);
+
+        return ret;
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>

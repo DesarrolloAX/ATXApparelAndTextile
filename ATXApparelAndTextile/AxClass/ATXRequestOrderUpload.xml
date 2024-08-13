@@ -1,0 +1,490 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXRequestOrderUpload</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+/// <summary>
+/// Create new versions and update version in RequestOrderHeader
+/// </summary>
+class ATXRequestOrderUpload extends FormRun
+{
+    Dialog                          dialog;
+    DialogField                     dialogOption, dialogFileOpen, fieldApp;
+    private str                     availableTypes = '.csv';
+    private const str               okButtonName = 'OkButton';
+    const str                       fileUploadName = 'FileUpload';
+    const Delimiter                 delimiter = '\n';
+
+    str                             textFile;
+    str                             text;
+    LineNumber                      lineNumber;
+    Caption                         captionGroup;
+
+    // Error log
+    RecordInsertList                recordInsertListErrors;
+
+    // Data
+    ATXRequestOrderType        requestOrderType;
+    CustAccount                custAccount;
+    CurrencyCode               currencyCode;
+    CustPurchaseOrder          custPurchaseOrder;
+    CustRef                    custRef;
+    ProdPoolId                 prodPoolId;
+    ATXSeasonId                seasonId_AT;
+    ATXDestinationPlaceId      destinationPlaceId_AT;
+    ATXItemDivisionId          itemDivisionId_AT;
+    ATXBranchId                branchId;
+    ATXRequestOrderDate        requestOrderDate;
+    ATXRequestOrderCancelDate  requestOrderCancelDate_AT;
+    ItemId                     itemId;
+    InventSiteId               inventSiteId;
+    InventLocationId           inventLocationId;
+    EcoResConfigurationName    configId;
+    EcoResSizeName             inventSizeId;
+    EcoResColorName            inventColorId;
+    ATXSampleTypeId            sampleTypeId_AT;
+    ATXQtyBase                 custQty;
+    ATXRequestQty              reqQty;
+    Price                      price;
+    ATXCustPlanNumber          planNumber;
+    ATXIssueDate               issueDate;
+    InventTable                inventTable;
+
+
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>initData</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Read file and set fields
+    /// </summary>
+    /// <param name = "_data">Read line</param>
+    void initData(container _data)
+    {
+        lineNumber++;
+        switch (conPeek(_data, 1))
+        {
+            case "0":
+                requestOrderType = ATXRequestOrderType::Sample;
+                break;
+            case "1":
+                requestOrderType = ATXRequestOrderType::Sales;
+                break;
+            default:
+                throw error("@ATXApparelAndTextile_en_US:ATXL00101");
+
+        }
+        custAccount               = conPeek(_data, 2);
+        custPurchaseOrder         = conPeek(_data, 3);
+        custRef                   = conPeek(_data, 4);
+        prodPoolId                = conPeek(_data, 5);
+        seasonId_AT               = conPeek(_data, 6);
+        destinationPlaceId_AT     = conPeek(_data, 7);
+        itemDivisionId_AT         = conPeek(_data, 8);
+        branchId                  = conPeek(_data, 9);
+        requestOrderDate          = str2Date(conPeek(_data, 10), 213);
+        requestOrderCancelDate_AT = str2Date(conPeek(_data, 11), 213);
+        itemId                    = conPeek(_data, 12);
+        inventSiteId              = conPeek(_data, 13);
+        inventLocationId          = conPeek(_data, 14);
+        configId                  = conPeek(_data, 15);
+        inventSizeId              = conPeek(_data, 16);
+        inventColorId             = conPeek(_data, 17);
+        sampleTypeId_AT           = conPeek(_data, 18);
+        custQty                   = str2num(conPeek(_data, 19));
+        reqQty                    = str2num(conPeek(_data, 20));
+        price                     = str2num(conPeek(_data, 21));
+        planNumber                = conPeek(_data, 22);
+        issueDate                 = str2Date(conPeek(_data, 23), 213);
+        
+        inventTable = InventTable::find(itemId);
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>main</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Main
+    /// </summary>
+    /// <param name = "_args"></param>
+    static void main(Args _args)
+    {
+        xArgs xArgs = new xArgs();
+        ATXRequestOrderUpload               engine = new ATXRequestOrderUpload(xArgs);
+        AsciiStreamIo                       file;
+        FileUploadTemporaryStorageResult    fileUpload;
+        container record;
+        boolean cancelUpload = false;
+ 
+        fileUpload = File::GetFileFromUser() as FileUploadTemporaryStorageResult;
+        if (fileUpload)
+        {
+            file = AsciiStreamIo::constructForRead(fileUpload.openResult());
+ 
+            if (file)
+            {
+                if (file.status())
+                {
+                    throw error("@SYS52680");
+                }
+                file.inFieldDelimiter('|');
+                file.inRecordDelimiter(delimiter);
+            }
+            try
+            {
+                engine.initErrorList();
+                ttsbegin;
+                while (!file.status())
+                {
+                    record = file.read();
+                    if (conLen(record))
+                    {
+                        engine.initData(record);
+                        // Process file
+                        if (engine.validateData())
+                        {
+                            engine.createRequest();
+                            engine.updateQtyOV();
+                        }
+                        else
+                        {
+                            cancelUpload = true;
+                        }
+                    }
+                }
+                info("@ATXApparelAndTextile_en_US:ATXL00102");
+                if (cancelUpload)
+                {
+                    throw error("@ATXApparelAndTextile_en_US:ATXL00103");
+                }
+                else
+                {
+                    info("@ATXApparelAndTextile_en_US:ATXL00102");
+                }
+                ttscommit;
+            }
+            catch (Exception::Error)
+            {
+                engine.insertErrorsInTable();
+            }
+        }
+        //_args.caller().refreshHeaderDSFromCaller();
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>updateQtyOV</Name>
+				<Source><![CDATA[
+    void updateQtyOV()
+    {
+        ATXRequestOrderHeader   requestOrderHeader;
+        ATXRequestOrderUpdates  requestOrderUpdates_AT;
+        ATXRequestOrderLine     RequestOrderLine_AT;
+        ATXRequestOrderUpdateId updateId;
+        
+        ;
+
+        select firstonly requestOrderHeader
+            where requestOrderHeader.CustPlanNumber == planNumber;
+        
+        if (requestOrderHeader)
+        {
+            updateId = (select maxof(RequestOrderUpdateId) from ATXRequestOrderUpdates
+                where ATXRequestOrderUpdates.RequestOrderId == requestOrderHeader.RequestOrderId).RequestOrderUpdateId;
+        }
+
+        if (requestOrderHeader && updateId)
+        {
+            select sum(RequestQty), minof(ItemId) from RequestOrderLine_AT
+                where RequestOrderLine_AT.RequestOrderId == requestOrderHeader.RequestOrderId
+                    && RequestOrderLine_AT.RequestOrderUpdateId == updateId;
+
+            ttsbegin;
+            requestOrderHeader.selectForUpdate(true);
+            requestOrderHeader.QtyOv  = RequestOrderLine_AT.RequestQty;
+            requestOrderHeader.ItemId = RequestOrderLine_AT.ItemId;
+            requestOrderHeader.update();
+            ttscommit;
+        }
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>validateData</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Validate Data
+    /// </summary>
+    /// <returns>TRUE = VALIDATED</returns>
+    boolean validateData()
+    {
+        boolean ret = true;
+        /*
+        // Validate data
+        if (!CustTable::exist(custAccount))
+        {
+            recordInsertListErrors.add(ATXMigrationLog::insertErrorInList(ATXMigrationFile::RequestOrder, strFmt("@ATXApparelAndTextile_en_US:ATXL00112", custAccount), lineNumber));
+            ret = false;
+        }
+        currencyCode = CustTable::find(custAccount).Currency;
+        if (!currencyCode)
+        {
+            recordInsertListErrors.add(ATXMigrationLog::insertErrorInList(ATXMigrationFile::RequestOrder, strFmt("@ATXApparelAndTextile_en_US:ATXL00113", custAccount), lineNumber));
+            ret = false;
+        }
+
+        if (!ATXProdPoolSetup::find(inventSiteId, prodPoolId))
+        {
+            recordInsertListErrors.add(ATXMigrationLog::insertErrorInList(ATXMigrationFile::RequestOrder, strFmt("@ATXApparelAndTextile_en_US:ATXL00114", prodPoolId), lineNumber));
+            ret = false;
+        }
+
+        if (seasonId_AT && !ATXSeasonTable::exist(seasonId_AT))
+        {
+            recordInsertListErrors.add(ATXMigrationLog::insertErrorInList(ATXMigrationFile::RequestOrder, strFmt("@ATXApparelAndTextile_en_US:ATXL00115", seasonId_AT), lineNumber));
+            ret = false;
+        }
+
+        if (destinationPlaceId_AT && !ATXDestinationPlace::find(destinationPlaceId_AT))
+        {
+            recordInsertListErrors.add(ATXMigrationLog::insertErrorInList(ATXMigrationFile::RequestOrder, strFmt("@ATXApparelAndTextile_en_US:ATXL00116", destinationPlaceId_AT), lineNumber));
+            ret = false;
+        }
+
+        if (itemDivisionId_AT && !ATXItemDivisionTable::exist(itemDivisionId_AT))
+        {
+            recordInsertListErrors.add(ATXMigrationLog::insertErrorInList(ATXMigrationFile::RequestOrder, strFmt("@ATXApparelAndTextile_en_US:ATXL00117", itemDivisionId_AT), lineNumber));
+            ret = false;
+        }
+
+        if (branchId && !ATXBranchTable::exist(branchId))
+        {
+            recordInsertListErrors.add(ATXMigrationLog::insertErrorInList(ATXMigrationFile::RequestOrder, strFmt("@ATXApparelAndTextile_en_US:ATXL00118", branchId), lineNumber));
+            ret = false;
+        }
+
+        if (!InventTable::exist(itemId))
+        {
+            recordInsertListErrors.add(ATXMigrationLog::insertErrorInList(ATXMigrationFile::RequestOrder, strFmt("@ATXApparelAndTextile_en_US:ATXL00119", itemId), lineNumber));
+            ret = false;
+        }
+
+        if (!InventSite::exist(inventSiteId))
+        {
+            recordInsertListErrors.add(ATXMigrationLog::insertErrorInList(ATXMigrationFile::RequestOrder, strFmt("@ATXApparelAndTextile_en_US:ATXL00120", inventSiteId), lineNumber));
+            ret = false;
+        }
+
+        if (!inventLocation::exist(inventLocationId))
+        {
+            recordInsertListErrors.add(ATXMigrationLog::insertErrorInList(ATXMigrationFile::RequestOrder, strFmt("@ATXApparelAndTextile_en_US:ATXL00121", inventLocationId), lineNumber));
+            ret = false;
+        }
+
+        if (sampleTypeId_AT && !InventSite::exist(sampleTypeId_AT))
+        {
+            recordInsertListErrors.add(ATXMigrationLog::insertErrorInList(ATXMigrationFile::RequestOrder, strFmt("@ATXApparelAndTextile_en_US:ATXL00122", sampleTypeId_AT), lineNumber));
+            ret = false;
+        }
+
+        if (InventTable.configActive() && !ATXProductTools::existsConfiguration(inventTable, configId))
+        {
+            recordInsertListErrors.add(ATXMigrationLog::insertErrorInList(ATXMigrationFile::RequestOrder, "@ATXApparelAndTextile_en_US:ATXL00123", lineNumber));
+            ret = false;
+        }
+
+        if (InventTable.sizeActive() && !ATXProductTools::existsSize(inventTable, inventSizeId))
+        {
+            recordInsertListErrors.add(ATXMigrationLog::insertErrorInList(ATXMigrationFile::RequestOrder, "@ATXApparelAndTextile_en_US:ATXL00124", lineNumber));
+            ret = false;
+        }
+
+        if (InventTable.colorActive() && !ATXProductTools::existsColor(inventTable, inventColorId))
+        {
+            recordInsertListErrors.add(ATXMigrationLog::insertErrorInList(ATXMigrationFile::RequestOrder, "@ATXApparelAndTextile_en_US:ATXL00125", lineNumber));
+            ret = false;
+        }
+        */
+        return ret;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>createRequest</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Create request by line
+    /// </summary>
+    public void createRequest()
+    {
+        ATXRequestOrderHeader     requestOrderHeader;
+        ATXRequestOrderUpdates    requestOrderUpdates;
+        ATXRequestOrderLine       requestOrderLine_AT;
+        ATXAXRequestOrderHeader   axRequestOrderHeader;
+        NumberSeq                 numberSeq;
+        NumberSequenceTable       numberSequenceTable;
+        InventDim                 inventDim;
+        Args                      args;
+        SalesTable                salesTable;
+        SalesLine                 salesLine;
+        
+        ;
+
+        select firstonly requestOrderHeader
+            where requestOrderHeader.CustPlanNumber == planNumber;
+        
+        // There is a RequestOrder created
+        if (requestOrderHeader)
+        {
+            // DELETE SalesOrder to update plan?
+            salesTable = SalesTable::find(requestOrderHeader.SalesId);
+            if (salesTable)
+            {
+                while select salesLine
+                    where salesLine.SalesId == salesTable.SalesId
+                {
+                    if (salesLine.InventRefId)
+                    {
+                        //recordInsertListErrors.add(ATXMigrationLog::insertErrorInList(ATXMigrationFile::RequestOrder, strFmt("@ATXApparelAndTextile_en_US:ATXL00126", salesLine.InventRefId)));
+                        throw Error(strFmt("@ATXApparelAndTextile_en_US:ATXL00126", salesLine.InventRefId));
+                    }
+                    ttsbegin;
+                    salesLine.selectForUpdate(true);
+                    salesLine.delete();
+                    ttscommit;
+                }
+                ttsbegin;
+                salesTable.selectForUpdate(true);
+                salesTable.delete();
+                ttscommit;
+            }
+
+            // Update header
+            ttsbegin;
+            requestOrderHeader.reread();
+            requestOrderHeader.selectForUpdate(true);
+            requestOrderHeader.IssueDate = issueDate;
+            requestOrderHeader.RequestOrderDate = requestOrderDate;
+            requestOrderHeader.RequestOrderCancelDate = requestOrderCancelDate_AT;
+            // Update new fields 2019/07/25
+            requestOrderHeader.CustRef = custRef;
+            requestOrderHeader.SeasonId = seasonId_AT;
+            requestOrderHeader.DestinationPlaceId = destinationPlaceId_AT;
+            requestOrderHeader.update();
+            ttscommit;
+        }
+        else
+        {
+            select firstonly numberSequenceTable
+            where numberSequenceTable.RecId  == ATXSalesParameters::find().NumberSequenceId;
+
+            numberSeq   = NumberSeq::newGetNumFromCode(numberSequenceTable.NumberSequence);
+
+            axRequestOrderHeader = ATXAXRequestOrderHeader::construct();
+            axRequestOrderHeader.parmRequestOrderId_AT(numberSeq.num());
+            axRequestOrderHeader.parmRequestOrderStatus_AT(ATXRequestOrderStatus::Loaded);
+            axRequestOrderHeader.parmCustAccount(custAccount);
+            axRequestOrderHeader.parmCurrencyCode(currencyCode);
+            axRequestOrderHeader.parmCustPurchaseOrder(custPurchaseOrder);
+            axRequestOrderHeader.parmCustRef(custRef);
+            axRequestOrderHeader.parmProdPoolId(prodPoolId);
+            axRequestOrderHeader.parmInventTransType(InventTransType::Sales);
+            axRequestOrderHeader.parmRequestOrderCreated_AT(DateTimeUtil::getSystemDate(DateTimeUtil::getUserPreferredTimeZone()));
+            axRequestOrderHeader.parmInventSiteId(inventSiteId);
+            axRequestOrderHeader.parmInventLocationId(inventLocationId);
+            axRequestOrderHeader.parmRequestOrderDate(requestOrderDate);
+            axRequestOrderHeader.parmRequestOrderCancelDate_AT(requestOrderCancelDate_AT);
+            axRequestOrderHeader.parmRequestOrderType_AT(requestOrderType);
+            axRequestOrderHeader.save();
+
+            requestOrderHeader   = axRequestOrderHeader.requestOrderHeader();
+            ttsbegin;
+            requestOrderHeader.selectForUpdate(true);
+            requestOrderHeader.RequestOrderType = requestOrderType;
+            requestOrderHeader.InventLocationId = inventLocationId;
+
+            requestOrderHeader.SeasonId = seasonId_AT;
+            requestOrderHeader.DestinationPlaceId = destinationPlaceId_AT;
+            requestOrderHeader.ItemDivisionId = itemDivisionId_AT;
+            requestOrderHeader.BranchId = branchId;
+            requestOrderHeader.SampleTypeId  = sampleTypeId_AT;
+            requestOrderHeader.LineOfBusinessId = CustTable::find(custAccount).LineOfBusinessId;
+            requestOrderHeader.CustPlanNumber = planNumber;
+            requestOrderHeader.IssueDate = issueDate;
+            requestOrderHeader.update();
+            ttscommit;
+        }
+
+        // Create Request Update
+        requestOrderUpdates.clear();
+        requestOrderUpdates.initFromRequestOrderHeader(requestOrderHeader);
+        requestOrderUpdates.insert();
+
+        requestOrderLine_AT.clear();
+        requestOrderLine_AT.RequestOrderId = requestOrderHeader.RequestOrderId;
+        requestOrderLine_AT.RequestOrderUpdateId = requestOrderUpdates.RequestOrderUpdateId;
+        requestOrderLine_AT.initValue();
+        requestOrderLine_AT.ItemId = ItemId;
+
+        inventDim.clear();
+        inventDim.InventSiteId = inventSiteId;
+        inventDim.InventLocationId = inventLocationId;
+        inventDim.configId = configId;
+        inventDim.InventSizeId = inventSizeId;
+        inventDim.InventColorId = inventColorId;
+
+        requestOrderLine_AT.InventDimId = InventDim::findOrCreate(inventDim).inventDimId;
+        requestOrderLine_AT.QtyOrig = custQty;
+        requestOrderLine_AT.SalesPrice = price;
+        requestOrderLine_AT.modifiedField(fieldNum(ATXRequestOrderLine, QtyOrig));
+        requestOrderLine_AT.RequestQty = reqQty;
+        requestOrderLine_AT.modifiedField(fieldNum(ATXRequestOrderLine, RequestQty));
+
+        requestOrderLine_AT.SeasonId = seasonId_AT;
+        requestOrderLine_AT.DestinationPlaceId = destinationPlaceId_AT;
+        requestOrderLine_AT.ItemDivisionId = itemDivisionId_AT;
+        requestOrderLine_AT.BranchId = branchId;
+        requestOrderLine_AT.RequestOrderDate = requestOrderDate;
+        requestOrderLine_AT.RequestOrderCancelDate = requestOrderCancelDate_AT;
+        
+        requestOrderLine_AT.insert();
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>insertErrorsInTable</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Insert errors in log table
+    /// </summary>
+    void insertErrorsInTable()
+    {
+        recordInsertListErrors.insertDatabase();
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>initErrorList</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Instance list
+    /// </summary>
+    void initErrorList()
+    {
+        //recordInsertListErrors = new RecordInsertList(tableNum(ATXMigrationLog));
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>

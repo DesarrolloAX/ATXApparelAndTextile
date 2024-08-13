@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxTable xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXInventItemPattern</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+public class ATXInventItemPattern extends common
+{
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>find</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name = "_inventItemPatternId"></param>
+    /// <param name = "_forUpdate"></param>
+    /// <returns></returns>
+    public static ATXInventItemPattern find(ATXInventItemPatternId _inventItemPatternId, boolean _forUpdate = false)
+    {
+        ATXInventItemPattern inventItemPattern;
+
+        inventItemPattern.selectForUpdate(_forUpdate);
+
+        select firstonly inventItemPattern
+            where inventItemPattern.InventItemPatternId == _inventItemPatternId;
+
+        return inventItemPattern;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>exist</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name = "_inventItemPatternId"></param>
+    /// <returns></returns>
+    public static boolean exist(ATXInventItemPatternId _inventItemPatternId)
+    {
+        return (select firstonly RecId from ATXInventItemPattern where ATXInventItemPattern.InventItemPatternId == _inventItemPatternId).RecId != 0;
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+	<FormRef>ATXInventItemPattern</FormRef>
+	<SubscriberAccessLevel>
+		<Read>Allow</Read>
+	</SubscriberAccessLevel>
+	<DeleteActions />
+	<FieldGroups>
+		<AxTableFieldGroup>
+			<Name>AutoReport</Name>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoLookup</Name>
+			<Fields>
+				<AxTableFieldGroupField>
+					<DataField>InventItemPatternId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>Description</DataField>
+				</AxTableFieldGroupField>
+			</Fields>
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoIdentification</Name>
+			<AutoPopulate>Yes</AutoPopulate>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoSummary</Name>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoBrowse</Name>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>Overview</Name>
+			<Fields>
+				<AxTableFieldGroupField>
+					<DataField>InventItemPatternId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>Description</DataField>
+				</AxTableFieldGroupField>
+			</Fields>
+		</AxTableFieldGroup>
+	</FieldGroups>
+	<Fields>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>InventItemPatternId</Name>
+			<ExtendedDataType>ATXInventItemPatternId</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>Description</Name>
+			<ExtendedDataType>Description</ExtendedDataType>
+		</AxTableField>
+	</Fields>
+	<FullTextIndexes />
+	<Indexes>
+		<AxTableIndex>
+			<Name>InventItemPatternIdx</Name>
+			<Fields>
+				<AxTableIndexField>
+					<DataField>InventItemPatternId</DataField>
+				</AxTableIndexField>
+			</Fields>
+		</AxTableIndex>
+	</Indexes>
+	<Mappings />
+	<Relations />
+	<StateMachines />
+</AxTable>

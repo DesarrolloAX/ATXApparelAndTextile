@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxEdt xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns=""
+	i:type="AxEdtString">
+	<Name>ATXPlacementId</Name>
+	<Label>@ATXAT:NewLabel51</Label>
+	<ReferenceTable>ATXPlacementTable</ReferenceTable>
+	<ArrayElements />
+	<Relations />
+	<TableReferences>
+		<AxEdtTableReference>
+			<RelatedField>PlacementId</RelatedField>
+			<Table>ATXPlacementTable</Table>
+		</AxEdtTableReference>
+	</TableReferences>
+	<StringSize>20</StringSize>
+</AxEdt>

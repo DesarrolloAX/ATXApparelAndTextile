@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxFormExtension xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="Microsoft.Dynamics.AX.Metadata.V6">
+	<Name>RouteInventProd.ATXApparelAndTextile</Name>
+	<ControlModifications />
+	<Controls>
+		<AxFormExtensionControl xmlns="">
+			<Name>FormExtensionControl3vnrgyny1</Name>
+			<FormControl xmlns=""
+				i:type="AxFormMenuFunctionButtonControl">
+				<Name>ATXRouteSubOperations</Name>
+				<Type>MenuFunctionButton</Type>
+				<FormControlExtension
+					i:nil="true" />
+				<MenuItemName>ATXRouteSubOperations</MenuItemName>
+			</FormControl>
+			<Parent>RouteButtonGroup</Parent>
+		</AxFormExtensionControl>
+		<AxFormExtensionControl xmlns="">
+			<Name>FormExtensionControlx0pzrto21</Name>
+			<FormControl xmlns=""
+				i:type="AxFormMenuButtonControl">
+				<Name>PLMFunctions</Name>
+				<Type>MenuButton</Type>
+				<FormControlExtension
+					i:nil="true" />
+				<Controls>
+					<AxFormControl xmlns=""
+						i:type="AxFormMenuFunctionButtonControl">
+						<Name>ATXSewStitchesPerInch</Name>
+						<Type>MenuFunctionButton</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<DataSource>DocuRouteOpr</DataSource>
+						<MenuItemName>ATXSewStitchesPerInch</MenuItemName>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormMenuFunctionButtonControl">
+						<Name>ATXCutTechnicalSheet</Name>
+						<Type>MenuFunctionButton</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<DataSource>DocuRouteOpr</DataSource>
+						<MenuItemName>ATXCutTechnicalSheet</MenuItemName>
+					</AxFormControl>
+				</Controls>
+				<Text>@ATXPLM:NewLabel23</Text>
+			</FormControl>
+			<Parent>RouteButtonGroup</Parent>
+		</AxFormExtensionControl>
+	</Controls>
+	<DataSourceModifications />
+	<DataSourceReferences />
+	<DataSources />
+	<Parts />
+	<PropertyModifications />
+</AxFormExtension>

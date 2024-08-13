@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXReqTransPOMarkFirm_Extension</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+/// <summary>
+/// 
+/// </summary>
+[ExtensionOf(classStr(ReqTransPoMarkFirm))]
+final class ATXReqTransPOMarkFirm_Extension
+{
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>createProdTable</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Extended method
+    /// </summary>
+    protected ProdTable createProdTable(
+        ReqTrans    _reqTrans,
+        ReqPO       _reqPO,
+        ProdBOM     _prodBOMParent)
+    {
+        ProdTable prodTable, prodTableUpd;
+        InventDim inventDimUpd;
+
+        prodTable = next createProdTable(_reqTrans, _reqPO, _prodBOMParent);
+        prodTableUpd = ProdTable::find(prodTable.ProdId);
+
+        if (prodTableUpd)
+        {
+            prodTableUpd.selectForUpdate(true);
+            prodTableUpd.ATXInventRefId = prodTableUpd.InventRefId;
+            prodTableUpd.ATXInventRefTransId = prodTableUpd.InventRefTransId;
+            //prodTableUpd.ATXCustRef = _reqPO.atx;
+            /*prodTableUpd.ATXWrkCtrIdSew = _reqPO.ATXWrkCtrIdSew;
+            prodTableUpd.ATXRequestOrderId = _reqPO.ATXRequestOrderId;
+
+
+            prodTableUpd.ATXCustAccount = SalesTable::find(prodTable.InventRefId_AT).CustAccount;
+            prodTableUpd.ATXLineOfBusinessId = _reqPO.ATXLineOfBusinessId;
+            prodTableUpd.CustPurchaseOrder_AT = _reqPO.CustPurchaseOrder_AT;
+            prodTableUpd.ProdPoolId = _reqPO.ProdPoolId_AT;
+            prodTableUpd.modifiedField(fieldNum(ProdTable, ProdPoolId));
+            prodTableUpd.ATXSeasonId           = _reqPO.SeasonId_AT;
+            prodTableUpd.ATXDestinationPlaceId = _reqPO.DestinationPlaceId_AT;
+            prodTableUpd.FabricName_AT         = _reqPO.ATXFabricName;
+            prodTableUpd.PocketingName_AT      = _reqPO.ATXPocketingName;*/
+
+            /* if (ProdParameters_AT::find().CreateProdBatch && ecoResTrackingDimensionGroupFldSetup::findByDimensionGroupFieldId(InventTable::find(prodTableUpd.ItemId).trackingDimensionGroup(), fieldNum(InventDim, InventBatchId)).IsActive)
+            {
+                inventDimUpd = prodTableUpd.inventDim();
+                inventDimUpd.inventBatchId = prodTableUpd.atxCreateBatchProdTable(prodTableUpd.ItemId, prodTableUpd.ProdId,systemDateGet()).inventBatchId;
+                prodTableUpd.InventDimId = InventDim::findOrCreate(inventDimUpd).inventDimId;
+            }*/
+
+            prodTableUpd.update();
+        }
+        return prodTable;
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>

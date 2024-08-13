@@ -1,0 +1,1245 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxForm xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="Microsoft.Dynamics.AX.Metadata.V6">
+	<Name>ATXBOMTemplateLine</Name>
+	<SourceCode>
+		<Methods xmlns="">
+			<Method>
+				<Name>classDeclaration</Name>
+				<Source><![CDATA[
+[Form]
+public class ATXBOMTemplateLine extends FormRun
+{
+    InventDimCtrl_Frm_EditDimensions inventDimFormSetup;
+    
+}
+]]></Source>
+			</Method>
+			<Method>
+				<Name>inventDimSetupObject</Name>
+				<Source><![CDATA[
+    public InventDimCtrl_Frm_EditDimensions inventDimSetupObject()
+    {
+        return inventDimFormSetup;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>init</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    public void init()
+    {
+        super();
+        // This method will be used to show default fields at form startup
+        element.updateDesign(InventDimFormDesignUpdate::Init);
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>updateDesign</Name>
+				<Source><![CDATA[
+    void updateDesign(InventDimFormDesignUpdate _mode)
+    {
+        InventDimParm inventDimParmVisible;
+        switch (_mode)
+        {
+            // Form Init
+            case InventDimFormDesignUpdate::Init    :
+            if (!inventDimFormSetup)
+                inventDimFormSetup  = InventDimCtrl_Frm_EditDimensions::newFromForm(element);
+                inventDimFormSetup.parmSkipOnHandLookUp( true);
+                // Use the methods on InventDimParm
+                // to set which dimensions to show when form is initialized
+                inventdimparmvisible.inventsiteidflag       = true;
+                inventDimFormSetup.parmDimParmVisibleGrid(inventDimParmVisible);
+                
+            // Datasource Active
+            case InventDimFormDesignUpdate::Active  :
+                inventDimFormSetup.formActiveSetup(InventDimGroupSetup::newItemId(ATXBOMTemplateLine.ItemId));
+                inventDimFormSetup.formSetControls( true);
+                break;
+                
+            // Datasource Field change
+            case InventDimFormDesignUpdate::FieldChange :
+                inventDimFormSetup.formActiveSetup(InventDimGroupSetup::newItemId(ATXBOMTemplateLine.ItemId));
+                InventDim.clearNotSelectedDim(inventDimFormSetup.parmDimParmEnabled()); // InventDim is referring to datasource name
+                inventDimFormSetup.formSetControls( true);
+                break;
+            default :
+                throw error(strFmt ("@SYS54195", funcName()));
+        }
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>enableFields</Name>
+				<Source><![CDATA[
+    void enableFields()
+    {
+        /*InventItemType  inventItemType = ATXBOMTemplateLine.inventTable().inventItemType();
+        InventTable     inventTable = ATXBOMTemplateLine.inventTable(), inventTablebomVersion = ATXBOMTemplateLine.inventTableBOMVersion();
+        
+        ATXBOMTemplateLine_ds.object(fieldNum(ATXBOMTemplateLine, ItemBOMId)).allowEdit(inventTable.isFormulaOrBOMAllowed());
+        ATXBOMTemplateLine_ds.object(fieldNum(ATXBOMTemplateLine, ItemRouteId)).allowEdit(inventItemType.canHaveRoutes());
+        //ATXBOMTemplateLine_ds.object(fieldNum(ATXBOMTemplateLine, ItemPBAId)).allowEdit(ATXBOMTemplateLine.inventTable().pbaItemConfigurable);
+        // TODO ATXBOMTemplateLine_ds.object(fieldNum(ATXBOMTemplateLine, ProjSetSubProdToConsumed)).allowEdit(ATXBOMTemplateLine.bomType == BOMType::PeggedSupply);
+        ATXBOMTemplateLine_ds.object(fieldNum(ATXBOMTemplateLine, ConfigIdFlag)).allowEdit(inventTablebomVersion.configActive());
+        ATXBOMTemplateLine_ds.object(fieldNum(ATXBOMTemplateLine, InventSizeIdFlag)).allowEdit(inventTablebomVersion.sizeActive());
+        ATXBOMTemplateLine_ds.object(fieldNum(ATXBOMTemplateLine, InventColorIdFlag)).allowEdit(inventTablebomVersion.colorActive());
+        ATXBOMTemplateLine_ds.object(fieldNum(ATXBOMTemplateLine, InventStyleIdFlag)).allowEdit(inventTablebomVersion.styleActive());*/
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+		<DataSources xmlns="">
+			<DataSource>
+				<Name>ATXBOMTemplateLine</Name>
+				<Methods>
+					<Method>
+						<Name>active</Name>
+						<Source><![CDATA[
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns></returns>
+        public int active()
+        {
+            int         ret;
+
+            ret = super();
+            element.updateDesign(InventDimFormDesignUpdate::Active);
+
+            return ret;
+        }
+
+]]></Source>
+					</Method>
+					<Method>
+						<Name>validateWrite</Name>
+						<Source><![CDATA[
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns></returns>
+        public boolean validateWrite()
+        {
+            boolean ret;
+        
+            ATXBOMTemplateLine.InventDimId = InventDim::findOrCreate(InventDim).InventDimId;
+            ret = super();
+        
+            return ret;
+        }
+
+]]></Source>
+					</Method>
+				</Methods>
+				<Fields>
+					<Field>
+						<DataField>ItemId</DataField>
+						<Methods>
+							<Method>
+								<Name>modified</Name>
+								<Source><![CDATA[
+            /// <summary>
+            ///
+            /// </summary>
+            public void modified()
+            {
+                super();
+                element.updateDesign(InventDimFormDesignUpdate::FieldChange);
+                InventDim.clearNotSelectedDim(element.inventDimSetupObject().parmDimParmEnabled());
+            }
+
+]]></Source>
+							</Method>
+						</Methods>
+					</Field>
+				</Fields>
+			</DataSource>
+		</DataSources>
+		<DataControls xmlns="" />
+		<Members xmlns="" />
+	</SourceCode>
+	<DataSources>
+		<AxFormDataSource xmlns="">
+			<Name>ATXBOMTemplateLine</Name>
+			<Table>ATXBOMTemplateLine</Table>
+			<Fields>
+				<AxFormDataSourceField>
+					<DataField>Blocking</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>BOMConsumpType</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>BOMEndSchedConsump</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>BOMId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>BOMQty</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>BOMQtySerie</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>BOMType</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>BOMTypeId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>BOMUnitId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Calculation</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ConfigGroupId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ConfigId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ConfigIdFlag</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>DataAreaId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Formula</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>FromDate</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>HasAnyChild</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventColorId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventColorIdFlag</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventDimId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventLocationId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventSizeId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventSizeIdFlag</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventStyleId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventStyleIdFlag</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ItemBOMId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ItemId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ItemRouteId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>LineNum</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>MainFabric</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>MaterialRouting</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>MatrixConfig</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>MatrixId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>OprNum</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>OprNumBOMLine</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Partition</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>PlacementId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Position</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ProdFlushingPrincip</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ProductMasterItemId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>RecId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>RouteOprId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ScrapConst</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ScrapVar</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>TableId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>UnitId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>VendAccount</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>VendId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>WrkCtrConsumption</DataField>
+				</AxFormDataSourceField>
+			</Fields>
+			<ReferencedDataSources />
+			<DataSourceLinks />
+			<DerivedDataSources />
+		</AxFormDataSource>
+		<AxFormDataSource xmlns="">
+			<Name>InventDim</Name>
+			<Table>InventDim</Table>
+			<Fields>
+				<AxFormDataSourceField>
+					<DataField>configId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>CreatedDateTime</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>DataAreaId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>inventBatchId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventColorId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventDimension1</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventDimension10</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventDimension2</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventDimension3</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventDimension4</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventDimension5</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventDimension6</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventDimension7</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventDimension8</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventDimension9</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>inventDimId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventGtdId_RU</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventLocationId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventOwnerId_RU</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventProfileId_RU</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>inventSerialId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventSiteId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventSizeId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventStatusId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>InventStyleId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>LicensePlateId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ModifiedBy</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>ModifiedDateTime</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>Partition</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>RecId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>SHA1HashHex</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>TableId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>wMSLocationId</DataField>
+				</AxFormDataSourceField>
+				<AxFormDataSourceField>
+					<DataField>wMSPalletId</DataField>
+				</AxFormDataSourceField>
+			</Fields>
+			<ReferencedDataSources />
+			<JoinSource>ATXBOMTemplateLine</JoinSource>
+			<LinkType>InnerJoin</LinkType>
+			<DataSourceLinks />
+			<DerivedDataSources />
+		</AxFormDataSource>
+	</DataSources>
+	<Design>
+		<Caption xmlns="">@ATXAT:NewLabel22</Caption>
+		<Pattern xmlns="">SimpleList</Pattern>
+		<PatternVersion xmlns="">1.1</PatternVersion>
+		<Style xmlns="">SimpleList</Style>
+		<Controls xmlns="">
+			<AxFormControl xmlns=""
+				i:type="AxFormActionPaneControl">
+				<Name>FormActionPaneControl1</Name>
+				<Type>ActionPane</Type>
+				<FormControlExtension
+					i:nil="true" />
+				<Controls>
+					<AxFormControl xmlns=""
+						i:type="AxFormButtonGroupControl">
+						<Name>FormButtonGroupControl1</Name>
+						<Type>ButtonGroup</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<Controls>
+							<AxFormControl xmlns=""
+								i:type="AxFormMenuFunctionButtonControl">
+								<Name>ATXBOMMatrixTemplate</Name>
+								<AutoDeclaration>Yes</AutoDeclaration>
+								<Type>MenuFunctionButton</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataSource>ATXBOMTemplateLine</DataSource>
+								<MenuItemName>ATXBOMMatrixTemplate</MenuItemName>
+							</AxFormControl>
+						</Controls>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormButtonGroupControl">
+						<Name>FormButtonGroupControlDim</Name>
+						<Type>ButtonGroup</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<Controls>
+							<AxFormControl xmlns=""
+								i:type="AxFormMenuFunctionButtonControl">
+								<Name>InventDimParmFixed</Name>
+								<Type>MenuFunctionButton</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataSource>ATXBOMTemplateLine</DataSource>
+								<MenuItemName>InventDimParmFixed</MenuItemName>
+							</AxFormControl>
+						</Controls>
+					</AxFormControl>
+				</Controls>
+			</AxFormControl>
+			<AxFormControl xmlns=""
+				i:type="AxFormGroupControl">
+				<Name>FormGroupControl1</Name>
+				<Pattern>CustomAndQuickFilters</Pattern>
+				<PatternVersion>1.1</PatternVersion>
+				<Type>Group</Type>
+				<WidthMode>SizeToAvailable</WidthMode>
+				<FormControlExtension
+					i:nil="true" />
+				<Controls>
+					<AxFormControl>
+						<Name>QuickFilterControl1</Name>
+						<FormControlExtension>
+							<Name>QuickFilterControl</Name>
+							<ExtensionComponents />
+							<ExtensionProperties>
+								<AxFormControlExtensionProperty>
+									<Name>targetControlName</Name>
+									<Type>String</Type>
+									<Value>LineGrid</Value>
+								</AxFormControlExtensionProperty>
+								<AxFormControlExtensionProperty>
+									<Name>placeholderText</Name>
+									<Type>String</Type>
+								</AxFormControlExtensionProperty>
+								<AxFormControlExtensionProperty>
+									<Name>defaultColumnName</Name>
+									<Type>String</Type>
+									<Value>LineGrid_ItemId</Value>
+								</AxFormControlExtensionProperty>
+							</ExtensionProperties>
+						</FormControlExtension>
+					</AxFormControl>
+				</Controls>
+				<ArrangeMethod>HorizontalLeft</ArrangeMethod>
+				<FrameType>None</FrameType>
+				<Style>CustomFilter</Style>
+				<ViewEditMode>Edit</ViewEditMode>
+			</AxFormControl>
+			<AxFormControl xmlns=""
+				i:type="AxFormGridControl">
+				<Name>LineGrid</Name>
+				<Type>Grid</Type>
+				<FormControlExtension
+					i:nil="true" />
+				<Controls>
+					<AxFormControl xmlns=""
+						i:type="AxFormCheckBoxControl">
+						<Name>LineGrid_MatrixConfig</Name>
+						<Type>CheckBox</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<DataField>MatrixConfig</DataField>
+						<DataSource>ATXBOMTemplateLine</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormStringControl">
+						<Name>LineGrid_ItemId</Name>
+						<Type>String</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<DataField>ItemId</DataField>
+						<DataSource>ATXBOMTemplateLine</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormStringControl">
+						<Name>LineGrid_itemName</Name>
+						<Type>String</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<DataMethod>itemName</DataMethod>
+						<DataSource>ATXBOMTemplateLine</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormStringControl">
+						<Name>LineGrid_BOMTypeId</Name>
+						<Type>String</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<DataField>BOMTypeId</DataField>
+						<DataSource>ATXBOMTemplateLine</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormCheckBoxControl">
+						<Name>LineGrid_Blocking</Name>
+						<Type>CheckBox</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<DataField>Blocking</DataField>
+						<DataSource>ATXBOMTemplateLine</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormIntegerControl">
+						<Name>LineGrid_OprNum</Name>
+						<Type>Integer</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<DataField>OprNum</DataField>
+						<DataSource>ATXBOMTemplateLine</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormStringControl">
+						<Name>LineGrid_RouteOprId</Name>
+						<Type>String</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<DataField>RouteOprId</DataField>
+						<DataSource>ATXBOMTemplateLine</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormStringControl">
+						<Name>LineGrid_PlacementId</Name>
+						<Type>String</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<DataField>PlacementId</DataField>
+						<DataSource>ATXBOMTemplateLine</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormGroupControl">
+						<Name>InventoryDimensions</Name>
+						<Type>Group</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<Controls>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>InventDimensions_configId</Name>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>configId</DataField>
+								<DataSource>InventDim</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>InventDimensions_InventSizeId</Name>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>InventSizeId</DataField>
+								<DataSource>InventDim</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>InventDimensions_InventColorId</Name>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>InventColorId</DataField>
+								<DataSource>InventDim</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>InventDimensions_InventStyleId</Name>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>InventStyleId</DataField>
+								<DataSource>InventDim</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>InventDimensions_InventDimension1</Name>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>InventDimension1</DataField>
+								<DataSource>InventDim</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>InventDimensions_InventDimension2</Name>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>InventDimension2</DataField>
+								<DataSource>InventDim</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>InventDimensions_InventDimension3</Name>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>InventDimension3</DataField>
+								<DataSource>InventDim</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>InventDimensions_InventDimension4</Name>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>InventDimension4</DataField>
+								<DataSource>InventDim</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>InventDimensions_InventDimension5</Name>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>InventDimension5</DataField>
+								<DataSource>InventDim</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>InventDimensions_InventDimension6</Name>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>InventDimension6</DataField>
+								<DataSource>InventDim</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>InventDimensions_InventDimension7</Name>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>InventDimension7</DataField>
+								<DataSource>InventDim</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>InventDimensions_InventDimension8</Name>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>InventDimension8</DataField>
+								<DataSource>InventDim</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormDateTimeControl">
+								<Name>InventDimensions_InventDimension9</Name>
+								<Type>DateTime</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>InventDimension9</DataField>
+								<DataSource>InventDim</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormRealControl">
+								<Name>InventDimensions_InventDimension10</Name>
+								<Type>Real</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>InventDimension10</DataField>
+								<DataSource>InventDim</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>InventDimensions_InventSiteId</Name>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>InventSiteId</DataField>
+								<DataSource>InventDim</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>InventDimensions_InventLocationId</Name>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>InventLocationId</DataField>
+								<DataSource>InventDim</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>InventDimensions_wMSLocationId</Name>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>wMSLocationId</DataField>
+								<DataSource>InventDim</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>InventDimensions_InventStatusId</Name>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>InventStatusId</DataField>
+								<DataSource>InventDim</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>InventDimensions_LicensePlateId</Name>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>LicensePlateId</DataField>
+								<DataSource>InventDim</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>InventDimensions_inventBatchId</Name>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>inventBatchId</DataField>
+								<DataSource>InventDim</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>InventDimensions_inventSerialId</Name>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>inventSerialId</DataField>
+								<DataSource>InventDim</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>InventDimensions_InventOwnerId_RU</Name>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>InventOwnerId_RU</DataField>
+								<DataSource>InventDim</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>InventDimensions_InventProfileId_RU</Name>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>InventProfileId_RU</DataField>
+								<DataSource>InventDim</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>InventDimensions_InventGtdId_RU</Name>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>InventGtdId_RU</DataField>
+								<DataSource>InventDim</DataSource>
+							</AxFormControl>
+						</Controls>
+						<DataGroup>InventoryDimensions</DataGroup>
+						<DataSource>InventDim</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormRealControl">
+						<Name>LineGrid_BOMQty</Name>
+						<Type>Real</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<DataField>BOMQty</DataField>
+						<DataSource>ATXBOMTemplateLine</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormRealControl">
+						<Name>LineGrid_BOMQtySerie</Name>
+						<Type>Real</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<DataField>BOMQtySerie</DataField>
+						<DataSource>ATXBOMTemplateLine</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormStringControl">
+						<Name>LineGrid_UnitId</Name>
+						<Type>String</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<DataField>UnitId</DataField>
+						<DataSource>ATXBOMTemplateLine</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormRealControl">
+						<Name>LineGrid_ScrapConst</Name>
+						<Type>Real</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<DataField>ScrapConst</DataField>
+						<DataSource>ATXBOMTemplateLine</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormRealControl">
+						<Name>LineGrid_ScrapVar</Name>
+						<Type>Real</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<DataField>ScrapVar</DataField>
+						<DataSource>ATXBOMTemplateLine</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormCheckBoxControl">
+						<Name>LineGrid_ConfigIdFlag</Name>
+						<Type>CheckBox</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<DataField>ConfigIdFlag</DataField>
+						<DataSource>ATXBOMTemplateLine</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormCheckBoxControl">
+						<Name>LineGrid_InventSizeIdFlag</Name>
+						<Type>CheckBox</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<DataField>InventSizeIdFlag</DataField>
+						<DataSource>ATXBOMTemplateLine</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormCheckBoxControl">
+						<Name>LineGrid_InventColorIdFlag</Name>
+						<Type>CheckBox</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<DataField>InventColorIdFlag</DataField>
+						<DataSource>ATXBOMTemplateLine</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormCheckBoxControl">
+						<Name>LineGrid_InventStyleIdFlag</Name>
+						<Type>CheckBox</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<DataField>InventStyleIdFlag</DataField>
+						<DataSource>ATXBOMTemplateLine</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormComboBoxControl">
+						<Name>LineGrid_BOMConsumpType</Name>
+						<Type>ComboBox</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<DataField>BOMConsumpType</DataField>
+						<DataSource>ATXBOMTemplateLine</DataSource>
+						<Items />
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormComboBoxControl">
+						<Name>LineGrid_BOMType</Name>
+						<Type>ComboBox</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<DataField>BOMType</DataField>
+						<DataSource>ATXBOMTemplateLine</DataSource>
+						<Items />
+					</AxFormControl>
+				</Controls>
+				<DataSource>ATXBOMTemplateLine</DataSource>
+				<Style>Tabular</Style>
+			</AxFormControl>
+			<AxFormControl xmlns=""
+				i:type="AxFormGroupControl">
+				<Name>DetailsFormGroupControl</Name>
+				<Pattern>FieldsFieldGroups</Pattern>
+				<PatternVersion>1.1</PatternVersion>
+				<Type>Group</Type>
+				<FormControlExtension
+					i:nil="true" />
+				<Controls>
+					<AxFormControl xmlns=""
+						i:type="AxFormGroupControl">
+						<Name>FormGroupControl3</Name>
+						<Type>Group</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<Controls>
+							<AxFormControl xmlns=""
+								i:type="AxFormCheckBoxControl">
+								<Name>FormGroupControl3_MatrixConfig</Name>
+								<Type>CheckBox</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>MatrixConfig</DataField>
+								<DataSource>ATXBOMTemplateLine</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>FormGroupControl3_ItemId</Name>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>ItemId</DataField>
+								<DataSource>ATXBOMTemplateLine</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>FormGroupControl3_itemName</Name>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataMethod>itemName</DataMethod>
+								<DataSource>ATXBOMTemplateLine</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>FormGroupControl3_nameAlias</Name>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataMethod>nameAlias</DataMethod>
+								<DataSource>ATXBOMTemplateLine</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>FormGroupControl3_BOMTypeId</Name>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>BOMTypeId</DataField>
+								<DataSource>ATXBOMTemplateLine</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormCheckBoxControl">
+								<Name>FormGroupControl3_Blocking</Name>
+								<Type>CheckBox</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>Blocking</DataField>
+								<DataSource>ATXBOMTemplateLine</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>FormGroupControl3_PlacementId</Name>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>PlacementId</DataField>
+								<DataSource>ATXBOMTemplateLine</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormIntegerControl">
+								<Name>FormGroupControl3_OprNum</Name>
+								<Type>Integer</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>OprNum</DataField>
+								<DataSource>ATXBOMTemplateLine</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>FormGroupControl3_RouteOprId</Name>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>RouteOprId</DataField>
+								<DataSource>ATXBOMTemplateLine</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormRealControl">
+								<Name>FormGroupControl3_BOMQty</Name>
+								<Type>Real</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>BOMQty</DataField>
+								<DataSource>ATXBOMTemplateLine</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormRealControl">
+								<Name>FormGroupControl3_BOMQtySerie</Name>
+								<Type>Real</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>BOMQtySerie</DataField>
+								<DataSource>ATXBOMTemplateLine</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>FormGroupControl3_UnitId</Name>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>UnitId</DataField>
+								<DataSource>ATXBOMTemplateLine</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormRealControl">
+								<Name>FormGroupControl3_ScrapConst</Name>
+								<Type>Real</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>ScrapConst</DataField>
+								<DataSource>ATXBOMTemplateLine</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormRealControl">
+								<Name>FormGroupControl3_ScrapVar</Name>
+								<Type>Real</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>ScrapVar</DataField>
+								<DataSource>ATXBOMTemplateLine</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormCheckBoxControl">
+								<Name>FormGroupControl3_ConfigIdFlag</Name>
+								<Type>CheckBox</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>ConfigIdFlag</DataField>
+								<DataSource>ATXBOMTemplateLine</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormCheckBoxControl">
+								<Name>FormGroupControl3_InventSizeIdFlag</Name>
+								<Type>CheckBox</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>InventSizeIdFlag</DataField>
+								<DataSource>ATXBOMTemplateLine</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormCheckBoxControl">
+								<Name>FormGroupControl3_InventColorIdFlag</Name>
+								<Type>CheckBox</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>InventColorIdFlag</DataField>
+								<DataSource>ATXBOMTemplateLine</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormCheckBoxControl">
+								<Name>FormGroupControl3_InventStyleIdFlag</Name>
+								<Type>CheckBox</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>InventStyleIdFlag</DataField>
+								<DataSource>ATXBOMTemplateLine</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormComboBoxControl">
+								<Name>FormGroupControl3_BOMConsumpType</Name>
+								<Type>ComboBox</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>BOMConsumpType</DataField>
+								<DataSource>ATXBOMTemplateLine</DataSource>
+								<Items />
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormComboBoxControl">
+								<Name>FormGroupControl3_BOMType</Name>
+								<Type>ComboBox</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>BOMType</DataField>
+								<DataSource>ATXBOMTemplateLine</DataSource>
+								<Items />
+							</AxFormControl>
+						</Controls>
+						<DataGroup>General</DataGroup>
+						<DataSource>ATXBOMTemplateLine</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormGroupControl">
+						<Name>ProductMasterDimGroup</Name>
+						<Type>Group</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<Controls>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>ProductMasterDimGroup_ConfigId</Name>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>ConfigId</DataField>
+								<DataSource>ATXBOMTemplateLine</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>ProductMasterDimGroup_InventSizeId</Name>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>InventSizeId</DataField>
+								<DataSource>ATXBOMTemplateLine</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>ProductMasterDimGroup_InventColorId</Name>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>InventColorId</DataField>
+								<DataSource>ATXBOMTemplateLine</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormStringControl">
+								<Name>ProductMasterDimGroup_InventStyleId</Name>
+								<Type>String</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>InventStyleId</DataField>
+								<DataSource>ATXBOMTemplateLine</DataSource>
+							</AxFormControl>
+						</Controls>
+						<DataGroup>ProductMasterDim</DataGroup>
+						<DataSource>ATXBOMTemplateLine</DataSource>
+					</AxFormControl>
+					<AxFormControl xmlns=""
+						i:type="AxFormGroupControl">
+						<Name>GenerateBOMByGroup</Name>
+						<Type>Group</Type>
+						<FormControlExtension
+							i:nil="true" />
+						<Controls>
+							<AxFormControl xmlns=""
+								i:type="AxFormCheckBoxControl">
+								<Name>GenerateBOMByGroup_ConfigIdFlag</Name>
+								<Type>CheckBox</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>ConfigIdFlag</DataField>
+								<DataSource>ATXBOMTemplateLine</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormCheckBoxControl">
+								<Name>GenerateBOMByGroup_InventSizeIdFlag</Name>
+								<Type>CheckBox</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>InventSizeIdFlag</DataField>
+								<DataSource>ATXBOMTemplateLine</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormCheckBoxControl">
+								<Name>GenerateBOMByGroup_InventColorIdFlag</Name>
+								<Type>CheckBox</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>InventColorIdFlag</DataField>
+								<DataSource>ATXBOMTemplateLine</DataSource>
+							</AxFormControl>
+							<AxFormControl xmlns=""
+								i:type="AxFormCheckBoxControl">
+								<Name>GenerateBOMByGroup_InventStyleIdFlag</Name>
+								<Type>CheckBox</Type>
+								<FormControlExtension
+									i:nil="true" />
+								<DataField>InventStyleIdFlag</DataField>
+								<DataSource>ATXBOMTemplateLine</DataSource>
+							</AxFormControl>
+						</Controls>
+						<DataGroup>GenerateBOMBy</DataGroup>
+						<DataSource>ATXBOMTemplateLine</DataSource>
+					</AxFormControl>
+				</Controls>
+				<ColumnsMode>Fill</ColumnsMode>
+			</AxFormControl>
+		</Controls>
+	</Design>
+	<Parts />
+</AxForm>

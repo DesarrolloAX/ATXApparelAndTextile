@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>InventDimParm_Extension</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+[ExtensionOf(tableStr(InventDimParm))]
+final class InventDimParm_Extension
+{
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>atxInitDimBOMTemplateLineEnable</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///    Initializes the <c>inventDimParm</c> record in relation to which inventory dimensions are enabled
+    ///    for a bills of materials record.
+    /// </summary>
+    /// <param name="_inventDimGroupSetup">
+    ///    An <c>InventDimGroupSetup</c> instance that provides information about dimension setup.
+    /// </param>
+    /// <param name="_bom">
+    ///    A bills of materials record.
+    /// </param>
+    public void atxInitDimBOMTemplateLineEnable(InventDimGroupSetup _inventDimGroupSetup, ATXBOMTemplateLine _bomLine)
+    {
+        InventDimParm bomInventDimParm = _inventDimGroupSetup.ecoResProductDimGroupSetup().inventDimParmActiveDimensions() as InventDimParm;
+        this.data(bomInventDimParm);
+
+        this.InventSiteIdFlag = NoYes::No; // Site can never be specified on bom lines
+
+        if (_bomLine.WrkCtrConsumption
+        || (_bomLine.bomId
+        && !_bomLine.bomTable().SiteId))
+        {
+            this.InventLocationIdFlag = NoYes::No;
+        }
+        else
+        {
+            this.InventLocationIdFlag = NoYes::Yes;
+        }
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>

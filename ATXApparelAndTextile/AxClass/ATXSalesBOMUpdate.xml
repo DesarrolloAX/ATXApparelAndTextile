@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXSalesBOMUpdate</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+class ATXSalesBOMUpdate
+{
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>run</Name>
+				<Source><![CDATA[
+    private void run(SalesLine _salesLine)
+    {
+        ATXBreakDownOrderEngine breackDownOrderEngine;
+        ;
+
+        try
+        {
+            ttsBegin;
+            _salesLine.selectForUpdate(true);
+           // todo breackDownOrderEngine = new ATXBreakDownOrderEngine(_salesLine);
+            //_salesLine.ItemBOMId = breackDownOrderEngine.buildProdBOM();
+            _salesLine.doUpdate();
+            ttsCommit;
+        }
+        catch(Exception::Error)
+        {
+            throw error(strFmt("Error al recalcular la lista de materiales"));
+        }
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>main</Name>
+				<Source><![CDATA[
+    static void main(Args _args)
+    {
+        ATXSalesBOMUpdate   salesBOMUpdate_AT = new ATXSalesBOMUpdate();
+        ATXBreakDownOrderEngine breackDownOrderEngine;
+
+        if (_args.dataset() == tableNum(SalesLine))
+        {
+            // TODO breackDownOrderEngine = new ATXBreakDownOrderEngine(_args.record());
+            /*breackDownOrderEngine.createStylesFromSalesLineItem(
+                    requestOrderHeader.RequestOrderId,
+                    this.parmRequestOrderUpdateId(),
+                    requestOrderLine.ItemId,
+                    inventdimRequest);*/
+
+            //breackDownOrderEngine.buildProdBOMFromTemplate();
+        }
+        
+
+        /*
+        ;
+
+        if (salesBOMUpdate_AT)
+        {
+            if (_args.dataset() == tableNum(SalesLine))
+            {
+                salesBOMUpdate_AT.run(_args.record());
+            }
+        }*/
+        //_args.caller().refreshSL_AT();
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>

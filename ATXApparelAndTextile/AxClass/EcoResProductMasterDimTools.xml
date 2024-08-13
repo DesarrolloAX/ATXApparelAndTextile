@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>EcoResProductMasterDimTools</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+class EcoResProductMasterDimTools
+{
+}
+
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>insertIfNotExistSize</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Insert a new record in EcoResSizeName
+    /// </summary>
+    /// <param name="name"></param>
+    public static server void insertIfNotExistSize(EcoResSizeName name)
+    {
+        EcoResSize ecoResSize;
+
+        if (name == '')
+        {
+            throw error(Error::wrongUseOfFunction(funcName()));
+        }
+
+        if (!EcoResSize::findByName(name).RecId)
+        {
+            ecoResSize.Name = name;
+            ecoResSize.insert();
+        }
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>insertIfNotExistColor</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Insert a new record in Color
+    /// </summary>
+    /// <param name="name"></param>
+    public static server void insertIfNotExistColor(EcoResColorName name)
+    {
+        EcoResColor ecoResColor;
+
+        if (name == '')
+        {
+            throw error(Error::wrongUseOfFunction(funcName()));
+        }
+
+        if (!EcoResColor::findByName(name).RecId)
+        {
+            ecoResColor.Name = name;
+            ecoResColor.insert();
+        }
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>insertIfNotExistConfiguration</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Insert a new record in Configuration
+    /// </summary>
+    /// <param name="name"></param>
+    public static server void insertIfNotExistConfiguration(EcoResConfigurationName name)
+    {
+        EcoResConfiguration ecoResConfiguration;
+
+        if (name == '')
+        {
+            throw error(Error::wrongUseOfFunction(funcName()));
+        }
+
+        if (!EcoResConfiguration::findByName(name).RecId)
+        {
+            ecoResConfiguration.Name = name;
+            ecoResConfiguration.insert();
+        }
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>existEcoResProductMasterConfiguration</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Find method in EcoResProductMasterConfiguration
+    /// </summary>
+    /// <param name="productMaster"></param>
+    /// <param name="ConfigurationRecId"></param>
+    /// <param name="dimensionAttributeRecId"></param>
+    static boolean existEcoResProductMasterConfiguration(
+    RefRecId        productMaster,
+    EcoResConfigurationRecId ConfigurationRecId,
+    RefRecId        dimensionAttributeRecId = ecoResProductDimensionAttribute::inventDimFieldId2DimensionAttributeRecId(fieldNum(InventDim, configId)))
+    {
+
+        return productMaster
+        && ConfigurationRecId
+        && (select firstOnly RecId from EcoResProductMasterConfiguration
+            where   EcoResProductMasterConfiguration.ConfigProductMaster == productMaster
+                &&  EcoResProductMasterConfiguration.ConfigProductDimensionAttribute == dimensionAttributeRecId
+                &&  EcoResProductMasterConfiguration.Configuration == ConfigurationRecId).RecId !=0;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>existEcoResProductMasterSize</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Find method in EcoResProductMasterSize
+    /// </summary>
+    /// <param name="productMaster"></param>
+    /// <param name="sizeRecId"></param>
+    /// <param name="dimensionAttributeRecId"></param>
+    static boolean existEcoResProductMasterSize(
+    RefRecId        productMaster,
+    EcoResSizeRecId sizeRecId,
+    RefRecId        dimensionAttributeRecId = ecoResProductDimensionAttribute::inventDimFieldId2DimensionAttributeRecId(fieldNum(InventDim,InventSizeId)))
+    {
+
+        return productMaster
+        && sizeRecId
+        && (select firstOnly RecId from EcoResProductMasterSize
+            where   EcoResProductMasterSize.SizeProductMaster == productMaster
+                &&  EcoResProductMasterSize.SizeProductDimensionAttribute == dimensionAttributeRecId
+                &&  EcoResProductMasterSize.Size == sizeRecId).RecId !=0;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>existEcoResProductMasterColor</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Find method in EcoResProductMasterColor
+    /// </summary>
+    /// <param name="productMaster"></param>
+    /// <param name="ColorRecId"></param>
+    /// <param name="dimensionAttributeRecId"></param>
+    static boolean existEcoResProductMasterColor(
+    RefRecId        productMaster,
+    EcoResColorRecId ColorRecId,
+    RefRecId        dimensionAttributeRecId = ecoResProductDimensionAttribute::inventDimFieldId2DimensionAttributeRecId(fieldNum(InventDim,InventColorId)))
+    {
+
+        return productMaster
+        && ColorRecId
+        && (select firstOnly RecId from EcoResProductMasterColor
+            where   EcoResProductMasterColor.ColorProductMaster == productMaster
+                &&  EcoResProductMasterColor.ColorProductDimensionAttribute == dimensionAttributeRecId
+                &&  EcoResProductMasterColor.Color == ColorRecId).RecId !=0;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>insertIfNotExistStyle</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="name"></param>
+    public static server void insertIfNotExistStyle(EcoResStyleName name)
+    {
+        EcoResStyle ecoResStyle;
+
+        if (name == '')
+        {
+            throw error(Error::wrongUseOfFunction(funcName()));
+        }
+
+        if (!EcoResStyle::findByName(name).RecId)
+        {
+            ecoResStyle.Name = name;
+            ecoResStyle.insert();
+        }
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>existEcoResProductMasterStyle</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Find method in EcoResProductMasterStyle
+    /// </summary>
+    /// <param name="productMaster"></param>
+    /// <param name="StyleRecId"></param>
+    /// <param name="dimensionAttributeRecId"></param>
+    static boolean existEcoResProductMasterStyle(
+    RefRecId        productMaster,
+    EcoResStyleRecId StyleRecId,
+    RefRecId        dimensionAttributeRecId = ecoResProductDimensionAttribute::inventDimFieldId2DimensionAttributeRecId(fieldNum(InventDim, configId)))
+    {
+
+        return productMaster
+        && StyleRecId
+        && (select firstOnly RecId from EcoResProductMasterStyle
+            where   EcoResProductMasterStyle.StyleProductMaster == productMaster
+                &&  EcoResProductMasterStyle.StyleProductDimensionAttribute == dimensionAttributeRecId
+                &&  EcoResProductMasterStyle.Style == StyleRecId).RecId !=0;
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>

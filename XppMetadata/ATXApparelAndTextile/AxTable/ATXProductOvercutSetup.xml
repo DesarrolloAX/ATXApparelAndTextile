@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<z:anyType xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns=""
+	i:type="AxPropertyCollection" xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/">
+	<Methods>
+		<Method>
+			<Name>displayDescription</Name>
+			<IsDisplay>true</IsDisplay>
+			<Visibility>Public</Visibility>
+			<ReturnType>
+				<Tags></Tags>
+				<Type>ExtendedDataType</Type>
+				<TypeName>Description</TypeName>
+			</ReturnType>
+		</Method>
+		<Method>
+			<Name>find</Name>
+			<IsStatic>true</IsStatic>
+			<Visibility>Public</Visibility>
+			<Parameters>
+				<AxMethodParameter>
+					<Tags></Tags>
+					<Type>ExtendedDataType</Type>
+					<TypeName>ATXProductOvercutId</TypeName>
+					<Name>_productOvercutId_AT</Name>
+				</AxMethodParameter>
+				<AxMethodParameter>
+					<Tags></Tags>
+					<Type>ExtendedDataType</Type>
+					<TypeName>Qty</TypeName>
+					<Name>_qty</Name>
+				</AxMethodParameter>
+				<AxMethodParameter>
+					<Tags></Tags>
+					<Type>ExtendedDataType</Type>
+					<TypeName>EcoResConfigurationName</TypeName>
+					<Name>_configId</Name>
+				</AxMethodParameter>
+				<AxMethodParameter>
+					<Tags></Tags>
+					<Type>ExtendedDataType</Type>
+					<TypeName>EcoResColorName</TypeName>
+					<Name>_inventColorId</Name>
+				</AxMethodParameter>
+			</Parameters>
+			<ReturnType>
+				<Tags></Tags>
+				<Type>Record</Type>
+				<TypeName>ATXProductOvercutSetup</TypeName>
+			</ReturnType>
+		</Method>
+	</Methods>
+</z:anyType>

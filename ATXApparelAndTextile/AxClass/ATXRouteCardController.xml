@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXRouteCardController</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+class ATXRouteCardController extends SrsReportRunController
+{
+
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>main</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    public static void main(Args _args)
+    {
+        ATXRouteCardController controller = new ATXRouteCardController();
+
+        controller.parmReportName(ssrsReportStr(ATXRouteCard, Design));
+        controller.parmArgs(_args);
+        controller.initParmDefault();
+        controller.parmArgs(_args);
+        controller.parmLoadFromSysLastValue(false);
+        controller.parmShowDialog(true);
+        controller.startOperation();
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>prePromptModifyContract</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///
+    /// </summary>
+    protected void prePromptModifyContract()
+    {
+        ATXRouteCardContract contract = this.parmReportContract().parmRdpContract() as ATXRouteCardContract;
+        ProdTable prodTable;
+        
+        super();
+
+        if (this.parmArgs())
+        {
+            if (this.parmArgs().record())
+            {
+                if (this.parmArgs().record().TableId == tableNum(ProdTable))
+                {
+                    prodTable = this.parmArgs().record();
+                    contract.refRecId(prodTable.RecId);
+                }
+            }
+        }
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>

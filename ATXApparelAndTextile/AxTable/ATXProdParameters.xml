@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxTable xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXProdParameters</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+public class ATXProdParameters extends common
+{
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>find</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// lookup for a record
+    /// </summary>
+    /// <param name = "_forupdate">Only if update is needed</param>
+    /// <returns>Table Instance</returns>
+    static ATXProdParameters find(boolean _forupdate = false)
+    {
+        ATXProdParameters  parameter;
+
+        parameter.selectForUpdate(_forupdate);
+
+        select firstonly parameter
+            index KeyIdx
+            where parameter.Key == 0;
+
+        if (!parameter && !parameter.isTmp())
+        {
+            Company::createParameter(parameter);
+        }
+
+        return parameter;
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+	<Label>@ATXAT:NewLabel8</Label>
+	<SubscriberAccessLevel>
+		<Read>Allow</Read>
+	</SubscriberAccessLevel>
+	<TableGroup>Parameter</TableGroup>
+	<TitleField1>Key</TitleField1>
+	<ClusteredIndex>KeyIdx</ClusteredIndex>
+	<PrimaryIndex>KeyIdx</PrimaryIndex>
+	<DeleteActions />
+	<FieldGroups>
+		<AxTableFieldGroup>
+			<Name>AutoReport</Name>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoLookup</Name>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoIdentification</Name>
+			<AutoPopulate>Yes</AutoPopulate>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoSummary</Name>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>AutoBrowse</Name>
+			<Fields />
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>Request</Name>
+			<Label>@ATXAT:NewLabel9</Label>
+			<Fields>
+				<AxTableFieldGroupField>
+					<DataField>CreateBOMStyles</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>ReqCalcScheduleItem</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>BOMVersionApproved</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>BOMRouteApprover</DataField>
+				</AxTableFieldGroupField>
+			</Fields>
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>Yield</Name>
+			<Label>@ATXAT:NewLabel213</Label>
+			<Fields>
+				<AxTableFieldGroupField>
+					<DataField>YieldPercent</DataField>
+				</AxTableFieldGroupField>
+			</Fields>
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>FloorControlValidations</Name>
+			<Label>@ATXAT:NewLabel212</Label>
+			<Fields>
+				<AxTableFieldGroupField>
+					<DataField>ValidateQtyOnPreviousOperation</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>ValidateEmplId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>ValidateQuality</DataField>
+				</AxTableFieldGroupField>
+			</Fields>
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>ShopFloor</Name>
+			<Label>@ATXAT:NewLabel207</Label>
+			<Fields>
+				<AxTableFieldGroupField>
+					<DataField>SuggestPersonnelNumber</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>ValidateGoodErrorQty</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>ATXProdCutNumberSequenceId</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>StopProdJournalDescription</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>JournalMovDescription</DataField>
+				</AxTableFieldGroupField>
+			</Fields>
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>Overview</Name>
+			<Label>@ATXAT:NewLabel214</Label>
+			<Fields>
+				<AxTableFieldGroupField>
+					<DataField>ActivateCutControls</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>StandarPack</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>ExistenceInLastOperation</DataField>
+				</AxTableFieldGroupField>
+			</Fields>
+		</AxTableFieldGroup>
+		<AxTableFieldGroup>
+			<Name>LastRouteOpr</Name>
+			<Label>@ATXAT:NewLabel267</Label>
+			<Fields>
+				<AxTableFieldGroupField>
+					<DataField>LastOperationJournalName</DataField>
+				</AxTableFieldGroupField>
+				<AxTableFieldGroupField>
+					<DataField>ReverseInvMovJournalName</DataField>
+				</AxTableFieldGroupField>
+			</Fields>
+		</AxTableFieldGroup>
+	</FieldGroups>
+	<Fields>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldInt">
+			<Name>Key</Name>
+			<ExtendedDataType>ParametersKey</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldEnum">
+			<Name>CreateBOMStyles</Name>
+			<ExtendedDataType>NoYesId</ExtendedDataType>
+			<HelpText>@ATXAT:NewLabel13</HelpText>
+			<Label>@ATXAT:NewLabel12</Label>
+			<EnumType>NoYes</EnumType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldEnum">
+			<Name>BOMVersionApproved</Name>
+			<ExtendedDataType>NoYesId</ExtendedDataType>
+			<Label>@ATXAT:NewLabel124</Label>
+			<EnumType>NoYes</EnumType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldInt64">
+			<Name>BOMRouteApprover</Name>
+			<ExtendedDataType>BOMRouteApprover</ExtendedDataType>
+			<Label>@ATXAT:NewLabel125</Label>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldEnum">
+			<Name>ReqCalcScheduleItem</Name>
+			<ExtendedDataType>NoYesId</ExtendedDataType>
+			<Label>@ATXAT:NewLabel122</Label>
+			<EnumType>NoYes</EnumType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldEnum">
+			<Name>ValidateQtyOnPreviousOperation</Name>
+			<ExtendedDataType>NoYesId</ExtendedDataType>
+			<Label>@ATXAT:NewLabel152</Label>
+			<EnumType>NoYes</EnumType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldEnum">
+			<Name>ValidateGoodErrorQty</Name>
+			<ExtendedDataType>NoYesId</ExtendedDataType>
+			<Label>@ATXAT:NewLabel153</Label>
+			<EnumType>NoYes</EnumType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldReal">
+			<Name>YieldPercent</Name>
+			<ExtendedDataType>Percent</ExtendedDataType>
+			<Label>@ATXAT:NewLabel177</Label>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldEnum">
+			<Name>ActivateCutControls</Name>
+			<ExtendedDataType>NoYesId</ExtendedDataType>
+			<Label>@ATXAT:NewLabel206</Label>
+			<EnumType>NoYes</EnumType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldEnum">
+			<Name>SuggestPersonnelNumber</Name>
+			<ExtendedDataType>NoYesId</ExtendedDataType>
+			<Label>@ATXAT:NewLabel233</Label>
+			<EnumType>NoYes</EnumType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldReal">
+			<Name>StandarPack</Name>
+			<ExtendedDataType>Qty</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>ATXProdCutNumberSequenceId</Name>
+			<ExtendedDataType>NumberSequenceCode</ExtendedDataType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>StopProdJournalDescription</Name>
+			<ExtendedDataType>Description</ExtendedDataType>
+			<Label>@ATXAT:NewLabel249</Label>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldEnum">
+			<Name>ExistenceInLastOperation</Name>
+			<ExtendedDataType>NoYesId</ExtendedDataType>
+			<Label>@ATXAT:NewLabel250</Label>
+			<EnumType>NoYes</EnumType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldEnum">
+			<Name>ValidateEmplId</Name>
+			<ExtendedDataType>NoYesId</ExtendedDataType>
+			<Label>@ATXAT:NewLabel251</Label>
+			<EnumType>NoYes</EnumType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldEnum">
+			<Name>ValidateQuality</Name>
+			<ExtendedDataType>NoYesId</ExtendedDataType>
+			<Label>@ATXAT:NewLabel263</Label>
+			<EnumType>NoYes</EnumType>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>LastOperationJournalName</Name>
+			<ExtendedDataType>Description</ExtendedDataType>
+			<Label>@ATXAT:NewLabel266</Label>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>ReverseInvMovJournalName</Name>
+			<ExtendedDataType>Description</ExtendedDataType>
+			<Label>@ATXAT:NewLabel269</Label>
+		</AxTableField>
+		<AxTableField xmlns=""
+			i:type="AxTableFieldString">
+			<Name>JournalMovDescription</Name>
+			<ExtendedDataType>Description</ExtendedDataType>
+			<Label>@ATXAT:NewLabel272</Label>
+		</AxTableField>
+	</Fields>
+	<FullTextIndexes />
+	<Indexes>
+		<AxTableIndex>
+			<Name>KeyIdx</Name>
+			<AlternateKey>Yes</AlternateKey>
+			<Fields>
+				<AxTableIndexField>
+					<DataField>Key</DataField>
+				</AxTableIndexField>
+			</Fields>
+		</AxTableIndex>
+	</Indexes>
+	<Mappings />
+	<Relations>
+		<AxTableRelation xmlns=""
+			i:type="AxTableRelationForeignKey">
+			<Name>HcmWorker</Name>
+			<RelatedTable>HcmWorker</RelatedTable>
+			<Constraints>
+				<AxTableRelationConstraint xmlns=""
+					i:type="AxTableRelationConstraintField">
+					<Name>BOMRouteApprover</Name>
+					<Field>BOMRouteApprover</Field>
+					<RelatedField>RecId</RelatedField>
+				</AxTableRelationConstraint>
+			</Constraints>
+			<Index>RecId</Index>
+		</AxTableRelation>
+	</Relations>
+	<StateMachines />
+</AxTable>

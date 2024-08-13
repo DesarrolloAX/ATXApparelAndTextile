@@ -1,0 +1,616 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>ATXBOMVersionEngine</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+/// <summary>
+/// Contains all functions to create BOMVersions
+/// TODO Falta funcionalidad para actualizar listas de materiales de OV y OP
+/// </summary>
+class ATXBOMVersionEngine
+{
+    BOMId                   templateBOMId;
+    ItemId                  templateItemId;
+    BOMVersion              templateBOMVersion;
+    NumberOfRecords         numberOfRecords;
+    SysOperationProgress    sysProgress;
+    ItemId                  itemId;
+    BOMConsumpType          bomConsumpType;
+    EcoResColorName         inventColorId;
+    #AviFiles
+    #ATXBOMMacro
+
+    
+
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>new</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Set default data with BOMVersion
+    /// Type:Template
+    /// </summary>
+    /// <param name = "_bomId">BOMID from Product master template</param>
+    /// <param name = "_itemId">Product master</param>
+    void new(
+        BomId _bomId,
+        ItemId _itemId)
+    {
+        BOMTable    BOMTableQry;
+        templateBOMId   = _bomId;
+        templateItemId  = _itemId;
+        bomConsumpType  = BOMConsumpType::Constant;
+        
+        select firstOnly templateBOMVersion
+            index ItemIdx
+            where templateBOMVersion.ItemId     == templateItemId
+               && templateBOMVersion.BOMId      == templateBOMId
+            join BOMTableQry
+            where BOMTableQry.BOMId             == templateBOMVersion.BOMId
+                && BOMTableQry.ATXBOMType       == ATXBOMType::Template
+            ;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>generateVariantBOMVersions</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Generate versions
+    /// </summary>
+    /// <param name = "_bomId">BOMID Template</param>
+    /// <param name = "_itemId">Product master</param>
+    static server void generateVariantBOMVersions(BOMId _bomId, ItemId _itemId)
+    {
+        ATXBOMVersionEngine engine = new ATXBOMVersionEngine(_bomId, _itemId);
+
+        engine.run();
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>run</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Run logic
+    /// </summary>
+    void run()
+    {
+        ProdTable   prodTable;
+        BOM         bomSalesLine;
+        ProdBOM     prodBOM;
+        InventDim           inventDimSL, inventDimPB;
+        InventTransOrigin   inventTransOrigin;
+        InventTrans         inventTrans;
+
+        ttsbegin;
+        numberOfRecords = (select count(recid) from BOM where BOM.BOMId == templateBOMId).RecId;
+        this.generateVersionsHeaders();
+        ttscommit;
+        // TODO this.validateBOM();
+/*
+        // Update BOMVersions of all released Sales orders
+        if (inventColorId)
+        {
+            salesBOMUpdateFromItem_AT::engineSalesBOMUpdateByColor(templateitemId, inventColorId);
+        }
+        else
+        {
+            salesBOMUpdateFromItem_AT::engineSalesBOMUpdate(templateitemId);
+        }
+        if (ProductParameters_AT::find().UpdateProdBOM)
+        {
+            // Update Production BOM only for materials that has not been touched
+            while select prodTable
+                where prodTable.ProdStatus != ProdStatus::Completed
+                && prodTable.ItemId == templateItemId
+            {
+                while select bomSalesLine
+                    where bomSalesLine.BOMId    == prodTable.BOMId
+                {
+                    // look for line in ProdBOM
+                    select firstonly prodBOM
+                        where prodBOM.BOMTemplateLine_AT == bomSalesLine.BOMTemplateLine_AT
+                        join inventDimPB
+                        where inventDimPB.inventDimId   == prodBOM.InventDimId
+                            && inventDimPB.configId     == bomSalesLine.inventDim().configId
+                            && inventDimPB.InventSizeId     == bomSalesLine.inventDim().InventSizeId
+                            && inventDimPB.InventColorId     == bomSalesLine.inventDim().InventColorId
+                            && inventDimPB.InventStyleId     == bomSalesLine.inventDim().InventStyleId;
+                    // Update line
+                    if (prodBOM && prodBOM.BOMQty != bomSalesLine.BOMQty)
+                    {
+                        select firstonly inventTransOrigin
+                            where inventTransOrigin.InventTransId   == prodBOM.InventTransId
+                            join inventTrans
+                            where inventtrans.inventTransOrigin     == inventTransOrigin.RecId
+                            && inventtrans.StatusIssue              != StatusIssue::OnOrder;
+                        if (!inventTrans)
+                        {
+                            ttsbegin;
+                            prodBOM.QtyBOMCalc      = bomSalesLine.BOMQty;
+                            prodBOM.modifiedField(fieldnum(prodBOM, QtyBOMCalc));
+                            prodBOM.update();
+                            ttscommit;
+                        }
+                    }
+                }
+                info(strfmt('@ATXApparelAndTextile_AT:NewLabel3', prodtable.CustPurchaseOrder_AT));
+            }
+        }*/
+        /*
+        // Also update Production BOM only for materials that has not been touched
+        if(ProdParameters_AT::find().ReqCalcScheduleItem)
+        {
+            ReqCalcScheduleItem::newItemId(templateitemId, ReqParameters::find().CurrentReqPlanIdSchedStatic).run();
+        }
+
+        // Insert log
+        ATXBOMTemplateLog::insertLog(templateitemId);*/
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>generateVersionsHeaders</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Create a new BOMVersion for every product master combination
+    /// Skip # dimension
+    /// </summary>
+    private void generateVersionsHeaders()
+    {
+        InventDimCombination    inventDimCombination;
+        BOMVersion              bomVersion, bomVersionTemplate;
+        BOMTable                bomTable;
+        InventTable             inventTable;
+        InventDim               inventDim, inventDimBOMVersion, inventDimBOMVersionQry;
+        BOM                     bomLine;
+        InventSiteId            defaultSiteId = templateBOMVersion.inventDim().InventSiteId;
+        Name                    bomName;
+        BOMId                   bomId;
+        SysGroup                dummyDimValue = ATXProductParameters::find().DummyValue;
+        
+        void createBOMVersion()
+        {
+            // Go over all product combinations with no #
+            while select inventDimCombination
+                index hint ItemIdx
+                where inventDimCombination.ItemId == templateItemId
+                join inventDim
+                where inventDim.inventDimId == inventDimCombination.InventDimId
+                && inventDim.ConfigId       != dummyDimValue
+                && inventDim.InventSizeId   != dummyDimValue
+                && inventDim.InventColorId  != dummyDimValue
+                && inventDim.InventStyleId  != dummyDimValue
+            {
+                select firstonly BOMId, RecId from bomVersion
+                    where bomVersion.ItemId     == templateItemId
+                    join inventDimBOMVersionQry
+                    where inventDimBOMVersionQry.inventDimId    == bomVersion.InventDimId
+                    && inventDimBOMVersionQry.configId          == inventDim.configId
+                    && inventDimBOMVersionQry.InventSizeId      == inventDim.InventSizeId
+                    && inventDimBOMVersionQry.InventColorId     == inventDim.InventColorId
+                    && inventDimBOMVersionQry.InventStyleId     == inventDim.InventStyleId
+                    exists join bomTable
+                    where bomTable.BOMId    == bomVersion.BOMId
+                    && bomTable.ATXBOMType  == ATXBOMType::Variant
+                    ;
+                if (!bomVersion.RecId)
+                {
+                    bomName = ATXBOMVersionEngine::getBOMName(templateItemId, inventDim);
+
+                    inventDimBOMVersion.clear();
+                    inventDimBOMVersion.configId        = inventDim.ConfigId;
+                    inventDimBOMVersion.InventSizeId    = inventDim.InventSizeId;
+                    inventDimBOMVersion.InventColorId   = inventDim.InventColorId;
+                    inventDimBOMVersion.InventStyleId   = inventDim.InventStyleId;
+                    inventDimBOMVersion.InventSiteId    = defaultSiteId;
+
+                    bomVersion.clear();
+                    bomVersion.BOMId            = ATXBOMVersionEngine::createBOMTable(templateItemId, bomName, ATXBOMType::Variant, bomId, defaultSiteId);
+                    bomVersion.ATXBOMType       = ATXBOMType::Variant;
+                    bomVersion.ItemId           = templateitemId;
+                    bomVersion.Name             = bomName;
+                    bomVersion.ATXConfigId      = inventDim.ConfigId;
+                    bomVersion.ATXInventColorId = inventDim.InventColorId;
+                    bomVersion.ATXInventSizeId  = inventDim.InventSizeId;
+                    bomVersion.ATXInventStyleId = inventDim.InventStyleId;
+                    bomVersion.FromQty          = bomVersionTemplate.FromQty;
+                    bomVersion.FromDate         = bomVersionTemplate.FromDate;
+                    bomVersion.ToDate           = bomVersionTemplate.ToDate;
+                    bomVersion.InventDimId      = InventDim::findOrCreate(inventDimBOMVersion).inventDimId;
+                    bomVersion.insert();
+                }
+            }
+        }
+        ;
+
+        // Find bomVersionTemplate
+        select firstOnly bomVersionTemplate
+            where bomVersionTemplate.ItemId == templateitemId
+            join bomTable
+            where bomTable.BOMId        == bomVersionTemplate.BOMId
+                && bomTable.ATXBOMType  == ATXBOMType::Template
+        ;
+        if (!bomVersionTemplate)
+        {
+            throw error('@ATXAT:NewLabel24');
+        }
+     
+        createBOMVersion();
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>getBOMName</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Create a name based on Product master dimensions
+    /// </summary>
+    /// <param name = "_itemId">Product master</param>
+    /// <param name = "_inventDim">Dimensions</param>
+    /// <returns></returns>
+    static Name getBOMName(ItemId _itemId, InventDim _inventDim)
+    {
+        InventTable inventTable;
+        Name        bomName;
+
+        inventTable = InventTable::find(_itemId);
+        if (inventTable)
+        {
+            bomName = strFmt("%1", _itemId);
+            if (inventTable.configActive())
+            {
+                bomName += #CharBOMSeparator + _inventDim.ConfigId;
+            }
+            if (inventTable.sizeActive())
+            {
+                bomName += #CharBOMSeparator + _inventDim.InventSizeId;
+            }
+            if (inventTable.colorActive())
+            {
+                bomName += #CharBOMSeparator + _inventDim.InventColorId;
+            }
+            if (inventTable.styleActive())
+            {
+                bomName += #CharBOMSeparator + _inventDim.InventStyleId;
+            }
+        }
+        else
+        {
+            throw error(strFmt("@SYS5307"));
+        }
+
+        return bomName;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>createBOMTable</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Create a new BOMTable record
+    /// </summary>
+    /// <param name = "_itemId">Product master</param>
+    /// <param name = "_name">BOM Name</param>
+    /// <param name = "_bomType">ATXBOMType</param>
+    /// <param name = "_bomId">BOMID</param>
+    /// <param name = "_inventSiteId">Site</param>
+    /// <returns></returns>
+    /*server*/ static BOMId createBOMTable(
+        ItemId          _itemId,
+        Name            _name,
+        ATXBOMType      _bomType = ATXBOMType::None,
+        BOMId           _bomId = "",
+        InventSiteId    _inventSiteId = ""
+    )
+    {
+        #OCCRetryCount
+        BOMTable            bomTable;
+        InventTable         inventTable = InventTable::find(_itemId);
+        BOMRouteCopyJob     BOMCopy;
+        BOMId               dialogNumber;
+        Name                dialogName;
+        NoYes               dialogCopy;
+        NumberSeq           numberSeq;
+        NumberSequenceTable numberSequenceTable;
+        container           dialogVal;
+        boolean             manual;
+        boolean             alreadyExists;
+
+        numberSeq = BOMTable::numberSeq(false, true);
+        if(numberSeq)
+        {
+            numberSequenceTable = NumberSequenceTable::findByNaturalKey(numberSeq.parmNumberSequenceCode());
+        }
+        manual = !numberSeq || (numberSequenceTable && numberSequenceTable.numAllowEdit());
+
+        if (!inventTable.inventItemType().canHaveBOM())
+        {
+            throw error(strfmt("@SYS78175",inventTable.ItemType));
+        }
+        try
+        {
+            ttsbegin;
+            if (_bomType == ATXBOMType::Variant || _bomType == ATXBOMType::ProdBOM)
+            {
+                dialogNumber = _bomId;
+            }
+
+            if (manual)
+            {
+                bomTable = BOMTable::find(dialogNumber);
+            }
+            if (bomTable)
+            {
+                alreadyExists = true;
+            }
+            else
+            {
+                bomTable.BOMId = dialogNumber;
+                if (!bomTable.BOMId)
+                {
+                    if (!numberSeq)
+                    {
+                        numberSeq = BOMTable::numberSeq();
+                    }
+                    bomTable.BOMId = numberSeq.num();
+                }
+                if (BOMTable::exist(bomTable.BOMId))
+                {
+                    alreadyExists = true;
+                }
+                else
+                {
+                    bomTable.ItemGroupId = inventTable.projCategoryId;
+                    bomTable.Name = _name;
+                    bomTable.SiteId = _inventSiteId;
+
+                    if (!bomTable.validateWrite())
+                    {
+                        throw error("@SYS23020");
+                    }
+                    bomTable.ATXBOMType = _bomType;
+                    bomTable.insert();
+                }
+            }
+            ttscommit;
+        }
+        catch (Exception::Deadlock)
+        {
+            retry;
+        }
+        catch (Exception::UpdateConflict)
+        {
+            if (appl.ttsLevel() == 0)
+            {
+                if (xSession::currentRetryCount() >= #RetryNum)
+                {
+                    throw Exception::UpdateConflictNotRecovered;
+                }
+                else
+                {
+                    retry;
+                }
+            }
+            else
+            {
+                throw Exception::UpdateConflict;
+            }
+        }
+
+        if (alreadyExists)
+        {
+            return bomTable.BOMId;
+        }
+        if (dialogNumber && numberSequenceTable && numberSequenceTable.Continuous)
+        {
+            ttsbegin;
+            NumberSeq::newReserveNumFromCode(numberSequenceTable.NumberSequence,NumberSeqScopeFactory::createDefaultScope() , false, true).reserve(dialogNumber);
+            ttscommit;
+        }
+
+        return bomTable.BOMId;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>findVariantVersion</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Search a valid BOMVersion
+    /// Type: Variant
+    /// Previously it has to be generated from BOM Template
+    /// </summary>
+    /// <param name = "_itemId">Product master</param>
+    /// <param name = "_configId">Configuration</param>
+    /// <param name = "_inventColorId">Color</param>
+    /// <param name = "_InventSizeId">Size</param>
+    /// <param name = "_inventStyleId">Style</param>
+    /// <param name = "_forUpdate">Update?</param>
+    /// <returns>Version found with product dimensions</returns>
+    static BOMVersion findVariantVersion(
+        ItemId                      _itemId,
+        EcoResItemConfigurationName _configId,
+        EcoResItemColorName         _inventColorId,
+        EcoResItemSizeName          _InventSizeId,
+        EcoResItemStyleName         _inventStyleId,
+        boolean                     _forUpdate = false)
+    {
+        BOMVersion  bomVersion;
+        BOMTable    bomTableQry;
+
+        bomTableQry.selectForUpdate(_forUpdate);
+        select firstonly bomVersion
+            where bomVersion.ItemId         == _itemId
+            && bomVersion.ATXConfigId       == _configId
+            && bomVersion.ATXInventColorId  == _inventColorId
+            && bomVersion.ATXInventSizeId   == _InventSizeId
+            && bomVersion.ATXInventStyleId  == _inventStyleId
+            exists join bomTableQry
+            where bomTableQry.BOMId         == bomVersion.BOMId
+            && bomTableQry.ATXBOMType       == ATXBOMType::Variant
+        ;
+
+        return bomVersion;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>findEcoResProductMasterColor</Name>
+				<Source><![CDATA[
+    //------------------------------------------------------
+    // TODO Estos metodos sirven?
+    public static EcoResProductMasterColor findEcoResProductMasterColor(
+    RefRecId                    _productMaster,
+    EcoResColorRecId            _colorRecId,
+    fieldId                     _inventDimFieldId   = fieldnum(InventDim, InventcolorId),
+    boolean                     _forupdate          = false)
+    {
+        EcoResProductMasterColor    ecoResProductMasterColor;
+        RefRecId                    ecoResProductDimensionAttributeRecId;
+
+        ecoResProductMasterColor.selectForUpdate(_forupdate);
+
+        if (   _productMaster
+        && _colorRecId)
+        {
+            ecoResProductDimensionAttributeRecId = ecoResProductDimensionAttribute::inventDimFieldId2DimensionAttributeRecId(_inventDimFieldId);
+
+            select firstonly ecoResProductMasterColor
+            where ecoResProductMasterColor.ColorProductMaster               == _productMaster
+               && ecoResProductMasterColor.ColorProductDimensionAttribute   == ecoResProductDimensionAttributeRecId
+               && ecoResProductMasterColor.Color                            == _colorRecId;
+
+        }
+
+        return ecoResProductMasterColor;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>findEcoResProductMasterSize</Name>
+				<Source><![CDATA[
+    public static EcoResProductMasterSize findEcoResProductMasterSize(
+    RefRecId                    _productMaster,
+    EcoResSizeRecId             _sizeRecId,
+    fieldId                     _inventDimFieldId   = fieldnum(InventDim, InventSizeId),
+    boolean                     _forupdate          = false)
+    {
+        EcoResProductMasterSize ecoResProductMasterSize;
+        RefRecId                ecoResProductDimensionAttributeRecId;
+
+        ecoResProductMasterSize.selectForUpdate(_forupdate);
+
+        if (   _productMaster
+        && _sizeRecId)
+        {
+            ecoResProductDimensionAttributeRecId = ecoResProductDimensionAttribute::inventDimFieldId2DimensionAttributeRecId(_inventDimFieldId);
+
+            select firstonly ecoResProductMasterSize
+            where ecoResProductMasterSize.SizeProductMaster              == _productMaster
+               && ecoResProductMasterSize.SizeProductDimensionAttribute  == ecoResProductDimensionAttributeRecId
+               && ecoResProductMasterSize.Size                              == _sizeRecId;
+
+        }
+
+        return ecoResProductMasterSize;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>findEcoResProductMasterStyle</Name>
+				<Source><![CDATA[
+    public static EcoResProductMasterStyle findEcoResProductMasterStyle(
+    RefRecId                    _productMaster,
+    EcoResSizeRecId             _styleRecId,
+    fieldId                     _inventDimFieldId   = fieldnum(InventDim, InventStyleId),
+    boolean                     _forupdate          = false)
+    {
+        EcoResProductMasterStyle ecoResProductMasterStyle;
+        RefRecId                ecoResProductDimensionAttributeRecId;
+
+        ecoResProductMasterStyle.selectForUpdate(_forupdate);
+
+        if (   _productMaster
+        && _styleRecId)
+        {
+            ecoResProductDimensionAttributeRecId = ecoResProductDimensionAttribute::inventDimFieldId2DimensionAttributeRecId(_inventDimFieldId);
+
+            select firstonly ecoResProductMasterStyle
+            where ecoResProductMasterStyle.StyleProductMaster               == _productMaster
+               && ecoResProductMasterStyle.StyleProductDimensionAttribute   == ecoResProductDimensionAttributeRecId
+               && ecoResProductMasterStyle.Style                            == _styleRecId;
+        }
+
+        return ecoResProductMasterStyle;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>findByItemBOMId</Name>
+				<Source><![CDATA[
+    /// <summary>
+    ///    Finds a BOMVersion for specified ItemId and BOMId
+    /// </summary>
+    /// <param name="_itemId">
+    ///    A string that holds an item id.
+    /// </param>
+    /// <param name="_BOMId">
+    ///    A string that holds an bom id
+    /// </param>
+    /// <param name="_forupdate">
+    ///    A Boolean value that is assigned to the <c>BOMVersion</c><c>.selectForUpdate</c> field; optional.
+    ///    The default is false.
+    /// </param>
+    /// <returns>
+    ///    A BOM version record.
+    /// </returns>
+    /// <remarks>
+    ///    This methods returns the first record found
+    /// </remarks>
+    ///
+    static BOMVersion findByItemBOMId(
+    ItemId  _itemId,
+    BOMId   _BOMId,
+    boolean _forupdate = false
+        )
+    {
+        BOMVersion  bomVersion;
+        BOMTable    bomTableQry;
+
+        if (!_itemId || !_BOMId)
+        {
+            return bomVersion;
+        }
+
+        bomVersion.selectForUpdate(_forUpdate);
+        select firstonly bomVersion
+            where bomVersion.ItemId     == _itemId
+            && bomVersion.BOMId         == _BOMId
+            exists join bomTableQry
+            where bomTableQry.BOMId     == bomVersion.BOMId
+            && (bomTableQry.ATXBOMType  == ATXBOMType::Template
+            || bomTableQry.ATXBOMType   == ATXBOMType::ProdBOM)
+        ;
+
+        return bomVersion;
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>

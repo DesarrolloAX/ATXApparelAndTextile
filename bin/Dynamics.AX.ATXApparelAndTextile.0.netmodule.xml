@@ -1,0 +1,15 @@
+<EventHandlers>
+  <BusinessEventHandlers>
+    <EventHandler delegateElementName="ProdJournalCheckPostProd" delegateElementTypeId="ClassTypeId" delegateMethodName="run" eventHandlerElementName="ATXProdJournalCheckPostProd_Extension" eventHandlerElementTypeId="ClassTypeId" eventHandlerMethodName="ProdJournalCheckPostProd_Post_run" delegateTypeId="PostDelegateTypeId" />
+  </BusinessEventHandlers>
+  <DataEventHandlers>
+    <DataEventHandler tableName="SalesTable" dataEventType="ValidatedDelete" eventHandlerElementName="SalesTable_Extension" eventHandlerElementTypeId="ClassTypeId" eventHandlerMethodName="SalesTable_onValidatedDelete" />
+  </DataEventHandlers>
+  <FormEventHandlers />
+  <FormControlEventHandlers>
+    <FormControlEventHandler formName="EcoResProductMasterDimension" formControlName="ATXButtonGridSize" formControlEventType="Clicked" eventHandlerElementName="EcoResProductMasterDimension_Extension" eventHandlerElementTypeId="ClassTypeId" eventHandlerMethodName="ATXButtonGridSize_OnClicked" />
+    <FormControlEventHandler formName="EcoResProductMasterDimension" formControlName="ATXButtonGridColor" formControlEventType="Clicked" eventHandlerElementName="EcoResProductMasterDimension_Extension" eventHandlerElementTypeId="ClassTypeId" eventHandlerMethodName="ATXButtonGridColor_OnClicked" />
+  </FormControlEventHandlers>
+  <FormDataSourceEventHandler />
+  <FormDataFieldEventHandler />
+</EventHandlers>
